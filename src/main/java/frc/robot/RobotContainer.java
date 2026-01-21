@@ -18,8 +18,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.vision.SupplyAprilTagFieldPose;
-import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
@@ -87,8 +85,17 @@ public class RobotContainer {
         joystick.y().whileTrue(new InstantCommand(() -> {
             System.out.println("pressed x");
             Vision.Cameras.MAIN.updateUnreadResults();
-            var result = Vision.Cameras.MAIN.getCamera().getLatestResult();
-            System.out.println(result.hasTargets() ? result.getBestTarget() : null);
+            var results = Vision.Cameras.MAIN.getCamera().getAllUnreadResults();
+            var result = results.get(results.size() - 1);
+                // At least one AprilTag was seen by the camera
+            if (result.hasTargets()) {
+                var target = result.getBestTarget();
+                var transform = Vision.getRobotRelativeTransformTo(target);
+                System.out.println("Best target ID: " + target.getFiducialId());
+                System.out.println("Robot-relative transform to target: " + transform);
+            } else {
+                System.out.println("No targets seen");
+        }
             // Vision.Cameras.MAIN.getBestResult()
             //   .map(e -> (e.hasTargets() ? e.getBestTarget() : null))
             //   .map(Vision::getRobotRelativeTransformTo)

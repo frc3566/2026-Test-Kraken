@@ -28,8 +28,10 @@ import edu.wpi.first.math.util.Units;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-    public static final int LEFT_MOTOR=8;
-    public static final int RIGHT_MOTOR=9;
+    public static class Shooter{
+        public static final int LEFT_MOTOR=8;
+        public static final int RIGHT_MOTOR=9;
+    }
   public static class Vision {
     public static final double xWidth = Units.inchesToMeters(32.5);
     public static final double yWidth = Units.inchesToMeters(29);

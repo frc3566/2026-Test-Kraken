@@ -26,8 +26,8 @@ public class GetVisionData extends Command {
         var results = Vision.Cameras.MAIN.getLatestResult();
         
         if (!results.isEmpty()) {
-            targetSet = true;
             tagID = results.get().getBestTarget().getFiducialId();
+            targetSet = true;
         } else {
             targetSet = false;
             tagID = -1;

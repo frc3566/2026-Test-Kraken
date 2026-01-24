@@ -20,8 +20,8 @@ public class GetVisionData extends Command {
 
     @Override
     public void execute() {
-        Shuffleboard.getTab("Vision").addNumber("Tag ID", () -> tagID);
-        Shuffleboard.getTab("Vision").addBoolean("Has Target", () -> targetSet);
+        // Shuffleboard.getTab("Vision").addNumber("Tag ID", () -> tagID);
+        // Shuffleboard.getTab("Vision").addBoolean("Has Target", () -> targetSet);
         Vision.Cameras.MAIN.updateUnreadResults();
         var results = Vision.Cameras.MAIN.getLatestResult();
         
@@ -32,6 +32,8 @@ public class GetVisionData extends Command {
             targetSet = false;
             tagID = -1;
         }
+
+        System.out.println(String.valueOf(tagID) + String.valueOf(targetSet));
     }
 
     @Override

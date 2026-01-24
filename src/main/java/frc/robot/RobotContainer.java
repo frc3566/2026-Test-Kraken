@@ -46,6 +46,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
+        DriverStation.silenceJoystickConnectionWarning(true);
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         if(DriverStation.isTeleop()){

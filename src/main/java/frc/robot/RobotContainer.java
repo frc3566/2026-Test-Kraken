@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.TestCommands;
+import frc.robot.commands.vision.ChaseTagCommand;
 import frc.robot.commands.vision.GetVisionData;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -102,7 +103,7 @@ public class RobotContainer {
             }            
         }));
 
-        joystick.x().onTrue(new GetVisionData());
+        joystick.x().onTrue(new ChaseTagCommand(drivetrain));
 
         
 

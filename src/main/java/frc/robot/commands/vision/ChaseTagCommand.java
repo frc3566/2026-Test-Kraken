@@ -4,23 +4,18 @@
 
 package frc.robot.commands.vision;
 
-import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
-
-import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -34,7 +29,7 @@ public class ChaseTagCommand extends Command {
   private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(0.1, 0.5);
   private static final TrapezoidProfile.Constraints rotConstraints = new TrapezoidProfile.Constraints(Math.PI, Math.PI);
 
-  private static final int tagToChase = 4;
+  private static final int tagToChase = 5;
   private static final Transform3d tagToGoal = 
       new Transform3d(1, 0, 0,
           new Rotation3d(0, 0, Math.PI)); // yaw may be -pi/2 if front hasnt changed
@@ -71,7 +66,6 @@ public class ChaseTagCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boolean targetFound = false;
     var robotPose2d = swerve.getState().Pose;
     var robotPose = 
         new Pose3d(
@@ -80,11 +74,11 @@ public class ChaseTagCommand extends Command {
           0,
           new Rotation3d(0,0, robotPose2d.getRotation().getRadians())
         );
-    SmartDashboard.putString("Current Pose", String.format("(%.2f, %.2f) %.2f degrees", 
+    Shuffleboard.getTab("Vision").add("Current Pose", String.format("(%.2f, %.2f) %.2f degrees", 
       robotPose2d.getX(),
       robotPose2d.getY(), 
       robotPose2d.getRotation().getDegrees()));
-
+    
     var photonResOpt = Vision.Cameras.MAIN.getLatestResult();
     if(!photonResOpt.isEmpty()){
       var photonRes = Vision.Cameras.MAIN.getLatestResult().get();
@@ -96,6 +90,7 @@ public class ChaseTagCommand extends Command {
             .findFirst();
         if (targetOpt.isPresent()) {
           var target = targetOpt.get();
+          Shuffleboard.getTab("Vision").addBoolean("isTargetFound", () -> targetOpt.isPresent());
           lastTarget = target;
 
           var cameraPose = robotPose.transformBy(Constants.Vision.robotToCamera);
@@ -114,11 +109,11 @@ public class ChaseTagCommand extends Command {
         }
       }
       if (lastTarget == null) {
-        swerve.applyRequest(() ->
-          drive.withVelocityX(0) // Drive forward with negative Y (forward)
-              .withVelocityY(0) // Drive left with negative X (left)
-              .withRotationalRate(0) // Drive counterclockwise with negative X (left)
-        );
+        // swerve.applyRequest(() ->
+        //   drive.withVelocityX(0) // Drive forward with negative Y (forward)
+        //       .withVelocityY(0) // Drive left with negative X (left)
+        //       .withRotationalRate(0) // Drive counterclockwise with negative X (left)
+        // );
       } 
   } else {
       var xSpeed = xController.calculate(robotPose.getX());
@@ -138,23 +133,32 @@ public class ChaseTagCommand extends Command {
         rot = 0;
       }
       
-      swerve.setControl(
-        drive.withVelocityX(xSpeed) // Drive forward with negative Y (forward)
-             .withVelocityY(ySpeed) // Drive left with negative X (left)
-             .withRotationalRate(rot) // Drive counterclockwise with negative X (left)
-      );
-      
+      // Final vars required for the applyRequest Command
+      // Not sure if it is different from setControl
+      final double xSupplier = xSpeed;
+      final double ySupplier = ySpeed;
+      final double rotSupplier = rot;
+
+      // swerve.applyRequest(() ->
+      //   drive.withVelocityX(xSupplier) // Drive forward with negative Y (forward)
+      //        .withVelocityY(ySupplier) // Drive left with negative X (left)
+      //        .withRotationalRate(rotSupplier) // Drive counterclockwise with negative X (left)
+      // );
+        Shuffleboard.getTab("Vision").add("Target Velocity", String.format("(%.2f, %.2f) %.2f degrees", 
+          xSpeed,
+          ySpeed, 
+          rot));
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-        swerve.applyRequest(() ->
-        drive.withVelocityX(0) // Drive forward with negative Y (forward)
-             .withVelocityY(0) // Drive left with negative X (left)
-             .withRotationalRate(0) // Drive counterclockwise with negative X (left)
-      );
+      //   swerve.applyRequest(() ->
+      //   drive.withVelocityX(0) // Drive forward with negative Y (forward)
+      //        .withVelocityY(0) // Drive left with negative X (left)
+      //        .withRotationalRate(0) // Drive counterclockwise with negative X (left)
+      // );
   }
 
   // Returns true when the command should end.

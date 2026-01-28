@@ -1,6 +1,5 @@
 package frc.robot.commands.vision;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Vision;
 
@@ -26,8 +25,12 @@ public class GetVisionData extends Command {
         var results = Vision.Cameras.MAIN.getLatestResult();
         
         if (!results.isEmpty()) {
-            tagID = results.get().getBestTarget().getFiducialId();
             targetSet = true;
+            var result = results.get().getBestTarget();
+            tagID = result.getFiducialId();
+            System.out.println(result.getBestCameraToTarget());
+
+            
         } else {
             targetSet = false;
             tagID = -1;

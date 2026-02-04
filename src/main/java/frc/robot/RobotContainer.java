@@ -80,9 +80,9 @@ public class RobotContainer {
 
         // joystick.x().onTrue(new ChaseTagCommand(drivetrain));
 
-        joystick.y().onTrue(new InstantCommand( () -> shooter.setLowerPower(0.5)));
+        joystick.y().onTrue(new InstantCommand( () -> shooter.setLowerPower(1)));
         joystick.y().onFalse(new InstantCommand( () -> shooter.stopLower()));
-        joystick.x().onTrue(new InstantCommand( () -> shooter.setUpperPower(0.5)));
+        joystick.x().onTrue(new InstantCommand( () -> shooter.setUpperPower(-1)));
         joystick.x().onFalse(new InstantCommand( () -> shooter.stopUpper()));
 
 

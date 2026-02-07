@@ -4,7 +4,12 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.CounterBase.EncodingType;
+import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
@@ -15,6 +20,7 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    
   }
 
   @Override
@@ -31,26 +37,71 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledExit() {}
 
-  @Override
-  public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+   private Spark leftMotor1 = new Spark(0);
+  private Spark leftMotor2 = new Spark(1);
+  private Spark rightMotor1 = new Spark(2);
+  private Spark rightMotor2 = new Spark(3);
 
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.schedule();
-    }
+  private Joystick joy1 = new Joystick(0);
+
+  private Encoder encoder = new Encoder(0, 1, false, EncodingType.k4X);
+  private final double kDriveTick2Feet = 1.0 / 128 * 6 * Math.PI / 12;
+
+  @Override
+  public void robotInit() {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousInit() {
+    encoder.reset();
+    errorSum = 0;
+    lastError = 0;
+    lastTimestamp = Timer.getFPGATimestamp();
+  }
+
+  final double kP = 0.5;
+  final double kI = 0.5;
+  final double kD = 0.1;
+  final double iLimit = 1;
+
+  double setpoint = 0;
+  double errorSum = 0;
+  double lastTimestamp = 0;
+  double lastError = 0;
 
   @Override
-  public void autonomousExit() {}
-
-  @Override
-  public void teleopInit() {
-    if (m_autonomousCommand != null) {
-      m_autonomousCommand.cancel();
+  public void autonomousPeriodic() {
+    // get joystick command
+    if (joy1.getRawButton(1)) {
+      setpoint = 10;
+    } else if (joy1.getRawButton(2)) {
+      setpoint = 0;
     }
+
+    // get sensor position
+    double sensorPosition = encoder.get() * kDriveTick2Feet;
+
+    // calculations
+    double error = setpoint - sensorPosition;
+    double dt = Timer.getFPGATimestamp() - lastTimestamp;
+
+    if (Math.abs(error) < iLimit) {
+      errorSum += error * dt;
+    }
+
+    double errorRate = (error - lastError) / dt;
+
+    double outputSpeed = kP * error + kI * errorSum + kD * errorRate;
+
+    // output to motors
+    leftMotor1.set(outputSpeed);
+    leftMotor2.set(outputSpeed);
+    rightMotor1.set(-outputSpeed);
+    rightMotor2.set(-outputSpeed);
+
+    // update last- variables
+    lastTimestamp = Timer.getFPGATimestamp();
+    lastError = error;
   }
 
   @Override

@@ -75,7 +75,7 @@ public class Robot extends TimedRobot {
     if (joy1.getRawButton(1)) {
       setpoint = 10;
     } else if (joy1.getRawButton(2)) {
-      setpoint = 0;
+      setpoint = 10;
     }
 
     // get sensor position

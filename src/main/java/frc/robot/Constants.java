@@ -15,9 +15,12 @@ import org.photonvision.simulation.SimCameraProperties;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.math.util.Units.inchesToMeters;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean constants. This
@@ -60,4 +63,9 @@ public final class Constants {
         new Rotation3d(0, 0, 0)
         );
     }
+
+    public static final Transform2d robotToCamera2d = new Transform2d(
+    new Translation2d(inchesToMeters(0), 0.0), 
+    new Rotation2d(0.0)
+    );
 }

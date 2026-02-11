@@ -96,8 +96,7 @@ public class Vision {
       for (Cameras c : Cameras.values()) {
         c.addToVisionSim(visionSim);
       }
-
-      // openSimCameraViews();
+      openSimCameraViews();
     }
   }
 

@@ -9,6 +9,7 @@ public class Shooter extends SubsystemBase {
     public Shooter() {
         lower = new TalonFX(22);
         upper = new TalonFX(32);
+
     }
 
     /**
@@ -16,8 +17,10 @@ public class Shooter extends SubsystemBase {
      *      Value should be in the range [-1, 1] where 1 is full speed forward.
      *      Invert the motors in the constructor if behavior is not as described above.
      */
+
+    // BOTH MOTORS NEED TO BE INVERTED; USE NEGATIVE POWER FOR NOW.
     public void setLowerPower(double power) {
-        lower.set(power);
+        lower.set(-power);
     }
 
     public void stopLower() {
@@ -25,7 +28,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void setUpperPower(double power) {
-        upper.set(power);
+        upper.set(-power);
     }
 
     public void stopUpper() {   

@@ -31,6 +31,13 @@ import static edu.wpi.first.math.util.Units.inchesToMeters;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+  public static class Motors{
+    public static final int ShooterHigh = 32;
+    public static final int ShooterLow = 22;
+    public static final int IntakeRoller = 40;
+    public static final int IntakeArm = 41;
+
+  }
 
 
   public static class Vision {

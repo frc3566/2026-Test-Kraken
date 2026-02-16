@@ -15,13 +15,14 @@ public class ArmToSetpoint extends Command {
         this.setpoint = setpoint + armOffset;
         addRequirements(m_Intake);
         m_Controller = new PIDController(0.05, 0, 0.0015); //TODO: monitor values for accuracy
-        m_Controller.setTolerance(2);
+        m_Controller.setTolerance(1);
 
     }
 
     // Called when the command is initially scheduled.
     @Override
     public void initialize() {
+        System.out.println("ArmToSetpoint initialized. Setpoint: " + setpoint);
         // double value = Math.clamp(m_Controller.calculate(m_Intake.getPivotDegrees(), 45), minval, maxval);
 
     }
@@ -37,13 +38,15 @@ public class ArmToSetpoint extends Command {
     // Called once the command ends or is interrupted.
     @Override
     public void end(boolean interrupted) {
+        System.out.println("ArmToSetpoint ended. Interrupted: " + interrupted);
         // m_Intake.stopPivot();
     }
 
     // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return m_Controller.atSetpoint();
+        // return m_Controller.atSetpoint();
+        return true;
     }
     
 }

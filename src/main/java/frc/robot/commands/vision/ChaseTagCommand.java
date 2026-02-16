@@ -46,6 +46,7 @@ public class ChaseTagCommand extends Command {
 
   public ChaseTagCommand(CommandSwerveDrivetrain swerve) {
     this.swerve = swerve;
+    this.addRequirements(swerve);
 
     xController.setTolerance(0.1);
     yController.setTolerance(0.1);

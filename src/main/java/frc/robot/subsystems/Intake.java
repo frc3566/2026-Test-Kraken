@@ -53,7 +53,7 @@ public class Intake extends SubsystemBase {
 
     public double getArmRotation() {
         double rotation = armMotor.getPosition().getValueAsDouble();
-        System.out.println(rotation);
+        // System.out.println(rotation);
         return rotation;
     }
 }

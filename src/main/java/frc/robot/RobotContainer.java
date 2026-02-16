@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.intake.GetIntakeData;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
@@ -94,18 +93,19 @@ public class RobotContainer {
         joystick.leftBumper().onTrue(new InstantCommand( () -> shooter.setUpperPower(0.5)));
         joystick.leftBumper().onFalse(new InstantCommand( () -> shooter.stopUpper()));
 
-        // joystick.leftBumper().onTrue(new InstantCommand(() -> intake.armUp(0.2)));
-        // joystick.leftBumper().onFalse(new InstantCommand(() -> intake.armStop()));
-        // joystick.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.2)));
-        // joystick.rightBumper().onFalse(new InstantCommand(() -> intake.armStop()));
-
-        // joystick.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(1)));
-        // joystick.leftTrigger().onFalse(new InstantCommand(() -> intake.rollerStop()));
-        // joystick.rightTrigger().onTrue(new InstantCommand(() -> intake.rollerOut(1)));
-        // joystick.rightTrigger().onFalse(new InstantCommand(() -> intake.rollerStop()));
-
-        joystick.a().onTrue(new GetIntakeData(intake));
         
+
+        // Intake arm bindings
+        joystick.rightBumper().onTrue(new InstantCommand(() -> intake.armUp(0.1)));
+        joystick.rightBumper().onFalse(new InstantCommand(() -> intake.armStop()));
+        joystick.rightTrigger().onTrue(new InstantCommand(() -> intake.armDown(0.1)));
+        joystick.rightTrigger().onFalse(new InstantCommand(() -> intake.armStop()));
+
+        // Intake roller bindings
+        joystick.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(1)));
+        joystick.leftTrigger().onFalse(new InstantCommand(() -> intake.rollerStop()));
+        joystick.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(1)));
+        joystick.leftBumper().onFalse(new InstantCommand(() -> intake.rollerStop()));
 
 
 

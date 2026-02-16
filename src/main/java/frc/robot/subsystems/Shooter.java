@@ -6,10 +6,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
-    public TalonFX lowerMotor, upperMotor;
+    public TalonFX lowerMotor, upperMotor, agitatorMotor;
     public Shooter() {
         lowerMotor = new TalonFX(Constants.Motors.ShooterLow);
         upperMotor = new TalonFX(Constants.Motors.ShooterHigh);
+        agitatorMotor = new TalonFX(Constants.Motors.Agitator);
 
     }
 
@@ -21,15 +22,17 @@ public class Shooter extends SubsystemBase {
 
     // BOTH MOTORS NEED TO BE INVERTED; USE NEGATIVE POWER FOR NOW.
     public void setLowerPower(double power) {
-        lowerMotor.set(-power);
+        lowerMotor.set(power);
+        agitatorMotor.set((power/8));
     }
 
     public void stopLower() {
         lowerMotor.stopMotor();
+        agitatorMotor.stopMotor();
     }
 
     public void setUpperPower(double power) {
-        upperMotor.set(-power);
+        upperMotor.set(power);
     }
 
     public void stopUpper() {   

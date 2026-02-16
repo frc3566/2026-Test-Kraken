@@ -19,9 +19,14 @@ public class Shooter extends SubsystemBase {
      *      Invert the motors in the constructor if behavior is not as described above.
      */
 
-    // BOTH MOTORS NEED TO BE INVERTED; USE NEGATIVE POWER FOR NOW.
+   
     public void setLowerPower(double power) {
-        lowerMotor.set(-power);
+        lowerMotor.set(power);
+        // lowerMotor.setControl(
+        //     m_dutyCycle.withOutput(0.5)
+        //         .withLimitForwardMotion(m_forwardLimit.get())
+        //         .withLimitReverseMotion(m_reverseLimit.get())
+        //     );
     }
 
     public void stopLower() {
@@ -29,7 +34,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public void setUpperPower(double power) {
-        upperMotor.set(-power);
+        upperMotor.set(power);
     }
 
     public void stopUpper() {   

@@ -15,13 +15,14 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.intake.GetIntakeData;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
 public class RobotContainer {
+    private boolean enableDrive = true;
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -46,17 +47,21 @@ public class RobotContainer {
 
     private void configureBindings() {
         DriverStation.silenceJoystickConnectionWarning(true);
+        
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         if(DriverStation.isTeleop()){
-            drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
+            if(enableDrive){
+                drivetrain.setDefaultCommand(
+                // Drivetrain will execute this command periodically
+                drivetrain.applyRequest(() ->
+                    drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                )
         );
+            }
+
         joystick.x().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // Run SysId routines when holding back/start and X/Y.
@@ -84,20 +89,23 @@ public class RobotContainer {
 
         // joystick.x().onTrue(new ChaseTagCommand(drivetrain));
 
-        joystick.y().onTrue(new InstantCommand( () -> shooter.setLowerPower(0.8)));
-        joystick.y().onFalse(new InstantCommand( () -> shooter.stopLower()));
-        joystick.x().onTrue(new InstantCommand( () -> shooter.setUpperPower(0.8)));
-        joystick.x().onFalse(new InstantCommand( () -> shooter.stopUpper()));
+        joystick.rightBumper().onTrue(new InstantCommand( () -> shooter.setLowerPower(0.5)));
+        joystick.rightBumper().onFalse(new InstantCommand( () -> shooter.stopLower()));
+        joystick.leftBumper().onTrue(new InstantCommand( () -> shooter.setUpperPower(0.5)));
+        joystick.leftBumper().onFalse(new InstantCommand( () -> shooter.stopUpper()));
 
-        joystick.leftBumper().onTrue(new InstantCommand(() -> intake.armUp(0.1)));
-        joystick.leftBumper().onFalse(new InstantCommand(() -> intake.armStop()));
-        joystick.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.1)));
-        joystick.rightBumper().onFalse(new InstantCommand(() -> intake.armStop()));
+        // joystick.leftBumper().onTrue(new InstantCommand(() -> intake.armUp(0.2)));
+        // joystick.leftBumper().onFalse(new InstantCommand(() -> intake.armStop()));
+        // joystick.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.2)));
+        // joystick.rightBumper().onFalse(new InstantCommand(() -> intake.armStop()));
 
-        joystick.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(1)));
-        joystick.leftTrigger().onFalse(new InstantCommand(() -> intake.rollerStop()));
-        joystick.rightTrigger().onTrue(new InstantCommand(() -> intake.rollerOut(1)));
-        joystick.rightTrigger().onFalse(new InstantCommand(() -> intake.rollerStop()));
+        // joystick.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(1)));
+        // joystick.leftTrigger().onFalse(new InstantCommand(() -> intake.rollerStop()));
+        // joystick.rightTrigger().onTrue(new InstantCommand(() -> intake.rollerOut(1)));
+        // joystick.rightTrigger().onFalse(new InstantCommand(() -> intake.rollerStop()));
+
+        joystick.a().onTrue(new GetIntakeData(intake));
+        
 
 
 

@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -10,13 +11,11 @@ public class Intake extends SubsystemBase {
    
     public TalonFX rollerMotor;
     public TalonFX armMotor;
-    private double armGearRatio = 4;
-    // public double rtrigger;
+    
 
     public Intake() {
         rollerMotor = new TalonFX(Constants.Motors.IntakeRoller);
         armMotor=new TalonFX(Constants.Motors.IntakeArm);
-        // intakeMotor.setInverted(false);
 
         var armConfig = new TalonFXConfiguration();
 
@@ -24,7 +23,29 @@ public class Intake extends SubsystemBase {
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = -1;
 
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -15;
+        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -16;
+        armMotor.getConfigurator().apply(armConfig);
+
+
+        // PID gains (tune later)
+        armConfig.Slot0.kP = 2.0;
+        armConfig.Slot0.kI = 0.0;
+        armConfig.Slot0.kD = 0.5;
+
+        // Gravity feedforward (START small, tune upward)
+        // armConfig.Slot0.kG = 0.2;
+
+        // Tell Talon this is an arm
+        // armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+        // armConfig.Slot0.GravityArmPositionOffset = 0.25;
+
+        // Motion Magic settings
+        armConfig.MotionMagic.MotionMagicCruiseVelocity = 40;
+        armConfig.MotionMagic.MotionMagicAcceleration = 80;
+        armConfig.MotionMagic.MotionMagicJerk = 400;
+        armConfig.Feedback.RotorToSensorRatio = Constants.Arm.GearRatio;
+
+        // Apply configuration
         armMotor.getConfigurator().apply(armConfig);
         
     }
@@ -51,9 +72,15 @@ public class Intake extends SubsystemBase {
         armMotor.stopMotor();
     }
 
-    public double getArmRotation() {
-        double rotation = armMotor.getPosition().getValueAsDouble();
-        // System.out.println(rotation);
-        return rotation;
+    public double getArmPosition() {
+        return armMotor.getPosition().getValueAsDouble();
     }
+
+    public void setArmPosition(double rotations) {
+        MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(rotations);
+        armMotor.setControl(
+            motionMagicRequest.withPosition(rotations)
+        );
+}
+
 }

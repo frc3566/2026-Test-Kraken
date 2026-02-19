@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.intake.ArmToSetpoint;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
@@ -93,8 +92,8 @@ public class RobotContainer {
             
         firstDriver.x().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        firstDriver.leftBumper().onTrue(new InstantCommand( () -> shooter.setLowerPower(0.5)));
-        firstDriver.leftBumper().onFalse(new InstantCommand( () -> shooter.stopLower()));
+        firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(0.5)));
+        firstDriver.leftTrigger().onFalse(new InstantCommand( () -> shooter.stopLower()));
         // firstDriver.rightTrigger().onTrue(new ChaseTagCommand(drivetrain)); //TODO: Auto align+move to scoring pos
         // firstDriver.rightBumper().onTrue(new HeadingToHub()); //TODO: Heading snap to hub
 
@@ -112,24 +111,31 @@ public class RobotContainer {
         // firstDriver.leftBumper().onFalse(new InstantCommand(() -> intake.rollerStop()));
 
         /* For Second Driver */
-        secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(0.5)));
+        secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(0.8)));
         secondDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.rollerStop()));
-        secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(0.5)));
+        secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(0.8)));
         secondDriver.leftBumper().onFalse(new InstantCommand(() -> intake.rollerStop()));
 
-        secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armDown(0.1)));
+        secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armUp(0.15)));
         secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.armStop()));
-        secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armUp(0.1)));
+        secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.15)));
         secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.armStop()));
 
         // Toggle Shooter (scoring)
-        secondDriver.x().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(0.8)));
+        secondDriver.x().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(0.50)));
         // Toggle Shooter (passing)
-        secondDriver.y().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(0.3)));
+        secondDriver.y().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(shooter.testSpeed)));
 
-        secondDriver.a().onTrue(new ArmToSetpoint(intake, 10));
+        // secondDriver.a().onTrue(new ArmToSetpoint(intake, 10));
+        secondDriver.a().onTrue(new InstantCommand( () -> shooter.setAgitatorPower(0.4)));
 
         secondDriver.b().onTrue(new InstantCommand(() -> shooter.stopUpper()));
+
+        
+        secondDriver.povUp().onTrue(new InstantCommand( () -> shooter.addTestSpeed(0.05)));
+        secondDriver.povDown().onTrue(new InstantCommand( () -> shooter.addTestSpeed(-0.05)));
+        secondDriver.povRight().onTrue(new InstantCommand( () -> shooter.addTestSpeed(0.01)));
+        secondDriver.povLeft().onTrue(new InstantCommand( () -> shooter.addTestSpeed(-0.01)));
 
         // secondDriver.povUp().onTrue(new InstantCommand( () -> climber.set(0.5)));
         // secondDriver.povUp().onFalse(new InstantCommand( () -> climber.stop()));

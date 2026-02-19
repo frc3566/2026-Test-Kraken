@@ -10,7 +10,7 @@ public class GetIntakeData extends Command {
 
     public GetIntakeData(Intake intake) {
         this.intake = intake;
-        this.rotation = intake.getArmRotation();
+        // this.rotation = intake.getArmRotation();
     }
 
     @Override
@@ -22,7 +22,7 @@ public class GetIntakeData extends Command {
     public void execute() {
         // Shuffleboard.getTab("Vision").addNumber("Tag ID", () -> tagID);
         // Shuffleboard.getTab("Vision").addBoolean("Has Target", () -> targetSet);
-        rotation = intake.getArmRotation();
+        // rotation = intake.getArmRotation();
         SmartDashboard.putNumber("Current Arm Rotation", rotation);
         // System.out.println(String.valueOf(tagID) + String.valueOf(targetSet));
     }

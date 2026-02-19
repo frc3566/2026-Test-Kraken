@@ -2,11 +2,14 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
     public TalonFX lowerMotor, upperMotor, agitatorMotor;
+    public double testSpeed = 0;
+
     public Shooter() {
         lowerMotor = new TalonFX(Constants.Motors.ShooterLow);
         upperMotor = new TalonFX(Constants.Motors.ShooterHigh);
@@ -35,8 +38,21 @@ public class Shooter extends SubsystemBase {
         upperMotor.set(power);
     }
 
+    public void addTestSpeed(double increment) {
+        testSpeed = MathUtil.clamp(testSpeed+increment, 0.0, 1.0);
+        System.out.println("Test Speed: " + testSpeed);
+    }
+
     public void stopUpper() {   
         upperMotor.stopMotor();
+    }
+
+    public void setAgitatorPower(double speed){
+        agitatorMotor.set(speed);
+    }
+
+    public void stopAgitator(){
+        agitatorMotor.stopMotor();
     }
     
 }

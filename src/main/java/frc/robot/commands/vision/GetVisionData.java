@@ -5,7 +5,7 @@ import frc.robot.subsystems.Vision;
 
 public class GetVisionData extends Command {
     private boolean targetSet = false;
-    private int tagID = 0;
+    private int targetId = 0;
 
     public GetVisionData() {
 
@@ -13,30 +13,26 @@ public class GetVisionData extends Command {
 
     @Override
     public void initialize() {
-        targetSet = false;
-        tagID = 0;
+        System.out.println("Initializing GetVisionData command");
     }
 
     @Override
     public void execute() {
-        // Shuffleboard.getTab("Vision").addNumber("Tag ID", () -> tagID);
-        // Shuffleboard.getTab("Vision").addBoolean("Has Target", () -> targetSet);
         Vision.Cameras.MAIN.updateUnreadResults();
         var results = Vision.Cameras.MAIN.getLatestResult();
         
         if (!results.isEmpty()) {
-            targetSet = true;
             var result = results.get().getBestTarget();
-            tagID = result.getFiducialId();
-            System.out.println(result.getBestCameraToTarget());
-
-            
-        } else {
-            targetSet = false;
-            tagID = -1;
-        }
-
-        System.out.println(String.valueOf(tagID) + String.valueOf(targetSet));
+            var tagID = result.getFiducialId();
+            var cameraToTarget = result.getBestCameraToTarget();
+            double distance = Math.sqrt(Math.pow(cameraToTarget.getX(), 2) + Math.pow(cameraToTarget.getY(), 2));
+            System.out.println("Tag ID: " + tagID);
+            System.out.println("Camera to Target: " + cameraToTarget);
+            System.out.println("Distance: " + distance);
+            if(tagID==targetId){
+                targetSet = true;
+            }
+        } 
     }
 
     @Override

@@ -8,6 +8,7 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -148,10 +149,11 @@ public class ChaseTagCommand extends Command {
         final double rotSupplier = rot;
 
         swerve.setControl(
-          drive.withVelocityX(Math.min(0.1, xSpeed)) // Drive forward with negative Y (forward)
-               .withVelocityY(Math.min(0.1, ySpeed)) // Drive left with negative X (left)
-               .withRotationalRate(Math.min(Math.PI/12, rot)) // Drive counterclockwise with negative X (left)
+          drive.withVelocityX(MathUtil.clamp(xSpeed, -0.2, 0.2)) // Drive forward with negative Y (forward)
+               .withVelocityY(MathUtil.clamp(ySpeed, -0.2, 0.2)) // Drive left with negative X (left)
+               .withRotationalRate(MathUtil.clamp(rot, -Math.PI/12, Math.PI/12)) // Drive counterclockwise with negative X (left)
         );
+        
         SmartDashboard.putString("Vision/Target Velocity", String.format("(%.2f, %.2f) %.2f radians", 
         xSpeed,
         ySpeed, 
@@ -173,6 +175,6 @@ public class ChaseTagCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return (xController.atGoal() && yController.atGoal() && rotController.atGoal());
   }
 }

@@ -42,6 +42,15 @@ public final class Constants {
   public static class Arm{
     public static final double GearRatio = 64.0;
   }
+  
+  public static class AprilTags{
+    public static final int RED_STAGE_SIDE = 9;
+    public static final int RED_STAGE_CENTER = 10;
+
+    public static final int BLUE_STAGE_SIDE = 26;
+    public static final int BLUE_STAGE_CENTER = 25;
+
+  }
 
 
   public static class Vision {
@@ -67,16 +76,16 @@ public final class Constants {
      */
     public static final Transform3d robotToCamera = new Transform3d(
         new Translation3d(
+            Units.inchesToMeters(14.5),
             Units.inchesToMeters(0),
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(0)
+            Units.inchesToMeters(10)
         ),
         new Rotation3d(0, 0, 0)
         );
     }
 
     public static final Transform2d robotToCamera2d = new Transform2d(
-    new Translation2d(inchesToMeters(0), 0.0), 
+    new Translation2d(inchesToMeters(14.5), 0.0), 
     new Rotation2d(0.0)
     );
 }

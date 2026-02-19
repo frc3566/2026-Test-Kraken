@@ -54,5 +54,10 @@ public class Shooter extends SubsystemBase {
     public void stopAgitator(){
         agitatorMotor.stopMotor();
     }
+
+    public void autoPower(double distance){
+        double power = 31.1 + ((3.3)*(distance)) + (-0.0714*Math.pow(distance, 2));
+        upperMotor.set(power);
+    }
     
 }

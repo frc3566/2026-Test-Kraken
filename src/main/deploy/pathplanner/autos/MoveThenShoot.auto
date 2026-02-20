@@ -5,9 +5,15 @@
     "data": {
       "commands": [
         {
+          "type": "path",
+          "data": {
+            "pathName": "LeftShoot"
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "shoot"
+            "name": "PrimeAndShoot"
           }
         }
       ]

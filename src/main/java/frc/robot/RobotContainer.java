@@ -6,15 +6,17 @@ package frc.robot;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.shooter.PrimeAndShoot;
 import frc.robot.commands.vision.AutoShoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -44,7 +46,10 @@ public class RobotContainer {
     public final Intake intake = new Intake();
     // public final Climber climber = new Climber();
 
+    public final Command autoCommand = AutoBuilder.buildAuto("MoveThenShoot");
+
     public RobotContainer() {
+        configureAuto();
         configureBindings();
     }
 
@@ -99,18 +104,6 @@ public class RobotContainer {
         // firstDriver.rightBumper().onTrue(new HeadingToHub()); //TODO: Heading snap to hub
 
 
-        // Intake arm bindings
-        // firstDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armUp(0.1)));
-        // firstDriver.rightBumper().onFalse(new InstantCommand(() -> intake.armStop()));
-        // firstDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armDown(0.1)));
-        // firstDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.armStop()));
-
-        // Intake roller bindings
-        // firstDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(1)));
-        // firstDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.rollerStop()));
-        // firstDriver.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(1)));
-        // firstDriver.leftBumper().onFalse(new InstantCommand(() -> intake.rollerStop()));
-
         /* For Second Driver */
         secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(0.8)));
         secondDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.rollerStop()));
@@ -144,33 +137,17 @@ public class RobotContainer {
         // secondDriver.povDown().onTrue(new InstantCommand( () -> climber.set(-0.5)));
         // secondDriver.povDown().onFalse(new InstantCommand( () -> climber.stop()));
         
-        // reset the field-centric heading on left bumper press
-        // joystick.y().whileTrue(new InstantCommand(() -> {
-        //     System.out.println("pressed x");
-        //     Vision.Cameras.MAIN.updateUnreadResults();
-        //     var results = Vision.Cameras.MAIN.getCamera().getAllUnreadResults();
-        //     var result = results.get(results.size() - 1);
-        //         // At least one AprilTag was seen by the camera
-        //     if (result.hasTargets()) {
-        //         var target = result.getBestTarget();
-        //         var transform = Vision.getRobotRelativeTransformTo(target);
-        //         // System.out.println("Best target ID: " + target.getFiducialId());
-        //          Shuffleboard.getTab("Vision").addNumber("Best target ID:", () -> target.getFiducialId()); 
-        //         // System.out.println("Robot-relative transform to target: " + transform);
-        //     } else {
-        //         // System.out.println("No targets seen");
-        // }
-        //     // Vision.Cameras.MAIN.getBestResult()
-        //     //   .map(e -> (e.hasTargets() ? e.getBestTarget() : null))
-        //     //   .map(Vision::getRobotRelativeTransformTo)
-        //     //   .ifPresent(System.out::println);
-        // }).repeatedly());
-        
-        
         // drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     public Command getAutonomousCommand() {
-        return Commands.print("No autonomous command configured");
+        return autoCommand;
+    }
+
+    private void configureAuto() {
+        NamedCommands.registerCommand(
+            "PrimeAndShoot",
+            new PrimeAndShoot(shooter, 0.50)
+        );
     }
 }

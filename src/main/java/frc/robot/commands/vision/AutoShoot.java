@@ -8,6 +8,7 @@ public class AutoShoot extends Command {
     private boolean targetSet = false;
     private int targetId = 4;
     private Shooter shooter;
+    private boolean targetFound = false;
 
     public AutoShoot(Shooter shooter) {
         this.shooter = shooter;
@@ -35,6 +36,7 @@ public class AutoShoot extends Command {
             // System.out.println("Distance: " + distance);
             if(tagID==targetId){
                 shooter.autoPower(distance);
+                targetFound = true;
             }
         } 
         else{
@@ -50,6 +52,6 @@ public class AutoShoot extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return targetFound;
     }
 }

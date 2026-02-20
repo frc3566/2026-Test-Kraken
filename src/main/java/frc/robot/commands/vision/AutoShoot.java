@@ -1,13 +1,17 @@
 package frc.robot.commands.vision;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
 
-public class GetVisionData extends Command {
+public class AutoShoot extends Command {
     private boolean targetSet = false;
-    private int targetId = 0;
+    private int targetId = 4;
+    private Shooter shooter;
 
-    public GetVisionData() {
+    public AutoShoot(Shooter shooter) {
+        this.shooter = shooter;
+        this.addRequirements(shooter);
 
     }
 
@@ -26,22 +30,26 @@ public class GetVisionData extends Command {
             var tagID = result.getFiducialId();
             var cameraToTarget = result.getBestCameraToTarget();
             double distance = Math.sqrt(Math.pow(cameraToTarget.getX(), 2) + Math.pow(cameraToTarget.getY(), 2));
-            System.out.println("Tag ID: " + tagID);
-            System.out.println("Camera to Target: " + cameraToTarget);
-            System.out.println("Distance: " + distance);
+            // System.out.println("Tag ID: " + tagID);
+            // System.out.println("Camera to Target: " + cameraToTarget);
+            // System.out.println("Distance: " + distance);
             if(tagID==targetId){
-                targetSet = true;
+                shooter.autoPower(distance);
             }
         } 
+        else{
+            System.out.println("Result is empty!");
+        }
+
     }
 
     @Override
     public void end(boolean interrupted) {
-        System.out.println("Target Found!");
+       shooter.stopUpper();
     }
 
     @Override
     public boolean isFinished() {
-        return targetSet;
+        return false;
     }
 }

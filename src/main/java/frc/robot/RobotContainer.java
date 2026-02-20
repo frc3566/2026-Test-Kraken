@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.vision.GetVisionData;
+import frc.robot.commands.vision.AutoShoot;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
@@ -128,7 +128,7 @@ public class RobotContainer {
         secondDriver.y().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(shooter.testSpeed)));
 
         // secondDriver.a().onTrue(new ArmToSetpoint(intake, 10));
-        secondDriver.a().onTrue(new GetVisionData());
+        secondDriver.a().whileTrue(new AutoShoot(shooter));
 
         secondDriver.b().onTrue(new InstantCommand(() -> shooter.stopUpper()));
 

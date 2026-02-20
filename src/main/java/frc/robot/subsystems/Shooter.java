@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -56,7 +57,8 @@ public class Shooter extends SubsystemBase {
     }
 
     public void autoPower(double distance){
-        double power = 31.1 + ((3.3)*(distance)) + (-0.0714*Math.pow(distance, 2));
+        double power = 31.1 + ((3.3)*(Units.metersToFeet(distance))) + (-0.0714*Math.pow(Units.metersToFeet(distance), 2));
+        System.out.println("Auto Power: " + power);
         upperMotor.set(power);
     }
     

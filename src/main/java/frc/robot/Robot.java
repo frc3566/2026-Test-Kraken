@@ -29,6 +29,9 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         m_timeAndJoystickReplay.update();
+        SmartDashboard.putNumber("Robot Velocity X (m/s)", m_robotContainer.drivetrain.getState().Speeds.vxMetersPerSecond);
+        SmartDashboard.putNumber("Robot Velocity Y (m/s)", m_robotContainer.drivetrain.getState().Speeds.vyMetersPerSecond);
+        SmartDashboard.putNumber("Robot Angular Rate (rads)", m_robotContainer.drivetrain.getState().Speeds.omegaRadiansPerSecond);
         CommandScheduler.getInstance().run(); 
     }
 
@@ -43,7 +46,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+        SmartDashboard.putNumber("Auto Time", DriverStation.getMatchTime());
 
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -54,7 +57,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+        SmartDashboard.putNumber("Auto Time", DriverStation.getMatchTime());
     }
 
     @Override
@@ -62,7 +65,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+        setTeleopShifts();
+
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
@@ -70,6 +74,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+        setTeleopShifts();
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
     }
 
@@ -88,5 +93,35 @@ public class Robot extends TimedRobot {
     public void testExit() {}
 
     @Override
-    public void simulationPeriodic() {}
+    public void simulationPeriodic() {
+    }
+
+    public void setTeleopShifts(){
+        String shift = "";
+        double shiftTime = 0;
+        double currentTime =DriverStation.getMatchTime();
+        if(currentTime > 130){
+            shift = "TRANSITION SHIFT";
+            shiftTime = currentTime-130;
+
+        } else if(currentTime > 105){
+            shift = "SHIFT 1";
+            shiftTime = currentTime-105;
+        } else if(currentTime > 80){
+            shift = "SHIFT 2";
+            shiftTime = currentTime-80;
+        } else if(currentTime > 55){
+            shift = "SHIFT 3";
+            shiftTime = currentTime-55;
+        }
+        else if(currentTime > 30){
+            shift = "SHIFT 4";
+            shiftTime = currentTime-30;
+        } else {
+            shift = "END GAME";
+            shiftTime = currentTime;
+        }
+         SmartDashboard.putString("Teleop Shift", shift);
+         SmartDashboard.putNumber("Teleop Shift Time", shiftTime);
+    }
 }

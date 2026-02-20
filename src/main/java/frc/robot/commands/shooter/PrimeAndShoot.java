@@ -25,7 +25,7 @@ public class PrimeAndShoot extends Command {
 
     @Override
     public void execute() {
-        if (timer.hasElapsed(primeTime)) { // Adjust the time as needed
+        if (timer.get()>primeTime) { // Adjust the time as needed
             System.out.println("Prime And Shoot Command: Lower shooter primed, starting upper shooter.");
             shooter.setLowerPower(speed);
         }
@@ -40,6 +40,6 @@ public class PrimeAndShoot extends Command {
 
     @Override
     public boolean isFinished() {
-        return timer.hasElapsed(primeTime + shootTime);
+        return timer.get()>(primeTime + shootTime);
     }
 }

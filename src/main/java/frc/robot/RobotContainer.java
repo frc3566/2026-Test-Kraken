@@ -48,10 +48,11 @@ public class RobotContainer {
     public final Intake intake = new Intake();
     // public final Climber climber = new Climber();
 
-    public final Command autoCommand = AutoBuilder.buildAuto("MoveThenShoot");
+    public final Command autoCommand;
 
     public RobotContainer() {
-        configureAuto();
+        autoCommand = AutoBuilder.buildAuto("MoveThenShoot");
+        configureAutoCommand();
         configureBindings();
     }
 
@@ -118,9 +119,12 @@ public class RobotContainer {
         secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.armStop()));
 
         // Toggle Shooter (scoring)
-        secondDriver.x().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(0.50)));
+        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(0.50)));
         // Toggle Shooter (passing)
-        secondDriver.y().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(shooter.testSpeed)));
+        // secondDriver.y().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(shooter.testSpeed)));
+
+        secondDriver.y().onTrue(new PrimeAndShoot(shooter, 0.55));
+
 
         // secondDriver.a().onTrue(new ArmToSetpoint(intake, 10));
         secondDriver.a().whileTrue(new AutoShoot(shooter));
@@ -146,10 +150,11 @@ public class RobotContainer {
         return autoCommand;
     }
 
-    private void configureAuto() {
+    private void configureAutoCommand() {
         NamedCommands.registerCommand(
             "PrimeAndShoot",
-            new PrimeAndShoot(shooter, 0.50)
+            new PrimeAndShoot(shooter, 0.55)
         );
     }
+
 }

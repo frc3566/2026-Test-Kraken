@@ -117,7 +117,7 @@ public class RobotContainer {
         secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.3)));
         secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.armStop()));
 
-        // Toggle Shooter (scoring)
+        /* Scoring Speed */
         secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(0.55)));
         // Toggle Shooter (passing)
         // secondDriver.y().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(shooter.testSpeed)));
@@ -125,17 +125,20 @@ public class RobotContainer {
         secondDriver.y().onTrue(new AutoShoot(shooter));
 
         // secondDriver.a().onTrue(new ArmToSetpoint(intake, 10));
-        secondDriver.b().onTrue(new InstantCommand(() -> shooter.setAgitatorPower(0.5)));
-        secondDriver.b().onFalse(new InstantCommand(() -> shooter.stopAgitator()));
+        // secondDriver.b().onTrue(new InstantCommand(() -> shooter.setAgitatorPower(0.5)));
+        // secondDriver.b().onFalse(new InstantCommand(() -> shooter.stopAgitator()));
+
+        /* Passing speed */
+        secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(0.3)));
 
         secondDriver.a().onTrue(new InstantCommand(() -> shooter.stopUpper()));
 
 
         
-        secondDriver.povUp().onTrue(new InstantCommand( () -> shooter.addTestSpeed(0.05)));
-        secondDriver.povDown().onTrue(new InstantCommand( () -> shooter.addTestSpeed(-0.05)));
-        secondDriver.povRight().onTrue(new InstantCommand( () -> shooter.addTestSpeed(0.01)));
-        secondDriver.povLeft().onTrue(new InstantCommand( () -> shooter.addTestSpeed(-0.01)));
+        secondDriver.povUp().onTrue(new InstantCommand( () -> shooter.setAgitatorPower(0.5)));
+        secondDriver.povDown().onTrue(new InstantCommand( () -> shooter.stopAgitator()));
+        // secondDriver.povRight().onTrue(new InstantCommand( () -> shooter.addTestSpeed(0.01)));
+        // secondDriver.povLeft().onTrue(new InstantCommand( () -> shooter.addTestSpeed(-0.01)));
 
         // secondDriver.povUp().onTrue(new InstantCommand( () -> climber.set(0.5)));
         // secondDriver.povUp().onFalse(new InstantCommand( () -> climber.stop()));

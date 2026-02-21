@@ -6,8 +6,8 @@ import frc.robot.subsystems.Shooter;
 public class PrimeAndShoot extends Command {
     private final Shooter shooter;
     private final double speed;
-    private double primeTime = 1.0; // Time to prime the shooter in seconds
-    private double shootTime = 1.0; // Time to shoot after priming in seconds
+    private double primeTime = 2.0; // Time to prime the shooter in seconds
+    private double shootTime = 5.0; // Time to shoot after priming in seconds
     private final Timer timer = new Timer();
 
     public PrimeAndShoot(Shooter shooter, double speed) {
@@ -20,6 +20,7 @@ public class PrimeAndShoot extends Command {
         System.out.println("Prime And Shoot Command Initialized");
         timer.reset();
         timer.start();
+        shooter.setAgitatorPower(speed);
         shooter.setUpperPower(speed);
     }
 
@@ -35,6 +36,7 @@ public class PrimeAndShoot extends Command {
     public void end(boolean interrupted) {
         shooter.stopUpper();
         shooter.stopLower();
+        shooter.stopAgitator();
         System.out.println("Prime And Shoot Command Ended" + (interrupted ? " due to interruption." : "."));
     }
 

@@ -24,9 +24,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
 public class RobotContainer {
-
-
-    private boolean enableDrive = false;
+    private boolean enableDrive = true;
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -51,13 +49,14 @@ public class RobotContainer {
     public final Command autoCommand;
 
     public RobotContainer() {
-        autoCommand = AutoBuilder.buildAuto("MoveThenShoot");
         configureAutoCommand();
         configureBindings();
+        autoCommand = AutoBuilder.buildAuto("MoveThenShoot");
     }
 
     private void configureBindings() {
         DriverStation.silenceJoystickConnectionWarning(true);
+
         
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
@@ -113,23 +112,23 @@ public class RobotContainer {
         secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(0.8)));
         secondDriver.leftBumper().onFalse(new InstantCommand(() -> intake.rollerStop()));
 
-        secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armUp(0.15)));
+        secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armUp(0.3)));
         secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.armStop()));
-        secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.15)));
+        secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.3)));
         secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.armStop()));
 
         // Toggle Shooter (scoring)
-        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(0.50)));
+        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(0.55)));
         // Toggle Shooter (passing)
         // secondDriver.y().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(shooter.testSpeed)));
 
-        secondDriver.y().onTrue(new PrimeAndShoot(shooter, 0.55));
-
+        secondDriver.y().onTrue(new AutoShoot(shooter));
 
         // secondDriver.a().onTrue(new ArmToSetpoint(intake, 10));
-        secondDriver.a().whileTrue(new AutoShoot(shooter));
+        secondDriver.b().onTrue(new InstantCommand(() -> shooter.setAgitatorPower(0.5)));
+        secondDriver.b().onFalse(new InstantCommand(() -> shooter.stopAgitator()));
 
-        secondDriver.b().onTrue(new InstantCommand(() -> shooter.stopUpper()));
+        secondDriver.a().onTrue(new InstantCommand(() -> shooter.stopUpper()));
 
 
         

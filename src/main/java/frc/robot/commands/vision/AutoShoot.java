@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
 
+
 public class AutoShoot extends Command {
     private boolean targetSet = false;
     private int targetId = 4;
@@ -47,7 +48,7 @@ public class AutoShoot extends Command {
 
     @Override
     public void end(boolean interrupted) {
-       shooter.stopUpper();
+    //    shooter.stopUpper();
     }
 
     @Override

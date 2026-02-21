@@ -53,6 +53,6 @@ public class AutoShoot extends Command {
 
     @Override
     public boolean isFinished() {
-        return targetFound;
+        return true;
     }
 }

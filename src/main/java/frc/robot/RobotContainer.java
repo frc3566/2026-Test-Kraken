@@ -121,7 +121,7 @@ public class RobotContainer {
         secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.armStop()));
 
         /* Scoring Speed */
-        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(0.55)));
+        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(0.50)));
         // Toggle Shooter (passing)
         // secondDriver.y().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(shooter.testSpeed)));
 
@@ -159,6 +159,11 @@ public class RobotContainer {
         NamedCommands.registerCommand(
             "PrimeAndShoot",
             new PrimeAndShoot(shooter, 0.55)
+        );
+
+        NamedCommands.registerCommand(
+            "CenterPrimeAndShoot",
+            new PrimeAndShoot(shooter, 0.40)
         );
     }
 

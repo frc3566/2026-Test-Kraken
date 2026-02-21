@@ -52,6 +52,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         SmartDashboard.putNumber("Auto Time", DriverStation.getMatchTime());
+        m_robotContainer.drivetrain.seedFieldCentric();
 
         m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 

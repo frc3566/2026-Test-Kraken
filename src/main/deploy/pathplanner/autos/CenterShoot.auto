@@ -7,13 +7,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "BlueCenterBack"
+            "pathName": "CenterBack"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "PrimeAndShoot"
+            "name": "CenterPrimeAndShoot"
           }
         }
       ]

@@ -1,13 +1,14 @@
 package frc.robot.commands.vision;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
 
 
 public class AutoShoot extends Command {
     private boolean targetSet = false;
-    private int targetId = 4;
+    private int targetId = Constants.AprilTags.BLUE_STAGE_CENTER;
     private Shooter shooter;
     private boolean targetFound = false;
 

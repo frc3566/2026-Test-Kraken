@@ -63,6 +63,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         SmartDashboard.putNumber("Auto Time", DriverStation.getMatchTime());
+        putSubsystemTelemetry();
     }
 
     @Override
@@ -81,6 +82,7 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         setTeleopShifts();
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
+        putSubsystemTelemetry();
     }
 
     @Override
@@ -136,5 +138,21 @@ public class Robot extends TimedRobot {
         }
          SmartDashboard.putString("Teleop Shift", shift);
          SmartDashboard.putNumber("Teleop Shift Time", shiftTime);
+    }
+
+    public void putSubsystemTelemetry() {
+        double flywheelPower = m_robotContainer.shooter.upperMotor.get();
+        double feederPower = m_robotContainer.shooter.lowerMotor.get();
+        double agitatorPower = m_robotContainer.shooter.agitatorMotor.get();
+        double armPower = m_robotContainer.intake.armMotor.get();
+        double rollerPower = m_robotContainer.intake.rollerMotor.get();
+        double armPosition = m_robotContainer.intake.armMotor.getPosition().getValueAsDouble() / Constants.Arm.GearRatio * 360; // Convert to output shaft position
+
+        SmartDashboard.putNumber("Shooter Flywheel Power", flywheelPower);
+        SmartDashboard.putNumber("Shooter Feeder Power", feederPower);
+        SmartDashboard.putNumber("Shooter Agitator Power", agitatorPower);
+        SmartDashboard.putNumber("Intake Arm Power", armPower);
+        SmartDashboard.putNumber("Intake Roller Power", rollerPower);
+        SmartDashboard.putNumber("Intake Arm Position", armPosition);
     }
 }

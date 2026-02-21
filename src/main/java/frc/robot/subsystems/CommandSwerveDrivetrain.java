@@ -250,11 +250,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         if (Utils.isSimulation()) {
-            this.setControl(
-                autoRequest.withSpeeds(
-                    new ChassisSpeeds(1.0, 0.0, 0.0)
-                )
-            );
+            // this.setControl(
+            //     autoRequest.withSpeeds(
+            //         new ChassisSpeeds(1.0, 0.0, 0.0)
+            //     )
+            // );
             System.out.println(this.getState().Pose);
         }
 

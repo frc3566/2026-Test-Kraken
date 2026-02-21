@@ -13,6 +13,8 @@ import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -46,12 +48,13 @@ public class RobotContainer {
     public final Intake intake = new Intake();
     // public final Climber climber = new Climber();
 
-    public final Command autoCommand;
+    public final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
         configureAutoCommand();
         configureBindings();
-        autoCommand = AutoBuilder.buildAuto("MoveThenShoot");
+        autoChooser = AutoBuilder.buildAutoChooser();
+        Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
     }
 
     private void configureBindings() {
@@ -149,7 +152,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoCommand;
+        return autoChooser.getSelected();
     }
 
     private void configureAutoCommand() {

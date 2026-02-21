@@ -6,6 +6,8 @@ package frc.robot;
 
 import com.ctre.phoenix6.HootAutoReplay;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -26,6 +28,7 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         m_robotContainer = new RobotContainer();
+        SmartDashboard.putData("Field", field);
     }
 
     @Override
@@ -96,8 +99,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void simulationPeriodic() {
-        field.setRobotPose(m_robotContainer.drivetrain.getState().Pose);
-        SmartDashboard.putData("Field", field);
+        var pose = m_robotContainer.drivetrain.getState().Pose;
+        var wrappedRotation = Rotation2d.fromRadians(
+            Math.IEEEremainder(pose.getRotation().getRadians(), 2 * Math.PI)
+        );
+
+        field.setRobotPose(
+            new Pose2d(pose.getTranslation(), wrappedRotation)
+        );
     }
 
     public void setTeleopShifts(){

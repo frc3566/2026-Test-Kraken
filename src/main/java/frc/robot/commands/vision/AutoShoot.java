@@ -30,6 +30,7 @@ public class AutoShoot extends Command {
         
         if (!results.isEmpty()) {
             var trackedTags = results.get().getTargets();
+            System.out.println("Tracked Tags: " + trackedTags.size());
             try {
                 target = trackedTags.stream()
                             .filter(t -> t.getFiducialId() == targetId)
@@ -48,6 +49,9 @@ public class AutoShoot extends Command {
             if(target!=null){
                 shooter.autoPower(distance);
                 targetFound = true;
+            }
+            else{
+                System.out.println("Target not found!");
             }
         } 
         else{

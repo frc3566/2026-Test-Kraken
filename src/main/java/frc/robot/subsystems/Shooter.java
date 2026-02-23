@@ -14,7 +14,7 @@ public class Shooter extends SubsystemBase {
     public Shooter() {
         lowerMotor = new TalonFX(Constants.Motors.ShooterLow);
         upperMotor = new TalonFX(Constants.Motors.ShooterHigh);
-        agitatorMotor = new TalonFX(Constants.Motors.Agitator);
+        // agitatorMotor = new TalonFX(Constants.Motors.Agitator);
 
     }
 

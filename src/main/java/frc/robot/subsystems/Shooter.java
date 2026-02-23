@@ -58,9 +58,12 @@ public class Shooter extends SubsystemBase {
 
     // Used with /Vision/AutoShoot
     public void autoPower(double distance){
-        double power = 31.1 + ((3.3)*(Units.metersToFeet(distance))) + (-0.0714*Math.pow(Units.metersToFeet(distance), 2));
-        System.out.println("Auto Power: " + power);
-        upperMotor.set(power);
+
+        // Percentage Power Calculation
+        double percentPower = 31.1 + ((3.3)*(Units.metersToFeet(distance))) + (-0.0714*Math.pow(Units.metersToFeet(distance), 2));
+        
+        System.out.println("Auto Power: " + percentPower);
+        upperMotor.set(percentPower/100);
     }
     
 }

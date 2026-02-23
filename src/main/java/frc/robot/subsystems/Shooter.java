@@ -27,12 +27,12 @@ public class Shooter extends SubsystemBase {
    
     public void setLowerPower(double power) {
         lowerMotor.set(power);
-        agitatorMotor.set((power/8));
+        // agitatorMotor.set((power/8));
     }
 
     public void stopLower() {
         lowerMotor.stopMotor();
-        agitatorMotor.stopMotor();
+        // agitatorMotor.stopMotor();
     }
 
     public void setUpperPower(double power) {
@@ -48,13 +48,13 @@ public class Shooter extends SubsystemBase {
         upperMotor.stopMotor();
     }
 
-    public void setAgitatorPower(double speed){
-        agitatorMotor.set(speed);
-    }
+    // public void setAgitatorPower(double speed){
+    //     agitatorMotor.set(speed);
+    // }
 
-    public void stopAgitator(){
-        agitatorMotor.stopMotor();
-    }
+    // public void stopAgitator(){
+    //     agitatorMotor.stopMotor();
+    // }
 
     // Used with /Vision/AutoShoot
     public void autoPower(double distance){

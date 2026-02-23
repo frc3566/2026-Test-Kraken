@@ -20,7 +20,7 @@ public class PrimeAndShoot extends Command {
         System.out.println("Prime And Shoot Command Initialized");
         timer.reset();
         timer.start();
-        shooter.setAgitatorPower(speed);
+        // shooter.setAgitatorPower(speed);
         shooter.setUpperPower(speed);
     }
 
@@ -36,7 +36,7 @@ public class PrimeAndShoot extends Command {
     public void end(boolean interrupted) {
         shooter.stopUpper();
         shooter.stopLower();
-        shooter.stopAgitator();
+        // shooter.stopAgitator();
         System.out.println("Prime And Shoot Command Ended" + (interrupted ? " due to interruption." : "."));
     }
 

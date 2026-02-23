@@ -1,16 +1,18 @@
 package frc.robot.commands.vision;
 
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
 
 
 public class AutoShoot extends Command {
     private boolean targetSet = false;
-    private int targetId = Constants.AprilTags.BLUE_STAGE_CENTER;
+    private int targetId = 4;
     private Shooter shooter;
     private boolean targetFound = false;
+    private PhotonTrackedTarget target;
 
     public AutoShoot(Shooter shooter) {
         this.shooter = shooter;
@@ -27,14 +29,23 @@ public class AutoShoot extends Command {
         var results = Vision.Cameras.MAIN.getLatestResult();
         
         if (!results.isEmpty()) {
-            var result = results.get().getBestTarget();
-            var tagID = result.getFiducialId();
-            var cameraToTarget = result.getBestCameraToTarget();
+            var trackedTags = results.get().getTargets();
+            try {
+                target = trackedTags.stream()
+                            .filter(t -> t.getFiducialId() == targetId)
+                            .findFirst()
+                            .orElse(null);
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            var cameraToTarget = target.getBestCameraToTarget();
             double distance = Math.sqrt(Math.pow(cameraToTarget.getX(), 2) + Math.pow(cameraToTarget.getY(), 2));
             // System.out.println("Tag ID: " + tagID);
-            // System.out.println("Camera to Target: " + cameraToTarget);
-            // System.out.println("Distance: " + distance);
-            if(tagID==targetId){
+            System.out.println("Camera to Target: " + cameraToTarget);
+            System.out.println("Distance: " + distance);
+            if(target!=null){
                 shooter.autoPower(distance);
                 targetFound = true;
             }

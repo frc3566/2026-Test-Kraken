@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.intake.ArmToSetpoint;
 import frc.robot.commands.shooter.PrimeAndShoot;
 import frc.robot.commands.vision.AutoShoot;
 import frc.robot.generated.TunerConstants;
@@ -142,7 +141,6 @@ public class RobotContainer {
         secondDriver.povUp().onTrue(new InstantCommand( () -> shooter.setAgitatorPower(0.5)));
         secondDriver.povDown().onTrue(new InstantCommand( () -> shooter.stopAgitator()));
 
-        secondDriver.povRight().onTrue(new ArmToSetpoint(intake, 0.05, 0.01));
         // secondDriver.povRight().onTrue(new InstantCommand( () -> shooter.addTestSpeed(0.01)));
         // secondDriver.povLeft().onTrue(new InstantCommand( () -> shooter.addTestSpeed(-0.01)));
 

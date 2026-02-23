@@ -142,7 +142,7 @@ public class RobotContainer {
         secondDriver.povUp().onTrue(new InstantCommand( () -> shooter.setAgitatorPower(0.5)));
         secondDriver.povDown().onTrue(new InstantCommand( () -> shooter.stopAgitator()));
 
-        secondDriver.povRight().onTrue(new ArmToSetpoint(intake, 0, 2));
+        secondDriver.povRight().onTrue(new ArmToSetpoint(intake, 0.05, 0.01));
         // secondDriver.povRight().onTrue(new InstantCommand( () -> shooter.addTestSpeed(0.01)));
         // secondDriver.povLeft().onTrue(new InstantCommand( () -> shooter.addTestSpeed(-0.01)));
 

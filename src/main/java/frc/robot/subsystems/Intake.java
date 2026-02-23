@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -21,29 +22,29 @@ public class Intake extends SubsystemBase {
         var armConfig = new TalonFXConfiguration();
 
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = -1;
+        armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
 
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -16;
+        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.2;
         armMotor.getConfigurator().apply(armConfig);
 
 
         // PID gains (tune later)
-        armConfig.Slot0.kP = 20.0;
+        armConfig.Slot0.kP = 35.0;
         armConfig.Slot0.kI = 0.0;
         armConfig.Slot0.kD = 0.2;
 
         // Gravity feedforward (START small, tune upward)
-        // armConfig.Slot0.kG = 0.2;
+        armConfig.Slot0.kG = 1.5;
 
         // Tell Talon this is an arm
-        // armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        // armConfig.Slot0.GravityArmPositionOffset = 0.25;
+        armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+        armConfig.Slot0.GravityArmPositionOffset = 0.25;
 
         // Motion Magic settings
-        armConfig.MotionMagic.MotionMagicCruiseVelocity = 20;
-        armConfig.MotionMagic.MotionMagicAcceleration = 30;
-        armConfig.MotionMagic.MotionMagicJerk = 1;
+        armConfig.MotionMagic.MotionMagicCruiseVelocity = 720;
+        armConfig.MotionMagic.MotionMagicAcceleration = 480;
+        // armConfig.MotionMagic.MotionMagicJerk = 1;
         armConfig.Feedback.RotorToSensorRatio = 1;
         armConfig.Feedback.SensorToMechanismRatio = 64;
 

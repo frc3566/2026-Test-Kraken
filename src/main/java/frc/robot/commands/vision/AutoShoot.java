@@ -14,8 +14,6 @@ public class AutoShoot extends Command {
 
     public AutoShoot(Shooter shooter) {
         this.shooter = shooter;
-        this.addRequirements(shooter);
-
     }
 
     @Override

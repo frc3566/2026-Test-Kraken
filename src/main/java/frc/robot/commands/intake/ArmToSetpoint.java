@@ -2,49 +2,41 @@ package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
+
 public class ArmToSetpoint extends Command {
-    private Intake m_Intake;
-    private double setpoint; 
-    private double tolerance = 0.5;
 
-    public ArmToSetpoint(Intake m_Intake, double setpoint) {
-        this.m_Intake = m_Intake;
-        this.setpoint = setpoint;
-        addRequirements(m_Intake);
+    private final Intake intake;
+    private final double targetRotations;
+    private final double tolerance; // rotations (~7 degrees)
 
+    public ArmToSetpoint(Intake intake, double targetRotations, double tolerance) {
+        this.intake = intake;
+        this.targetRotations = targetRotations;
+        this.tolerance = tolerance;
+        addRequirements(intake);
     }
 
-    // Called when the command is initially scheduled.
     @Override
     public void initialize() {
-        System.out.println("ArmToSetpoint initialized. Setpoint: " + setpoint);
-        m_Intake.setArmPosition(setpoint);
+        System.out.println("Current Arm Pos:" + intake.getArmPosition());
+        System.out.println("Initiating ArmToSetpoint...");
+        intake.setArmPosition(targetRotations);
     }
 
-    // Called every time the scheduler runs while the command is scheduled.
     @Override
-    public void execute() {
-        double currentPos = m_Intake.getArmPosition();
-        System.out.println("Current Position: " + currentPos + " | Setpoint: " + setpoint);
-
-        
+    public void execute(){
+        System.out.println("[PID IN ACTION] Current Arm Pos:" + intake.getArmPosition());
 
     }
 
-    // Called once the command ends or is interrupted.
-    @Override
-    public void end(boolean interrupted) {
-        double currentPos = m_Intake.getArmPosition();
-        System.out.println("Current Position: " + currentPos + " | Setpoint: " + setpoint);
-        System.out.println("ArmToSetpoint ended. Interrupted: " + interrupted);
-        // m_Intake.stopPivot();
-    }
-
-    // Returns true when the command should end.
     @Override
     public boolean isFinished() {
-        return Math.abs(
-            m_Intake.getArmPosition() - setpoint
-        ) < tolerance;
+        return intake.armAtSetpoint(targetRotations, tolerance);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        // Optional: hold position
+        System.out.println("ArmToSetpoint Ended. Arm Pos:" + intake.getArmPosition());
     }
 }

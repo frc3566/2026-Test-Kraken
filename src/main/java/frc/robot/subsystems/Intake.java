@@ -11,6 +11,7 @@ public class Intake extends SubsystemBase {
    
     public TalonFX rollerMotor;
     public TalonFX armMotor;
+    private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0);
     
 
     public Intake() {
@@ -28,9 +29,9 @@ public class Intake extends SubsystemBase {
 
 
         // PID gains (tune later)
-        armConfig.Slot0.kP = 2.0;
+        armConfig.Slot0.kP = 20.0;
         armConfig.Slot0.kI = 0.0;
-        armConfig.Slot0.kD = 0.5;
+        armConfig.Slot0.kD = 0.2;
 
         // Gravity feedforward (START small, tune upward)
         // armConfig.Slot0.kG = 0.2;
@@ -40,10 +41,11 @@ public class Intake extends SubsystemBase {
         // armConfig.Slot0.GravityArmPositionOffset = 0.25;
 
         // Motion Magic settings
-        armConfig.MotionMagic.MotionMagicCruiseVelocity = 40;
-        armConfig.MotionMagic.MotionMagicAcceleration = 80;
-        armConfig.MotionMagic.MotionMagicJerk = 400;
-        armConfig.Feedback.RotorToSensorRatio = Constants.Arm.GearRatio;
+        armConfig.MotionMagic.MotionMagicCruiseVelocity = 20;
+        armConfig.MotionMagic.MotionMagicAcceleration = 30;
+        armConfig.MotionMagic.MotionMagicJerk = 1;
+        armConfig.Feedback.RotorToSensorRatio = 1;
+        armConfig.Feedback.SensorToMechanismRatio = 64;
 
         // Apply configuration
         armMotor.getConfigurator().apply(armConfig);
@@ -77,10 +79,15 @@ public class Intake extends SubsystemBase {
     }
 
     public void setArmPosition(double rotations) {
-        MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(rotations);
-        armMotor.setControl(
-            motionMagicRequest.withPosition(rotations)
-        );
-}
+        armMotor.setControl(motionMagicRequest.withPosition(rotations));
+    }
+
+    public double getPosition() {
+        return armMotor.getPosition().getValueAsDouble();
+    }
+
+    public boolean armAtSetpoint(double target, double tolerance) {
+        return Math.abs(armMotor.getPosition().getValueAsDouble() - target) <= tolerance;
+    }
 
 }

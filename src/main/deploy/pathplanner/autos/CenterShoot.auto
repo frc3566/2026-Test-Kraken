@@ -5,15 +5,41 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "CenterBack"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmDown"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CenterBack"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoPrime"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "CenterPrimeAndShoot"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "CenterPrimeAndShoot"
+                }
+              }
+            ]
           }
         }
       ]

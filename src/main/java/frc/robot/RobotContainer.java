@@ -18,15 +18,19 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.intake.ArmDown;
+import frc.robot.commands.intake.RollerAuto;
+import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
-import frc.robot.commands.vision.AutoShoot;
+import frc.robot.commands.vision.UpdateVisionPoseEstimate;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
-    private boolean enableDrive = false;
+    private boolean enableDrive = true;
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -46,6 +50,7 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
     public final Shooter shooter = new Shooter();
     public final Intake intake = new Intake();
+    public final Vision vision = new Vision(drivetrain::getPose);
     // public final Climber climber = new Climber();
 
     public final SendableChooser<Command> autoChooser;
@@ -61,25 +66,9 @@ public class RobotContainer {
         DriverStation.silenceJoystickConnectionWarning(true);
 
         
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
-
-        
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
-        // RobotModeTriggers.disabled().whileTrue(
-        //     drivetrain.applyRequest(() -> idle).ignoringDisable(true)
-        // );
-
-        // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
-        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        // ));
-
-        // joystick.y().onTrue(new GetVisionData());
-
-        // joystick.x().onTrue(new ChaseTagCommand(drivetrain));
 
 
         /* SysID stuffs */
@@ -100,8 +89,12 @@ public class RobotContainer {
                 )
             );
         }
+
+        // vision.setDefaultCommand(new UpdateVisionPoseEstimate(vision, drivetrain));
             
         firstDriver.x().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+        firstDriver.b().onTrue(new UpdateVisionPoseEstimate(vision, drivetrain));
 
         firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(0.5)));
         firstDriver.leftTrigger().onFalse(new InstantCommand( () -> shooter.stopLower()));
@@ -110,7 +103,7 @@ public class RobotContainer {
 
 
         /* For Second Driver */
-        secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(0.8)));
+        secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(1)));
         secondDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.rollerStop()));
         secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(0.8)));
         secondDriver.leftBumper().onFalse(new InstantCommand(() -> intake.rollerStop()));
@@ -125,7 +118,8 @@ public class RobotContainer {
         // Toggle Shooter (passing)
         // secondDriver.y().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(shooter.testSpeed)));
 
-        secondDriver.y().onTrue(new AutoShoot(shooter));
+        // secondDriver.y().onTrue(new AutoShoot(shooter));
+        secondDriver.povDown().onTrue(new ArmDown(intake, 0.2, 0.5));
 
         // secondDriver.a().onTrue(new ArmToSetpoint(intake, 10));
         // secondDriver.b().onTrue(new InstantCommand(() -> shooter.setAgitatorPower(0.5)));
@@ -157,14 +151,40 @@ public class RobotContainer {
     }
 
     private void configureAutoCommand() {
+
+        NamedCommands.registerCommand(
+            "AutoPrime",
+            new AutoPrime(shooter, intake,0.595, 1.5)
+        );
+
         NamedCommands.registerCommand(
             "PrimeAndShoot",
-            new PrimeAndShoot(shooter, 0.55)
+            new PrimeAndShoot(shooter, intake,0.58, 0.5, 5)
+        );
+
+        NamedCommands.registerCommand(
+            "LeftPrimeAndShoot",
+            new PrimeAndShoot(shooter, intake,0.58, 0.5, 5)
+        );
+
+        NamedCommands.registerCommand(
+            "RightPrimeAndShoot",
+            new PrimeAndShoot(shooter, intake,0.61, 0.5, 5)
         );
 
         NamedCommands.registerCommand(
             "CenterPrimeAndShoot",
-            new PrimeAndShoot(shooter, 0.40)
+            new PrimeAndShoot(shooter, intake, 0.52, 0.5, 5)
+        );
+
+        NamedCommands.registerCommand(
+            "ArmDown",
+            new ArmDown(intake, 0.25, 0.5)
+        );
+
+        NamedCommands.registerCommand(
+            "RollerAuto",
+            new RollerAuto(intake, 1, 5)
         );
     }
 

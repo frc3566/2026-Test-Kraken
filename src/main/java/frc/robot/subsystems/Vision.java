@@ -25,11 +25,13 @@ import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import frc.robot.Constants;
 import frc.robot.Robot;
+
 import java.awt.Desktop;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
+
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
@@ -40,15 +42,18 @@ import org.photonvision.simulation.SimCameraProperties;
 import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
+
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 // import swervelib.SwerveDrive;
 // import swervelib.telemetry.SwerveDriveTelemetry;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
  * Example PhotonVision class to aid in the pursuit of accurate odometry. Taken
  * from
  * https://gitlab.com/ironclad_code/ironclad-2024/-/blob/master/src/main/java/frc/robot/vision/Vision.java?ref_type=heads
  */
-public class Vision {
+public class Vision extends SubsystemBase {
 
   /**
    * April Tag Field Layout of the year.
@@ -74,6 +79,10 @@ public class Vision {
    */
   private Supplier<Pose2d> currentPose;
   /**
+   * Estimated robot pose from the vision system,
+   */
+  private Optional<EstimatedRobotPose> estimatedRobotPose = Optional.empty();
+  /**
    * Field from {@link swervelib.SwerveDrive#field}
    */
   private Field2d field2d;
@@ -85,9 +94,9 @@ public class Vision {
    *                    {@link SwerveDrive#getPose()}
    * @param field       Current field, should be {@link SwerveDrive#field}
    */
-  public Vision(Supplier<Pose2d> currentPose, Field2d field) {
+  public Vision(Supplier<Pose2d> currentPose) {
     this.currentPose = currentPose;
-    this.field2d = field;
+    // this.field2d = field;
 
     if (Robot.isSimulation()) {
       visionSim = new VisionSystemSim("Vision");
@@ -133,36 +142,69 @@ public class Vision {
   }
 
   /**
+   * Get AND update pose estimation inside of {@link SwerveDrive} with all of the
+   * given poses.
+   *
+   * @param swerveDrive {@link SwerveDrive} instance.
+   */
+  public Optional<Pose2d> getPoseEstimation(CommandSwerveDrivetrain swerveDrive) {
+    for (Cameras camera : Cameras.values()) {
+      Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
+
+      if(!poseEst.isEmpty()){
+        System.out.println("Camera Estimated Global Pose exists.");
+      } else{
+         System.out.println("Camera Estimated Global Pose does not exists.");
+      }
+
+      poseEst = filterPose(poseEst);
+
+      if(!poseEst.isEmpty()){
+        System.out.println("FILTERED Camera Estimated Global Pose exists.");
+        swerveDrive.addVisionMeasurement(
+              poseEst.get().estimatedPose.toPose2d(),
+              poseEst.get().timestampSeconds,
+              camera.curStdDevs);
+      } else{
+         System.out.println("FILTERED Camera Estimated Global Pose does not exists.");
+      }
+
+      if (poseEst.isPresent()) {
+        var pose = poseEst.get().estimatedPose.toPose2d();
+        return Optional.of(pose);
+      }
+    }
+    return Optional.empty();
+  }
+
+  /**
    * Update the pose estimation inside of {@link SwerveDrive} with all of the
    * given poses.
    *
    * @param swerveDrive {@link SwerveDrive} instance.
    */
-//   public void updatePoseEstimation(SwerveDrive swerveDrive) {
-//     if (SwerveDriveTelemetry.isSimulation && swerveDrive.getSimulationDriveTrainPose().isPresent()) {
-//       /*
-//        * In the maple-sim, odometry is simulated using encoder values, accounting for
-//        * factors like skidding and drifting.
-//        * As a result, the odometry may not always be 100% accurate.
-//        * However, the vision system should be able to provide a reasonably accurate
-//        * pose estimation, even when odometry is incorrect.
-//        * (This is why teams implement vision system to correct odometry.)
-//        * Therefore, we must ensure that the actual robot pose is provided in the
-//        * simulator when updating the vision simulation during the simulation.
-//        */
-//       visionSim.update(swerveDrive.getSimulationDriveTrainPose().get());
-//     }
-//     for (Cameras camera : Cameras.values()) {
-//       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
-//       poseEst = filterPose(poseEst);
-//       if (poseEst.isPresent()) {
-//         var pose = poseEst.get();
-//         swerveDrive.addVisionMeasurement(pose.estimatedPose.toPose2d(),
-//             pose.timestampSeconds,
-//             camera.curStdDevs);
-//       }
-//     }
-//   }
+  // public void updatePoseEstimation(CommandSwerveDrivetrain swerveDrive) {
+  //   for (Cameras camera : Cameras.values()) {
+  //     camera.updateUnreadResults();
+  //     var poseEst = camera.getEstimatedGlobalPose();
+  //     if(poseEst.isPresent()){
+  //         var filteredPoseEst = filterPose(poseEst);
+  //         if(filteredPoseEst.isPresent()){
+  //           var pose = filteredPoseEst.get();
+            
+  //             SmartDashboard.putBoolean("Vision Measure Updating", true);
+  //             // System.out.println("Updating pose estimation with camera measurement.");
+  //         } else {
+  //             // System.out.println("Camera measurement did not pass filter.");
+  //         }
+        
+  //     } else {
+  //       SmartDashboard.putBoolean("Vision Measure Updating", false);
+  //     }
+  //   }
+  // }
+      
+   
 
   private Optional<EstimatedRobotPose> filterPose(Optional<EstimatedRobotPose> pose) {
     if (pose.isEmpty()) { return pose; }
@@ -171,14 +213,30 @@ public class Vision {
       .map(target -> target.getPoseAmbiguity())
       .min(Double::compare);
 
-    if (bestTargetAmbiguity.orElse(1.0) > maximumAmbiguity) { return Optional.empty(); }
+    if (bestTargetAmbiguity.orElse(1.0) > maximumAmbiguity) { 
+      System.out.println("VISION FILTER: BEST TARGET AMBIGUITY TOO HIGH");
+      return Optional.empty(); 
+    }
 
+    double poseDiffOrigin = PhotonUtils.getDistanceToPose(currentPose.get(), new Pose2d(0,0, new Rotation2d(0)));
+    // robot initiated at 0,0, needs to update no matter what
+      System.out.println("Robot distance to 0, 0: "  + poseDiffOrigin);
+      if(poseDiffOrigin <= 0.5){
+        return pose;
+      } 
     // estimated pose is very far from recorded robot pose
-    if (PhotonUtils.getDistanceToPose(currentPose.get(), pose.get().estimatedPose.toPose2d()) > 1) {
+    double poseDiffTag = PhotonUtils.getDistanceToPose(currentPose.get(), pose.get().estimatedPose.toPose2d());
+    if (poseDiffTag > 1) {
+      System.out.println("Robot too far from tag! "  + poseDiffTag);
+      SmartDashboard.putString("Current Pose", currentPose.get().toString());
+      SmartDashboard.putString("Estimated Pose", pose.get().estimatedPose.toPose2d().toString());
+
+
       longDistangePoseEstimationCount++;
 
       // if it calculates that we're, say, 10 meter away for more than 50 times in a row its probably maybe potentially right 
       if (longDistangePoseEstimationCount < 50) {
+        System.out.println("VISION FILTER: BEST TARGET TOO FAR");
         return Optional.empty();
       }
     } else {
@@ -199,17 +257,17 @@ public class Vision {
    */
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Cameras camera) {
     Optional<EstimatedRobotPose> poseEst = camera.getEstimatedGlobalPose();
-    if (Robot.isSimulation()) {
-      Field2d debugField = visionSim.getDebugField();
-      // Uncomment to enable outputting of vision targets in sim.
-      poseEst.ifPresentOrElse(
-          est -> debugField
-              .getObject("VisionEstimation")
-              .setPose(est.estimatedPose.toPose2d()),
-          () -> {
-            debugField.getObject("VisionEstimation").setPoses();
-          });
-    }
+    // if (Robot.isSimulation()) {
+    //   Field2d debugField = visionSim.getDebugField();
+    //   // Uncomment to enable outputting of vision targets in sim.
+    //   poseEst.ifPresentOrElse(
+    //       est -> debugField
+    //           .getObject("VisionEstimation")
+    //           .setPose(est.estimatedPose.toPose2d()),
+    //       () -> {
+    //         debugField.getObject("VisionEstimation").setPoses();
+    //       });
+    // }
     return poseEst;
   }
 
@@ -296,7 +354,7 @@ public class Vision {
       }
     }
 
-    field2d.getObject("tracked targets").setPoses(poses);
+    // field2d.getObject("tracked targets").setPoses(poses);
   }
 
   public void printAllResults() {
@@ -324,11 +382,11 @@ public class Vision {
      * MAIN (Limelight3)
      */
     MAIN("limelight-2026-1",
-        new Rotation3d(0, 0, 0),
+        new Rotation3d(0, -0.1745, 0),
         new Translation3d(
           Units.inchesToMeters(14.5),
           Units.inchesToMeters(0),
-          Units.inchesToMeters(13.5)
+          Units.inchesToMeters(10)
         ),
         VecBuilder.fill(0.1, 0.1, 0.1), VecBuilder.fill(0.5, 0.5, 1));
     
@@ -493,46 +551,46 @@ public class Vision {
     }
 
     /**
-     * Update the latest results, cached with a maximum refresh rate of 1req/15ms.
-     * Sorts the list by timestamp.
+     * Update the latest results
      */
     public void updateUnreadResults() {
-      double mostRecentTimestamp = resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
-      double currentTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
-      double debounceTime = Milliseconds.of(15).in(Seconds);
-
-      for (PhotonPipelineResult result : resultsList) {
-        mostRecentTimestamp = Math.max(mostRecentTimestamp, result.getTimestampSeconds());
+      resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
+      // System.out.println("Latests Camera readings? " + resultsList.get(resultsList.size() - 1));
+      if (!resultsList.isEmpty()) {
+          updateEstimatedGlobalPose();
       }
+      
+      /* 
+        the following function is not getting ran because mostRecentTimestamp > currentTimestamp by a lot
+        most likely mostRecentTimeStamp is wrong
+      */
+
+      // double mostRecentTimestamp = resultsList.isEmpty() ? 0.0 : resultsList.get(0).getTimestampSeconds();
+      // double currentTimestamp = Microseconds.of(NetworkTablesJNI.now()).in(Seconds);
+      // double debounceTime = Milliseconds.of(15).in(Seconds);
 
       // System.out.println("Result timestamps: " + resultsList.stream().map(e -> e.getTimestampSeconds()).toList());
 
       // System.out.println("Most recent: " + mostRecentTimestamp + " Last read: " + lastReadTimestamp + " Current: " + currentTimestamp);
 
-      /* 
-        this function is not getting ran because mostRecentTimestamp > currentTimestamp by a lot
-        most likely mostRecentTimeStamp is wrong
-      */
-      if ((resultsList.isEmpty() || (currentTimestamp - mostRecentTimestamp >= debounceTime)) &&
-          (currentTimestamp - lastReadTimestamp) >= debounceTime) {
-        // System.out.println("Camera readings: " + camera.getAllUnreadResults());
-        resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
-        lastReadTimestamp = currentTimestamp;
-        resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
-          return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
-        });
-        if (!resultsList.isEmpty()) {
-          updateEstimatedGlobalPose();
-        }
-      }
 
-      // resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
-      // resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
-      //   return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
-      // });
-      // if (!resultsList.isEmpty()) {
-      //   updateEstimatedGlobalPose();
-      // }
+      // if ((resultsList.isEmpty() || (currentTimestamp - mostRecentTimestamp >= debounceTime)) &&
+      //     (currentTimestamp - lastReadTimestamp) >= debounceTime) {
+      //   System.out.println("Camera readings: " + camera.getAllUnreadResults());
+      //   resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
+      //   lastReadTimestamp = currentTimestamp;
+      //   resultsList.sort((PhotonPipelineResult a, PhotonPipelineResult b) -> {
+      //     return a.getTimestampSeconds() >= b.getTimestampSeconds() ? 1 : -1;
+      //   });
+      //   if (!resultsList.isEmpty()) {
+      //     updateEstimatedGlobalPose();
+      //   }
+
+      // } else{
+      //     System.out.println("NO VISION UPDATE");
+      //     System.out.println("Current - Most Recent:" + (currentTimestamp - mostRecentTimestamp));
+      //     System.out.println("Current - Last Read:" + (currentTimestamp - lastReadTimestamp));
+      //   }
     }
 
     /**
@@ -552,7 +610,7 @@ public class Vision {
     private void updateEstimatedGlobalPose() {
       Optional<EstimatedRobotPose> visionEst = Optional.empty();
       for (var change : resultsList) {
-        visionEst = poseEstimator.update(change);
+        visionEst = poseEstimator.estimateAverageBestTargetsPose(change); //TODO: Try different strategies?
         updateEstimationStdDevs(visionEst, change.getTargets());
       }
       // System.out.println("Localization estimation: " + visionEst.map(e -> e.estimatedPose.toPose2d()));

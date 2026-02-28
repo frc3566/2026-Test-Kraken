@@ -4,25 +4,23 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
-public class PrimeAndShoot extends Command {
+public class AutoPrime extends Command {
     private final Shooter shooter;
-    private final Intake intake;
     private final double speed;
-    private double primeTime = 2.0; // Time to prime the shooter in seconds
-    private double shootTime = 5.0; // Time to shoot after priming in seconds
+    private final Intake intake;
+    private double primeTime; 
     private final Timer timer = new Timer();
 
-    public PrimeAndShoot(Shooter shooter, Intake intake, double speed, double primeTime, double shootTime) {
+    public AutoPrime(Shooter shooter, Intake intake, double speed, double primeTime) {
         this.shooter = shooter;
         this.speed = speed;
         this.intake = intake;
         this.primeTime = primeTime;
-        this.shootTime = shootTime;
     }
 
     @Override
     public void initialize() {
-        System.out.println("Prime And Shoot Command Initialized");
+        System.out.println("Prime Command Initialized");
         timer.reset();
         timer.start();
         // shooter.setAgitatorPower(speed);
@@ -34,20 +32,17 @@ public class PrimeAndShoot extends Command {
     public void execute() {
         if (timer.get()>primeTime) { // Adjust the time as needed
             System.out.println("Prime And Shoot Command: Lower shooter primed, starting upper shooter.");
-            shooter.setLowerPower(speed);
         }
     }
     
     @Override
     public void end(boolean interrupted) {
-        shooter.stopUpper();
-        shooter.stopLower();
-        intake.rollerStop();
+        // shooter.stopAgitator();
         System.out.println("Prime And Shoot Command Ended" + (interrupted ? " due to interruption." : "."));
     }
 
     @Override
     public boolean isFinished() {
-        return timer.get()>(primeTime + shootTime);
+        return timer.get()>(primeTime);
     }
 }

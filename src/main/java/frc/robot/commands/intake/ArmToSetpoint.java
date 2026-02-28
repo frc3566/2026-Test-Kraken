@@ -38,5 +38,6 @@ public class ArmToSetpoint extends Command {
     public void end(boolean interrupted) {
         // Optional: hold position
         System.out.println("ArmToSetpoint Ended. Arm Pos:" + intake.getArmPosition());
+        intake.armMotor.stopMotor();
     }
 }

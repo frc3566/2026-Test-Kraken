@@ -5,15 +5,41 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "parallel",
           "data": {
-            "pathName": "LeftBack"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmDown"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "LeftBack"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoPrime"
+                }
+              }
+            ]
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "PrimeAndShoot"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "LeftPrimeAndShoot"
+                }
+              }
+            ]
           }
         }
       ]

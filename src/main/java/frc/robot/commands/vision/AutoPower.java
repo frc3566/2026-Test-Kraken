@@ -7,20 +7,20 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
 
 
-public class AutoShoot extends Command {
+public class AutoPower extends Command {
     private boolean targetSet = false;
-    private int targetId = 4;
+    private int targetId = 20;
     private Shooter shooter;
     private boolean targetFound = false;
     private PhotonTrackedTarget target;
 
-    public AutoShoot(Shooter shooter) {
+    public AutoPower(Shooter shooter) {
         this.shooter = shooter;
     }
 
     @Override
     public void initialize() {
-        System.out.println("Initializing GetVisionData command");
+        System.out.println("Initializing AutoShoot command");
     }
 
     @Override
@@ -37,7 +37,6 @@ public class AutoShoot extends Command {
                             .findFirst()
                             .orElse(null);
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 

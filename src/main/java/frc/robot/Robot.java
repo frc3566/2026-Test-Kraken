@@ -6,18 +6,15 @@ package frc.robot;
 
 import com.ctre.phoenix6.HootAutoReplay;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
-    private final Field2d field = new Field2d();
+
 
     private final RobotContainer m_robotContainer;
 
@@ -28,12 +25,13 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         m_robotContainer = new RobotContainer();
-        SmartDashboard.putData("Field", field);
     }
 
     @Override
     public void robotPeriodic() {
         m_timeAndJoystickReplay.update();
+        // m_robotContainer.vision.updatePoseEstimation(m_robotContainer.drivetrain);
+        putSubsystemTelemetry();
         SmartDashboard.putNumber("Robot Velocity X (m/s)", m_robotContainer.drivetrain.getState().Speeds.vxMetersPerSecond);
         SmartDashboard.putNumber("Robot Velocity Y (m/s)", m_robotContainer.drivetrain.getState().Speeds.vyMetersPerSecond);
         SmartDashboard.putNumber("Robot Angular Rate (rads)", m_robotContainer.drivetrain.getState().Speeds.omegaRadiansPerSecond);
@@ -64,7 +62,6 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         SmartDashboard.putNumber("Auto Time", DriverStation.getMatchTime());
-        putSubsystemTelemetry();
     }
 
     @Override
@@ -73,7 +70,6 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         setTeleopShifts();
-
         if (m_autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(m_autonomousCommand);
         }
@@ -102,15 +98,20 @@ public class Robot extends TimedRobot {
 
     @Override
     public void simulationPeriodic() {
-        var pose = m_robotContainer.drivetrain.getState().Pose;
-        var wrappedRotation = Rotation2d.fromRadians(
-            Math.IEEEremainder(pose.getRotation().getRadians(), 2 * Math.PI)
-        );
-
-        field.setRobotPose(
-            new Pose2d(pose.getTranslation(), wrappedRotation)
-        );
     }
+
+    // public void setFieldRobotPose(){
+    //     // var pose = m_robotContainer.drivetrain.getState().Pose;
+    //     // var pose = m_robotContainer.vision.getEstimatedGlobalPose();
+    //     // var wrappedRotation = Rotation2d.fromRadians(
+    //     //     Math.IEEEremainder(pose.getRotation().getRadians(), 2 * Math.PI)
+    //     // );
+
+    //     // field.setRobotPose(
+    //     //     new Pose2d(pose.getTranslation(), wrappedRotation)
+    //     // );
+    //     SmartDashboard.putData(field);
+    // }
 
     public void setTeleopShifts(){
         String shift = "";

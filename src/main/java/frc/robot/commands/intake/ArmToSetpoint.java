@@ -30,7 +30,7 @@ public class ArmToSetpoint extends Command {
     public void initialize() {
         System.out.println("Current Arm Pos:" + intake.getArmPosition());
         System.out.println("Initiating ArmToSetpoint...");
-        intake.setArmPosition(targetRotations);
+        // intake.setArmPosition(targetRotations);
     }
 
     @Override

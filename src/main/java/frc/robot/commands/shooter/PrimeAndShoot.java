@@ -7,14 +7,14 @@ import frc.robot.subsystems.Shooter;
 public class PrimeAndShoot extends Command {
     private final Shooter shooter;
     private final Intake intake;
-    private final double speed;
+    private final double speed; // In rotations per sec, -100-100
     private double primeTime = 1.0; // Default
     private double shootTime = 5.0; // Default
     private final Timer timer = new Timer();
 
-    public PrimeAndShoot(Shooter shooter, Intake intake, double speed, double primeTime, double shootTime) {
+    public PrimeAndShoot(Shooter shooter, Intake intake, double rps, double primeTime, double shootTime) {
         this.shooter = shooter;
-        this.speed = speed;
+        this.speed = rps;
         this.intake = intake;
         this.primeTime = primeTime;
         this.shootTime = shootTime;

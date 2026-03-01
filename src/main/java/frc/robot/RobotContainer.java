@@ -95,16 +95,16 @@ public class RobotContainer {
 
         firstDriver.b().onTrue(new UpdateVisionPoseEstimate(vision, drivetrain));
 
-        firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(0.5)));
+        firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(50)));
         firstDriver.leftTrigger().onFalse(new InstantCommand( () -> shooter.stopLower()));
         // firstDriver.rightTrigger().onTrue(new ChaseTagCommand(drivetrain)); //TODO: Auto align+move to scoring pos
         // firstDriver.rightBumper().onTrue(new HeadingToHub()); //TODO: Heading snap to hub
 
 
         /* For Second Driver */
-        secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(1)));
+        secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(100)));
         secondDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
-        secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(0.8)));
+        secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(80)));
         secondDriver.leftBumper().onFalse(new InstantCommand(() -> intake.stopRoller()));
 
         secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armUp(0.3)));
@@ -113,16 +113,18 @@ public class RobotContainer {
         secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.stopArm()));
 
         /* Scoring Speed */
-        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(0.50)));
+        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(50)));
         // Toggle Shooter (passing)
         // secondDriver.y().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(shooter.testSpeed)));
 
         // secondDriver.y().onTrue(new AutoShoot(shooter));
         secondDriver.povDown().onTrue(new ArmSwitch(intake, true));
         secondDriver.povUp().onTrue(new ArmSwitch(intake, false));
+        secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));
+        secondDriver.povRight().onTrue(new InstantCommand(() -> intake.resetArmPosition(false)));
 
         /* Passing speed */
-        secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(0.3)));
+        secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(30)));
 
         secondDriver.a().onTrue(new InstantCommand(() -> shooter.stopUpper()));
 
@@ -141,32 +143,32 @@ public class RobotContainer {
         // Prime the shooter while driving
         NamedCommands.registerCommand(
             "AutoPrime",
-            new AutoPrime(shooter, intake,0.58, 5) // Make it long enough so keeps running until deadline group?
+            new AutoPrime(shooter, intake,58, 5) // Make it long enough so keeps running until deadline group?
         );
 
         // Generic Prime and Shoot.
         // We want to wait until the robot is stead, so 1 second for another priming
         NamedCommands.registerCommand(
             "PrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,0.58, 1, 5)
+            new PrimeAndShoot(shooter, intake,58, 1, 5)
         );
 
 
         NamedCommands.registerCommand(
             "LeftPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,0.58, 1, 5)
+            new PrimeAndShoot(shooter, intake,58, 1, 5)
         );
 
         // For some reason right side need more power.
         // Could be due to inaccurate field, use PrimeAndShoot if things are not right
         NamedCommands.registerCommand(
             "RightPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,0.61, 1, 5)
+            new PrimeAndShoot(shooter, intake,61, 1, 5)
         );
 
         NamedCommands.registerCommand(
             "CenterPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake, 0.52, 1, 5)
+            new PrimeAndShoot(shooter, intake, 52, 1, 5)
         );
 
         NamedCommands.registerCommand(

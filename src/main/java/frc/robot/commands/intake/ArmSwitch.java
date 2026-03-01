@@ -9,7 +9,7 @@ public class ArmSwitch extends Command {
     private boolean down;
     private Timer timer;
     private double power=0.25;
-    private double time =0.5;
+    private double time =1;
 
 
     public ArmSwitch(Intake intake, boolean down){

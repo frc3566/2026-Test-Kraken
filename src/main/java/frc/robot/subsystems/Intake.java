@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,6 +13,7 @@ public class Intake extends SubsystemBase {
    
     public TalonFX rollerMotor;
     public TalonFX armMotor;
+    private VelocityVoltage m_velocity = new VelocityVoltage(0);
     private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0);
     
 
@@ -21,7 +23,9 @@ public class Intake extends SubsystemBase {
 
         // Need to set soft limits, so use talonfx config
         var armConfig = new TalonFXConfiguration();
-        var intakeConfig = new Slot0Configs();
+        var rollerConfig = new Slot0Configs();
+        rollerConfig.kP = 0.1;
+        rollerConfig.kV = 0.1;
 
 
         // Remember to power the robot on while the arm is up,
@@ -35,6 +39,7 @@ public class Intake extends SubsystemBase {
         armConfig.Feedback.RotorToSensorRatio = 1;
         armConfig.Feedback.SensorToMechanismRatio = 64;
         armMotor.getConfigurator().apply(armConfig);
+        rollerMotor.getConfigurator().apply(rollerConfig);
 
         // // PID gains (tune later)
         // armConfig.Slot0.kP = 35.0;
@@ -57,18 +62,18 @@ public class Intake extends SubsystemBase {
         
     }
 
-    public void rollerIn(double speed){
-        rollerMotor.set(speed);
+    public void rollerIn(double rps){
+        rollerMotor.setControl(m_velocity.withVelocity(rps));
     }
 
-    public void rollerOut(double speed){
-        rollerMotor.set(-speed);
+    public void rollerOut(double rps){
+        rollerMotor.setControl(m_velocity.withVelocity(-rps));
     }
-    public void armUp(double speed){
-        armMotor.set(speed);
+    public void armUp(double percent){
+        armMotor.set(percent);
     }
-    public void armDown(double speed){
-        armMotor.set(-speed);
+    public void armDown(double percent){
+        armMotor.set(-percent);
     }
 
     public void stopRoller() {
@@ -82,9 +87,14 @@ public class Intake extends SubsystemBase {
         return armMotor.getPosition().getValueAsDouble();
     }
 
-    public void setArmPosition(double rotations) {
-        armMotor.setControl(motionMagicRequest.withPosition(rotations));
+    public void resetArmPosition(boolean isStraight){
+        if(isStraight){
+            armMotor.setPosition(0);
+        } else{
+            armMotor.setPosition(-0.25);
+        }
     }
+
 
     public double getPosition() {
         return armMotor.getPosition().getValueAsDouble();

@@ -40,8 +40,8 @@ public class Shooter extends SubsystemBase {
      */
 
    
-    public void setLowerPower(double power) {
-        lowerMotor.setControl(m_velocity.withVelocity(power));
+    public void setLowerPower(double rps) {
+        lowerMotor.setControl(m_velocity.withVelocity(rps));
     }
 
     public void stopLower() {
@@ -49,8 +49,8 @@ public class Shooter extends SubsystemBase {
     }
 
     // PID-based, better consistency
-    public void setUpperPower(double power) {
-          upperMotor.setControl(m_velocity.withVelocity(power));
+    public void setUpperPower(double rps) {
+          upperMotor.setControl(m_velocity.withVelocity(rps));
     }
 
     public void stopUpper() {   

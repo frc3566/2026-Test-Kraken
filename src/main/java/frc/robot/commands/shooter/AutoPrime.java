@@ -21,6 +21,12 @@ public class AutoPrime extends Command {
      * @param primeTime
      */
 
+    public AutoPrime(Shooter shooter, Intake intake, double speed) {
+        this.shooter = shooter;
+        this.speed = speed;
+        this.intake = intake;
+    }
+
     public AutoPrime(Shooter shooter, Intake intake, double speed, double primeTime) {
         this.shooter = shooter;
         this.speed = speed;
@@ -32,8 +38,8 @@ public class AutoPrime extends Command {
     public void initialize() {
         System.out.println("Prime Command Initialized");
         // shooter.setAgitatorPower(speed);
-        shooter.setUpperPower(speed);
-        intake.rollerIn(0.8);
+        // shooter.setUpperPower(speed);
+        intake.rollerIn(100);
     }
 
     @Override

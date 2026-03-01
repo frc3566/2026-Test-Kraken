@@ -19,15 +19,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
-                      "data": {
-                        "name": "AutoPrime"
-                      }
-                    },
-                    {
                       "type": "path",
                       "data": {
                         "pathName": "RightBack"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AutoPrime"
                       }
                     }
                   ]

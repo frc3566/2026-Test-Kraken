@@ -21,11 +21,13 @@ public class Intake extends SubsystemBase {
 
         var armConfig = new TalonFXConfiguration();
 
+        // Remember to power the robot on while the arm is up,
+        // or the arm encoders will not work as intended and can't move up
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
+        armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.05; // Straight up
 
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.2;
+        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.2; // All the way down
         armMotor.getConfigurator().apply(armConfig);
 
 
@@ -37,14 +39,12 @@ public class Intake extends SubsystemBase {
         // Gravity feedforward (START small, tune upward)
         armConfig.Slot0.kG = 1.5;
 
-        // Tell Talon this is an arm
         armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         armConfig.Slot0.GravityArmPositionOffset = 0.25;
 
         // Motion Magic settings
-        armConfig.MotionMagic.MotionMagicCruiseVelocity = 720;
-        armConfig.MotionMagic.MotionMagicAcceleration = 480;
-        // armConfig.MotionMagic.MotionMagicJerk = 1;
+        armConfig.MotionMagic.MotionMagicCruiseVelocity = 360;
+        armConfig.MotionMagic.MotionMagicAcceleration = 120;
         armConfig.Feedback.RotorToSensorRatio = 1;
         armConfig.Feedback.SensorToMechanismRatio = 64;
 
@@ -53,7 +53,6 @@ public class Intake extends SubsystemBase {
         
     }
 
-    // MOTOR IS INVERSED; ADD NEGATIVE
     public void rollerIn(double speed){
         rollerMotor.set(speed);
     }
@@ -68,10 +67,10 @@ public class Intake extends SubsystemBase {
         armMotor.set(-speed);
     }
 
-    public void rollerStop() {
+    public void stopRoller() {
         rollerMotor.stopMotor();
     }
-    public void armStop() {
+    public void stopArm() {
         armMotor.stopMotor();
     }
 

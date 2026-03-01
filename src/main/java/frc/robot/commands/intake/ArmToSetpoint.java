@@ -3,6 +3,10 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 
+/**
+ * NOT FULLY TESTED; USE WITH CAUTION
+ */
+
 public class ArmToSetpoint extends Command {
 
     private final Intake intake;

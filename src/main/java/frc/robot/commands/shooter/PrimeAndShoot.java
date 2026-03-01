@@ -8,8 +8,8 @@ public class PrimeAndShoot extends Command {
     private final Shooter shooter;
     private final Intake intake;
     private final double speed;
-    private double primeTime = 2.0; // Time to prime the shooter in seconds
-    private double shootTime = 5.0; // Time to shoot after priming in seconds
+    private double primeTime = 1.0; // Default
+    private double shootTime = 5.0; // Default
     private final Timer timer = new Timer();
 
     public PrimeAndShoot(Shooter shooter, Intake intake, double speed, double primeTime, double shootTime) {
@@ -19,6 +19,22 @@ public class PrimeAndShoot extends Command {
         this.primeTime = primeTime;
         this.shootTime = shootTime;
     }
+
+    public PrimeAndShoot(Shooter shooter, Intake intake, double speed, double primeTime) {
+        this.shooter = shooter;
+        this.speed = speed;
+        this.intake = intake;
+        this.primeTime = primeTime;
+    }
+
+    public PrimeAndShoot(Shooter shooter, Intake intake, double speed) {
+        this.shooter = shooter;
+        this.speed = speed;
+        this.intake = intake;
+    }
+
+
+
 
     @Override
     public void initialize() {
@@ -42,7 +58,7 @@ public class PrimeAndShoot extends Command {
     public void end(boolean interrupted) {
         shooter.stopUpper();
         shooter.stopLower();
-        intake.rollerStop();
+        intake.stopRoller();
         System.out.println("Prime And Shoot Command Ended" + (interrupted ? " due to interruption." : "."));
     }
 

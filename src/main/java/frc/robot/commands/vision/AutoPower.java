@@ -2,25 +2,32 @@ package frc.robot.commands.vision;
 
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Vision;
 
-
+/**
+* Sets the shooter power automatically based on the distance to a specific target ID using vision data.
+* Note: This command is designed to run once and then finish. It does not continuously adjust 
+*/
 public class AutoPower extends Command {
     private boolean targetSet = false;
-    private int targetId = 20;
+    private int targetId;
     private Shooter shooter;
     private boolean targetFound = false;
     private PhotonTrackedTarget target;
+    private Vision vision;
 
-    public AutoPower(Shooter shooter) {
+    public AutoPower(Shooter shooter, Vision vision) {
         this.shooter = shooter;
+        this.vision = vision;
     }
 
     @Override
     public void initialize() {
         System.out.println("Initializing AutoShoot command");
+        this.targetId = TagUtil.Side.HUB_FRONT_CENTER.getTargettingId(); // Example target ID, change as needed
     }
 
     @Override
@@ -41,17 +48,23 @@ public class AutoPower extends Command {
             }
 
             var cameraToTarget = target.getBestCameraToTarget();
-            double distance = Math.sqrt(Math.pow(cameraToTarget.getX(), 2) + Math.pow(cameraToTarget.getY(), 2));
-            // System.out.println("Tag ID: " + tagID);
-            System.out.println("Camera to Target: " + cameraToTarget);
-            System.out.println("Distance: " + distance);
+            double measuredDist = Math.sqrt(Math.pow(cameraToTarget.getX(), 2) + Math.pow(cameraToTarget.getY(), 2));
+            double estimatedDist = vision.getDistanceFromAprilTag(targetId);
+            
+            SmartDashboard.putBoolean("Found Target Tag ID " + targetId, true);
+            SmartDashboard.putString("Camera to Target", cameraToTarget.toString());
+            SmartDashboard.putNumber("Distance to Target (VISION)", measuredDist);
+            SmartDashboard.putNumber("Distance to Target (POSE ESTIMATE)", estimatedDist);
+            
+            
             if(target!=null){
-                shooter.autoPower(distance);
+                shooter.autoPower(measuredDist);
                 targetFound = true;
+            } else{
+                targetFound = false;
             }
-            else{
-                System.out.println("Target not found!");
-            }
+            SmartDashboard.putBoolean("Target Found: " + targetId, targetFound);
+
         } 
         else{
             System.out.println("Result is empty!");

@@ -19,9 +19,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.intake.ArmDown;
-import frc.robot.commands.intake.RollerAuto;
 import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
+import frc.robot.commands.shooter.testPID;
 import frc.robot.commands.vision.UpdateVisionPoseEstimate;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -104,14 +104,14 @@ public class RobotContainer {
 
         /* For Second Driver */
         secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(1)));
-        secondDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.rollerStop()));
+        secondDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
         secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(0.8)));
-        secondDriver.leftBumper().onFalse(new InstantCommand(() -> intake.rollerStop()));
+        secondDriver.leftBumper().onFalse(new InstantCommand(() -> intake.stopRoller()));
 
         secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armUp(0.3)));
-        secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.armStop()));
+        secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.stopArm()));
         secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.3)));
-        secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.armStop()));
+        secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.stopArm()));
 
         /* Scoring Speed */
         secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(0.50)));
@@ -120,30 +120,17 @@ public class RobotContainer {
 
         // secondDriver.y().onTrue(new AutoShoot(shooter));
         secondDriver.povDown().onTrue(new ArmDown(intake, 0.2, 0.5));
-
-        // secondDriver.a().onTrue(new ArmToSetpoint(intake, 10));
-        // secondDriver.b().onTrue(new InstantCommand(() -> shooter.setAgitatorPower(0.5)));
-        // secondDriver.b().onFalse(new InstantCommand(() -> shooter.stopAgitator()));
+        secondDriver.povLeft().onTrue(new testPID(shooter, intake, 0.1));
 
         /* Passing speed */
         secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(0.3)));
 
         secondDriver.a().onTrue(new InstantCommand(() -> shooter.stopUpper()));
 
-
-        
-        // secondDriver.povUp().onTrue(new InstantCommand( () -> shooter.setAgitatorPower(0.5)));
-        // secondDriver.povDown().onTrue(new InstantCommand( () -> shooter.stopAgitator()));
-
         // secondDriver.povRight().onTrue(new InstantCommand( () -> shooter.addTestSpeed(0.01)));
         // secondDriver.povLeft().onTrue(new InstantCommand( () -> shooter.addTestSpeed(-0.01)));
-
-        // secondDriver.povUp().onTrue(new InstantCommand( () -> climber.set(0.5)));
-        // secondDriver.povUp().onFalse(new InstantCommand( () -> climber.stop()));
-        // secondDriver.povDown().onTrue(new InstantCommand( () -> climber.set(-0.5)));
-        // secondDriver.povDown().onFalse(new InstantCommand( () -> climber.stop()));
         
-        // drivetrain.registerTelemetry(logger::telemeterize);
+        drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     public Command getAutonomousCommand() {
@@ -152,39 +139,40 @@ public class RobotContainer {
 
     private void configureAutoCommand() {
 
+        // Prime the shooter while driving
         NamedCommands.registerCommand(
             "AutoPrime",
-            new AutoPrime(shooter, intake,0.595, 1.5)
+            new AutoPrime(shooter, intake,0.58, 5) // Make it long enough so keeps running until deadline group?
         );
 
+        // Generic Prime and Shoot.
+        // We want to wait until the robot is stead, so 1 second for another priming
         NamedCommands.registerCommand(
             "PrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,0.58, 0.5, 5)
+            new PrimeAndShoot(shooter, intake,0.58, 1, 5)
         );
+
 
         NamedCommands.registerCommand(
             "LeftPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,0.58, 0.5, 5)
+            new PrimeAndShoot(shooter, intake,0.58, 1, 5)
         );
 
+        // For some reason right side need more power.
+        // Could be due to inaccurate field, use PrimeAndShoot if things are not right
         NamedCommands.registerCommand(
             "RightPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,0.61, 0.5, 5)
+            new PrimeAndShoot(shooter, intake,0.61, 1, 5)
         );
 
         NamedCommands.registerCommand(
             "CenterPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake, 0.52, 0.5, 5)
+            new PrimeAndShoot(shooter, intake, 0.52, 1, 5)
         );
 
         NamedCommands.registerCommand(
             "ArmDown",
             new ArmDown(intake, 0.25, 0.5)
-        );
-
-        NamedCommands.registerCommand(
-            "RollerAuto",
-            new RollerAuto(intake, 1, 5)
         );
     }
 

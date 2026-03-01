@@ -39,6 +39,6 @@ public class ArmDown extends Command {
     @Override
     public void end(boolean interrupted) {
         // Optional: hold position
-        intake.armStop();
+        intake.stopArm();
     }
 }

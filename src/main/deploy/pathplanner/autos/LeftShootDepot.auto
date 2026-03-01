@@ -21,7 +21,7 @@
                     {
                       "type": "path",
                       "data": {
-                        "pathName": "CenterBack"
+                        "pathName": "LeftDepot"
                       }
                     },
                     {
@@ -43,7 +43,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "CenterPrimeAndShoot"
+                  "name": "LeftPrimeAndShoot"
                 }
               }
             ]

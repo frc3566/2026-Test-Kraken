@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
@@ -10,12 +12,16 @@ import frc.robot.Constants;
 public class Shooter extends SubsystemBase {
     public TalonFX lowerMotor, upperMotor, agitatorMotor;
     public double testSpeed = 0;
+    private VelocityVoltage m_velocity = new VelocityVoltage(0);
+    private Slot0Configs upperConfig = new Slot0Configs();
 
     public Shooter() {
         lowerMotor = new TalonFX(Constants.Motors.ShooterLow);
         upperMotor = new TalonFX(Constants.Motors.ShooterHigh);
+        upperConfig.kP = 0.1;
+        upperConfig.kD = 0.05;
+        upperMotor.getConfigurator().apply(upperConfig, 0.05);
         // agitatorMotor = new TalonFX(Constants.Motors.Agitator);
-
     }
 
     /**
@@ -64,6 +70,22 @@ public class Shooter extends SubsystemBase {
         
         System.out.println("Auto Power: " + percentPower);
         upperMotor.set(percentPower/100);
+    }
+
+    public double getUpperDutyCyle(){
+        return upperMotor.getDutyCycle().getValueAsDouble();
+    }
+
+    public double getUpperUpperVelocity(){
+        return upperMotor.getVelocity().getValueAsDouble();
+    }
+
+    public void testPID(){
+        upperMotor.setControl(m_velocity.withVelocity(10));
+    }
+
+    public void testOpenLoop(){
+        upperMotor.set(0.1);
     }
     
 }

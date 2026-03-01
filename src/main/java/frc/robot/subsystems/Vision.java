@@ -1,31 +1,5 @@
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Microseconds;
-import static edu.wpi.first.units.Units.Milliseconds;
-import static edu.wpi.first.units.Units.Seconds;
-
-import edu.wpi.first.apriltag.AprilTagFieldLayout;
-import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.Matrix;
-import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.math.numbers.N1;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.networktables.NetworkTablesJNI;
-import edu.wpi.first.wpilibj.Alert;
-import edu.wpi.first.wpilibj.Alert.AlertType;
-import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import frc.robot.Constants;
-import frc.robot.Robot;
-
 import java.awt.Desktop;
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +17,31 @@ import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTablesJNI;
+import static edu.wpi.first.units.Units.Microseconds;
+import static edu.wpi.first.units.Units.Seconds;
+import edu.wpi.first.wpilibj.Alert;
+import edu.wpi.first.wpilibj.Alert.AlertType;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-// import swervelib.SwerveDrive;
-// import swervelib.telemetry.SwerveDriveTelemetry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
+import frc.robot.Robot;
 
 /**
  * Example PhotonVision class to aid in the pursuit of accurate odometry. Taken
@@ -59,7 +54,7 @@ public class Vision extends SubsystemBase {
    * April Tag Field Layout of the year.
    */
   public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(
-      AprilTagFields.k2026RebuiltWelded);
+      AprilTagFields.k2026RebuiltAndymark);
   /**
    * Ambiguity defined as a value between (0,1). Used in
    * {@link Vision#filterPose}.
@@ -142,39 +137,30 @@ public class Vision extends SubsystemBase {
   }
 
   /**
-   * Get AND update pose estimation inside of {@link SwerveDrive} with all of the
+   * Update pose estimation inside of {@link SwerveDrive} with all of the
    * given poses.
    *
    * @param swerveDrive {@link SwerveDrive} instance.
    */
-  public Optional<Pose2d> getPoseEstimation(CommandSwerveDrivetrain swerveDrive) {
+  public void updatePoseEstimation(CommandSwerveDrivetrain swerveDrive) {
     for (Cameras camera : Cameras.values()) {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
 
-      if(!poseEst.isEmpty()){
-        System.out.println("Camera Estimated Global Pose exists.");
-      } else{
-         System.out.println("Camera Estimated Global Pose does not exists.");
-      }
+      SmartDashboard.putBoolean("Vision/Pose Estimation Available", poseEst.isPresent());
 
       poseEst = filterPose(poseEst);
 
-      if(!poseEst.isEmpty()){
-        System.out.println("FILTERED Camera Estimated Global Pose exists.");
+      SmartDashboard.putBoolean("Vision/Filtered Pose Available", poseEst.isPresent());
+
+      if(poseEst.isPresent()){
+        var pose = poseEst.get().estimatedPose.toPose2d();
         swerveDrive.addVisionMeasurement(
-              poseEst.get().estimatedPose.toPose2d(),
+              pose,
               poseEst.get().timestampSeconds,
               camera.curStdDevs);
-      } else{
-         System.out.println("FILTERED Camera Estimated Global Pose does not exists.");
-      }
-
-      if (poseEst.isPresent()) {
-        var pose = poseEst.get().estimatedPose.toPose2d();
-        return Optional.of(pose);
+        SmartDashboard.putString("Vision/Filtered Pose", pose.toString());
       }
     }
-    return Optional.empty();
   }
 
   /**
@@ -213,30 +199,26 @@ public class Vision extends SubsystemBase {
       .map(target -> target.getPoseAmbiguity())
       .min(Double::compare);
 
+    SmartDashboard.putNumber("Vision Pose Ambiguity", bestTargetAmbiguity.orElse(-1.0));
     if (bestTargetAmbiguity.orElse(1.0) > maximumAmbiguity) { 
-      System.out.println("VISION FILTER: BEST TARGET AMBIGUITY TOO HIGH");
       return Optional.empty(); 
     }
 
     double poseDiffOrigin = PhotonUtils.getDistanceToPose(currentPose.get(), new Pose2d(0,0, new Rotation2d(0)));
-    // robot initiated at 0,0, needs to update no matter what
-      System.out.println("Robot distance to 0, 0: "  + poseDiffOrigin);
       if(poseDiffOrigin <= 0.5){
         return pose;
       } 
+
     // estimated pose is very far from recorded robot pose
     double poseDiffTag = PhotonUtils.getDistanceToPose(currentPose.get(), pose.get().estimatedPose.toPose2d());
+    SmartDashboard.putNumber("Distance to Tag Pose", poseDiffTag); 
     if (poseDiffTag > 1) {
-      System.out.println("Robot too far from tag! "  + poseDiffTag);
-      SmartDashboard.putString("Current Pose", currentPose.get().toString());
-      SmartDashboard.putString("Estimated Pose", pose.get().estimatedPose.toPose2d().toString());
-
 
       longDistangePoseEstimationCount++;
 
       // if it calculates that we're, say, 10 meter away for more than 50 times in a row its probably maybe potentially right 
       if (longDistangePoseEstimationCount < 50) {
-        System.out.println("VISION FILTER: BEST TARGET TOO FAR");
+        SmartDashboard.putBoolean("Vision Pose Too Far", true);
         return Optional.empty();
       }
     } else {
@@ -388,7 +370,7 @@ public class Vision extends SubsystemBase {
           Units.inchesToMeters(0),
           Units.inchesToMeters(10)
         ),
-        VecBuilder.fill(0.1, 0.1, 0.1), VecBuilder.fill(0.5, 0.5, 1));
+        VecBuilder.fill(0.05, 0.05, 0.05), VecBuilder.fill(0.5, 0.5, 1));
     
     /**
      * Latency alert to use when high latency is detected.
@@ -404,11 +386,13 @@ public class Vision extends SubsystemBase {
     public final PhotonPoseEstimator poseEstimator;
     /**
      * Standard Deviation for single tag readings for pose estimation.
+     * X, Y, and Rotation respectively. Higher values means less trust.
      */
     private final Matrix<N3, N1> singleTagStdDevs;
     /**
      * Standard deviation for multi-tag readings for pose estimation.
-     */
+     * Check {@link poseEstimator} for more details on the meaning of values.
+     */ 
     private final Matrix<N3, N1> multiTagStdDevs;
     /**
      * Transform of the camera rotation and translation relative to the center of
@@ -663,6 +647,7 @@ public class Vision extends SubsystemBase {
             estStdDevs = multiTagStdDevs;
           }
           // Increase std devs based on (average) distance
+          // Do not trust vision if only one tag and far away
           if (numTags == 1 && avgDist > 4) {
             estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
           } else {
@@ -672,7 +657,5 @@ public class Vision extends SubsystemBase {
         }
       }
     }
-
   }
-
 }

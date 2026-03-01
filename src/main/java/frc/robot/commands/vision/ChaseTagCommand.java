@@ -22,6 +22,10 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
+
+/**
+ * Controls the robot to drive to a specific apriltag.java. Still WIP
+ */
 public class ChaseTagCommand extends Command {
   /** Creates a new ChaseTagCommand. */
   // this is honestly useless but it cool for messing around and testing vision
@@ -29,7 +33,9 @@ public class ChaseTagCommand extends Command {
   private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(2, 1);
   private static final TrapezoidProfile.Constraints rotConstraints = new TrapezoidProfile.Constraints(3/4 * Math.PI, 1/2 * Math.PI);
 
-  private static final int tagToChase = 4;
+  private final int tagToChase;
+
+  // 1 meter in front of the tag, facing the tag
   private static final Transform3d tagToGoal = 
       new Transform3d(1, 0, 0,
           new Rotation3d(0, 0, Math.PI)); // yaw may be -pi/2 if front hasnt changed
@@ -43,13 +49,14 @@ public class ChaseTagCommand extends Command {
   private double xSpeed, ySpeed, rotSpeed;
   private PhotonTrackedTarget lastTarget;
 
-  public ChaseTagCommand(CommandSwerveDrivetrain swerve) {
+    public ChaseTagCommand(CommandSwerveDrivetrain swerve, int tagToChase) {
     this.swerve = swerve;
+    this.tagToChase = tagToChase;
     this.addRequirements(swerve);
 
-    xController.setTolerance(0.1, 1);
-    yController.setTolerance(0.1, 1);
-    rotController.setTolerance(Units.degreesToRadians(5), Units.degreesToRadians(10));
+    xController.setTolerance(0.1);
+    yController.setTolerance(0.1);
+    rotController.setTolerance(Units.degreesToRadians(10));
     rotController.enableContinuousInput(-Math.PI, Math.PI);
     addRequirements(swerve);
   }
@@ -71,17 +78,18 @@ public class ChaseTagCommand extends Command {
   public void execute() {
     var robotPose2d = swerve.getState().Pose;
     var robotPose = 
-        new Pose3d(
-          robotPose2d.getX(),
-          robotPose2d.getY(),
-          0,
-          new Rotation3d(0,0, robotPose2d.getRotation().getRadians())
-        );
-    SmartDashboard.putString("Vision/Current Pose", String.format("(%.2f, %.2f) %.2f degrees", 
+      new Pose3d(
+            robotPose2d.getX(),
+            robotPose2d.getY(),
+            0,
+            new Rotation3d(0,0, robotPose2d.getRotation().getRadians())
+          );
+    
+      SmartDashboard.putString("Vision/Current Pose", String.format("(%.2f, %.2f) %.2f degrees", 
       robotPose2d.getX(),
       robotPose2d.getY(), 
       robotPose2d.getRotation().getDegrees()));
-    SmartDashboard.putBoolean("Vision/isTargetFound", false);
+
     
     var photonResOpt = Vision.Cameras.MAIN.getLatestResult();
     if(!photonResOpt.isEmpty()){

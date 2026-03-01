@@ -15,15 +15,22 @@
                 }
               },
               {
-                "type": "path",
+                "type": "race",
                 "data": {
-                  "pathName": "LeftBack"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutoPrime"
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "LeftBack"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "AutoPrime"
+                      }
+                    }
+                  ]
                 }
               }
             ]

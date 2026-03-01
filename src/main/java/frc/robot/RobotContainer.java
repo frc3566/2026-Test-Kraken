@@ -18,10 +18,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.intake.ArmDown;
+import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
-import frc.robot.commands.shooter.testPID;
 import frc.robot.commands.vision.UpdateVisionPoseEstimate;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -119,8 +118,8 @@ public class RobotContainer {
         // secondDriver.y().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(shooter.testSpeed)));
 
         // secondDriver.y().onTrue(new AutoShoot(shooter));
-        secondDriver.povDown().onTrue(new ArmDown(intake, 0.2, 0.5));
-        secondDriver.povLeft().onTrue(new testPID(shooter, intake, 0.1));
+        secondDriver.povDown().onTrue(new ArmSwitch(intake, true));
+        secondDriver.povUp().onTrue(new ArmSwitch(intake, false));
 
         /* Passing speed */
         secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(0.3)));
@@ -172,7 +171,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
             "ArmDown",
-            new ArmDown(intake, 0.25, 0.5)
+            new ArmSwitch(intake, true, 0.25, 0.5)
         );
     }
 

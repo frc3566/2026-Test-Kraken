@@ -4,15 +4,21 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 
-public class ArmDown extends Command {
-
+public class ArmSwitch extends Command {
     private final Intake intake;
+    private boolean down;
     private Timer timer;
-    private double time;
-    private double power;
+    private double power=0.25;
+    private double time =0.5;
 
-    public ArmDown(Intake intake, double power, double time) {
+
+    public ArmSwitch(Intake intake, boolean down){
         this.intake = intake;
+        this.down = down;
+    }
+    public ArmSwitch(Intake intake, boolean down, double power, double time) {
+        this.intake = intake;
+        this.down = down;
         this.power = power;
         this.time = time;
         addRequirements(intake);
@@ -23,7 +29,12 @@ public class ArmDown extends Command {
         timer = new Timer();
         timer.reset();
         timer.start();
-        intake.armDown(power);
+        if(down){
+            intake.armDown(power);
+        } else{
+            intake.armUp(power);
+            time += 0.2; // More time to go up because of gravity
+        }
     }
 
     @Override

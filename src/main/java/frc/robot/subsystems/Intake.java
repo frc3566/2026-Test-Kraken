@@ -1,9 +1,9 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.GravityTypeValue;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -19,37 +19,41 @@ public class Intake extends SubsystemBase {
         rollerMotor = new TalonFX(Constants.Motors.IntakeRoller);
         armMotor=new TalonFX(Constants.Motors.IntakeArm);
 
+        // Need to set soft limits, so use talonfx config
         var armConfig = new TalonFXConfiguration();
+        var intakeConfig = new Slot0Configs();
+
 
         // Remember to power the robot on while the arm is up,
         // or the arm encoders will not work as intended and can't move up
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.05; // Straight up
+        armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.0; // Straight up
 
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.2; // All the way down
-        armMotor.getConfigurator().apply(armConfig);
+        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.23; // All the way down
 
-
-        // PID gains (tune later)
-        armConfig.Slot0.kP = 35.0;
-        armConfig.Slot0.kI = 0.0;
-        armConfig.Slot0.kD = 0.2;
-
-        // Gravity feedforward (START small, tune upward)
-        armConfig.Slot0.kG = 1.5;
-
-        armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        armConfig.Slot0.GravityArmPositionOffset = 0.25;
-
-        // Motion Magic settings
-        armConfig.MotionMagic.MotionMagicCruiseVelocity = 360;
-        armConfig.MotionMagic.MotionMagicAcceleration = 120;
         armConfig.Feedback.RotorToSensorRatio = 1;
         armConfig.Feedback.SensorToMechanismRatio = 64;
-
-        // Apply configuration
         armMotor.getConfigurator().apply(armConfig);
+
+        // // PID gains (tune later)
+        // armConfig.Slot0.kP = 35.0;
+        // armConfig.Slot0.kI = 0.0;
+        // armConfig.Slot0.kD = 0.2;
+
+        // // Gravity feedforward (START small, tune upward)
+        // armConfig.Slot0.kG = 1.5;
+
+        // armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+        // armConfig.Slot0.GravityArmPositionOffset = 0.25;
+
+        // // Motion Magic settings
+        // armConfig.MotionMagic.MotionMagicCruiseVelocity = 360;
+        // armConfig.MotionMagic.MotionMagicAcceleration = 120;
+
+
+        // // Apply configuration
+        // armMotor.getConfigurator().apply(armConfig);
         
     }
 

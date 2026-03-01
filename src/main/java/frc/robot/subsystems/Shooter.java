@@ -13,14 +13,23 @@ public class Shooter extends SubsystemBase {
     public TalonFX lowerMotor, upperMotor, agitatorMotor;
     public double testSpeed = 0;
     private VelocityVoltage m_velocity = new VelocityVoltage(0);
-    private Slot0Configs upperConfig = new Slot0Configs();
+
 
     public Shooter() {
         lowerMotor = new TalonFX(Constants.Motors.ShooterLow);
         upperMotor = new TalonFX(Constants.Motors.ShooterHigh);
-        upperConfig.kP = 0.1;
-        upperConfig.kD = 0.05;
+
+        var upperConfig = new Slot0Configs();
+        var lowerConfig = new Slot0Configs();
+
+        upperConfig.kP = 0.8;
+        upperConfig.kV = 0.12;
+
+        lowerConfig.kP = 0.35;
+        lowerConfig.kV = 0.12;
+
         upperMotor.getConfigurator().apply(upperConfig, 0.05);
+        lowerMotor.getConfigurator().apply(lowerConfig, 0.05);
         // agitatorMotor = new TalonFX(Constants.Motors.Agitator);
     }
 
@@ -32,17 +41,20 @@ public class Shooter extends SubsystemBase {
 
    
     public void setLowerPower(double power) {
-        lowerMotor.set(power);
-        // agitatorMotor.set((power/8));
+        lowerMotor.setControl(m_velocity.withVelocity(power));
     }
 
     public void stopLower() {
         lowerMotor.stopMotor();
-        // agitatorMotor.stopMotor();
     }
 
+    // PID-based, better consistency
     public void setUpperPower(double power) {
-        upperMotor.set(power);
+          upperMotor.setControl(m_velocity.withVelocity(power));
+    }
+
+    public void stopUpper() {   
+        upperMotor.stopMotor();
     }
 
     public void addTestSpeed(double increment) {
@@ -50,26 +62,15 @@ public class Shooter extends SubsystemBase {
         System.out.println("Test Speed: " + testSpeed);
     }
 
-    public void stopUpper() {   
-        upperMotor.stopMotor();
-    }
-
-    // public void setAgitatorPower(double speed){
-    //     agitatorMotor.set(speed);
-    // }
-
-    // public void stopAgitator(){
-    //     agitatorMotor.stopMotor();
-    // }
 
     // Used with /Vision/AutoShoot
+    // NEED TO RETEST
     public void autoPower(double distance){
-
         // Percentage Power Calculation
         double percentPower = 31.1 + ((3.3)*(Units.metersToFeet(distance))) + (-0.0714*Math.pow(Units.metersToFeet(distance), 2));
         
         System.out.println("Auto Power: " + percentPower);
-        upperMotor.set(percentPower/100);
+        setUpperPower(percentPower);
     }
 
     public double getUpperDutyCyle(){
@@ -78,14 +79,6 @@ public class Shooter extends SubsystemBase {
 
     public double getUpperUpperVelocity(){
         return upperMotor.getVelocity().getValueAsDouble();
-    }
-
-    public void testPID(){
-        upperMotor.setControl(m_velocity.withVelocity(10));
-    }
-
-    public void testOpenLoop(){
-        upperMotor.set(0.1);
     }
     
 }

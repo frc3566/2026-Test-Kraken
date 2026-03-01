@@ -13,6 +13,12 @@ public class ArmToSetpoint extends Command {
     private final double targetRotations;
     private final double tolerance; // rotations (~7 degrees)
 
+    /**
+     * DO NOT USE. Arm encoders change when moving up and down.
+     * @param intake
+     * @param targetRotations
+     * @param tolerance
+     */
     public ArmToSetpoint(Intake intake, double targetRotations, double tolerance) {
         this.intake = intake;
         this.targetRotations = targetRotations;

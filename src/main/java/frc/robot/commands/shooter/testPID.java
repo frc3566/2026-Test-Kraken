@@ -16,13 +16,11 @@ public class testPID extends Command {
         this.shooter = shooter;
         this.goalSpeed = goalSpeed;
         this.intake = intake;
-        addRequirements(shooter, intake);
     }
 
     @Override
     public void initialize() {
-        System.out.println("AutoShoot Command Initialized");
-        shooter.testPID();
+        System.out.println("TestPID Command Initialized");
         timer.reset();
         timer.start();
         
@@ -39,7 +37,7 @@ public class testPID extends Command {
     public void end(boolean interrupted) {
         shooter.stopUpper();
         // shooter.stopAgitator();
-        System.out.println("Prime And Shoot Command Ended" + (interrupted ? " due to interruption." : "."));
+        System.out.println("TestPID Command Ended" + (interrupted ? " due to interruption." : "."));
     }
 
     @Override

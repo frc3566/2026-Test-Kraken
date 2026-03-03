@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.intake.ArmSwitch;
@@ -148,19 +149,23 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
+        
         SequentialCommandGroup autoCommand = new SequentialCommandGroup();
 
+        // Wrap each chooser selection in a ProxyCommand so a fresh command instance is
+        // created every time auto runs. Without this, reusing the same Command object
+        // in a SequentialCommandGroup crashes on the second auto attempt because
+        // WPILib commands can only be composed/scheduled once.
         Command start = firstChooser.getSelected();
         Command second = secondChooser.getSelected();
         Command third = thirdChooser.getSelected();
 
-        if (start != null) autoCommand.addCommands(start);
-        if (second != null) autoCommand.addCommands(second);
-        if (third != null) autoCommand.addCommands(third);
+        if (start != null) autoCommand.addCommands(new ProxyCommand(start));
+        if (second != null) autoCommand.addCommands(new ProxyCommand(second));
+        if (third != null) autoCommand.addCommands(new ProxyCommand(third));
 
         return autoCommand;
     }
-
 
     private void configureAutoCommand() {
 

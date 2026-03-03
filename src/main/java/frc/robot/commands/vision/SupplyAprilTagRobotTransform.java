@@ -6,10 +6,9 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.WithStatus;
 import frc.robot.subsystems.Vision;
 
-public class SupplyAprilTagRobotTransform extends Command implements WithStatus {
+public class SupplyAprilTagRobotTransform extends Command {
     
     private Consumer<Transform2d> setTargetPose;
 
@@ -72,10 +71,5 @@ public class SupplyAprilTagRobotTransform extends Command implements WithStatus 
     @Override
     public boolean isFinished() {
         return targetSet;
-    }
-
-    @Override
-    public boolean isRunning() {
-        return isRunning;
     }
 }

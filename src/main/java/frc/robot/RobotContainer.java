@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.shooter.AutoPrime;
@@ -52,13 +53,25 @@ public class RobotContainer {
     public final Vision vision = new Vision(drivetrain::getPose);
     // public final Climber climber = new Climber();
 
-    public final SendableChooser<Command> autoChooser;
+    public  SendableChooser<Command> firstChooser;
+    public  SendableChooser<Command> secondChooser;
+    public  SendableChooser<Command> thirdChooser;
 
     public RobotContainer() {
         configureAutoCommand();
+        configureAutoChooser();
         configureBindings();
-        autoChooser = AutoBuilder.buildAutoChooser();
-        Shuffleboard.getTab("Autonomous").add("Auto Chooser", autoChooser);
+        
+    }
+
+    private void configureAutoChooser() {
+        firstChooser = AutoBuilder.buildAutoChooser();
+        secondChooser = AutoBuilder.buildAutoChooser();
+        thirdChooser = AutoBuilder.buildAutoChooser();
+
+        Shuffleboard.getTab("Autonomous").add("First Auto", firstChooser);
+        Shuffleboard.getTab("Autonomous").add("Second Auto", secondChooser);
+        Shuffleboard.getTab("Autonomous").add("Third Auto", thirdChooser);
     }
 
     private void configureBindings() {
@@ -135,8 +148,19 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return autoChooser.getSelected();
+        SequentialCommandGroup autoCommand = new SequentialCommandGroup();
+
+        Command start = firstChooser.getSelected();
+        Command second = secondChooser.getSelected();
+        Command third = thirdChooser.getSelected();
+
+        if (start != null) autoCommand.addCommands(start);
+        if (second != null) autoCommand.addCommands(second);
+        if (third != null) autoCommand.addCommands(third);
+
+        return autoCommand;
     }
+
 
     private void configureAutoCommand() {
 
@@ -156,14 +180,14 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
             "LeftPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,58, 1, 5)
+            new PrimeAndShoot(shooter, intake,56, 1, 5)
         );
 
         // For some reason right side need more power.
         // Could be due to inaccurate field, use PrimeAndShoot if things are not right
         NamedCommands.registerCommand(
             "RightPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,61, 1, 5)
+            new PrimeAndShoot(shooter, intake,60, 1, 5)
         );
 
         NamedCommands.registerCommand(

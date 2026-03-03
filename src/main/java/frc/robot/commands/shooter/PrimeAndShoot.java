@@ -7,7 +7,7 @@ import frc.robot.subsystems.Shooter;
 public class PrimeAndShoot extends Command {
     private final Shooter shooter;
     private final Intake intake;
-    private final double speed; // In rotations per sec, -100-100
+    private final double speed; // In rotations per sec, -100 to 100
     private double primeTime = 1.0; // Default
     private double shootTime = 5.0; // Default
     private final Timer timer = new Timer();
@@ -34,8 +34,6 @@ public class PrimeAndShoot extends Command {
     }
 
 
-
-
     @Override
     public void initialize() {
         System.out.println("Prime And Shoot Command Initialized");
@@ -43,7 +41,7 @@ public class PrimeAndShoot extends Command {
         timer.start();
         // shooter.setAgitatorPower(speed);
         shooter.setUpperPower(speed);
-        intake.rollerIn(0.8);
+        intake.rollerIn(80);
     }
 
     @Override

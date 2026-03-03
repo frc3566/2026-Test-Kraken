@@ -4,40 +4,40 @@
     {
       "anchor": {
         "x": 3.5,
-        "y": 6.0
+        "y": 2.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.838409751732337,
-        "y": 6.0
+        "x": 3.768,
+        "y": 2.0
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
         "x": 0.7,
-        "y": 6.0
+        "y": 0.5
       },
       "prevControl": {
-        "x": 0.27983008487474775,
-        "y": 6.0
+        "x": 1.3608976423520833,
+        "y": 0.5
       },
       "nextControl": {
-        "x": 1.0342421929135677,
-        "y": 6.0
+        "x": 0.039102357647916586,
+        "y": 0.5000000000000001
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 6.0
+        "x": 1.5,
+        "y": 2.0
       },
       "prevControl": {
-        "x": 1.6398143489490504,
-        "y": 6.0
+        "x": 1.4235237440853448,
+        "y": 1.7619844915110021
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,16 +48,20 @@
     {
       "waypointRelativePos": 1,
       "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 2.0,
+      "rotationDegrees": 27.0
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7958439086294415,
-      "maxWaypointRelativePos": 1.0,
+      "minWaypointRelativePos": 0.75,
+      "maxWaypointRelativePos": 1.5,
       "constraints": {
         "maxVelocity": 0.5,
-        "maxAcceleration": 1.5,
+        "maxAcceleration": 3.0,
         "maxAngularVelocity": 540.0,
         "maxAngularAcceleration": 720.0,
         "nominalVoltage": 12.0,
@@ -68,16 +72,16 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
+    "maxVelocity": 3.2,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
-    "unlimited": false
+    "unlimited": true
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -29.999999999999996
+    "rotation": 27.0
   },
   "reversed": false,
   "folder": null,

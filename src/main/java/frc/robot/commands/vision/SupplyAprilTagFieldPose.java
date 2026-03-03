@@ -7,10 +7,9 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.commands.WithStatus;
 import frc.robot.subsystems.Vision;
 
-public class SupplyAprilTagFieldPose extends Command implements WithStatus {
+public class SupplyAprilTagFieldPose extends Command {
     private Consumer<Pose2d> setTargetPose;
 
     private int counter = 0;
@@ -63,7 +62,7 @@ public class SupplyAprilTagFieldPose extends Command implements WithStatus {
 
     @Override
     public void end(boolean interrupted) {
-        isRunning = false;
+        // isRunning = false;
     }
 
     @Override
@@ -71,8 +70,8 @@ public class SupplyAprilTagFieldPose extends Command implements WithStatus {
         return targetSet;
     }
 
-    @Override
-    public boolean isRunning() {
-        return isRunning;
-    }
+    // @Override
+    // public boolean isRunning() {
+    //     return isRunning;
+    // }
 }

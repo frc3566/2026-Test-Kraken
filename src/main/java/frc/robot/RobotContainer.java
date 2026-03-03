@@ -155,7 +155,9 @@ public class RobotContainer {
         // Wrap each chooser selection in a ProxyCommand so a fresh command instance is
         // created every time auto runs. Without this, reusing the same Command object
         // in a SequentialCommandGroup crashes on the second auto attempt because
-        // WPILib commands can only be composed/scheduled once.
+        // WPILib commands can only be composed/scheduled once. We don't want this
+        // because during testing we want to run auto many times in a row without restarting the robot code.
+
         Command start = firstChooser.getSelected();
         Command second = secondChooser.getSelected();
         Command third = thirdChooser.getSelected();

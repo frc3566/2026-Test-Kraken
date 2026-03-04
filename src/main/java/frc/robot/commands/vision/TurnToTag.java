@@ -25,9 +25,10 @@ public class TurnToTag extends Command {
             Units.degreesToRadians(135),
             Units.degreesToRadians(270)
         );
-
+    
+    // TODO: Test and tuning 
     private final ProfiledPIDController rotController =
-        new ProfiledPIDController(0.05, 0, 0.001, ROT_CONSTRAINTS);
+        new ProfiledPIDController(1, 0, 0.001, ROT_CONSTRAINTS);
 
     // Max number of loops to run without seeing the target
     private static final int MAX_MISSED_CYCLES = 20;
@@ -144,6 +145,7 @@ public class TurnToTag extends Command {
             System.out.println("TurnToTag: tag not found for " + MAX_MISSED_CYCLES + " cycles, ending command.");
             return true;
         }
-        return rotController.atGoal();
+        // Stops when it is at goal. Remove this if we want it to always snap to tag
+        return false;
     }
 }

@@ -9,7 +9,8 @@ import frc.robot.subsystems.Vision;
 
 /**
 * Sets the shooter power automatically based on the distance to a specific target ID using vision data.
-* Note: This command is designed to run once and then finish. It does not continuously adjust 
+* Continuously adjusts. Tune down shooter upper kP if oscillates two much
+* Normally should work as long the distance don't change too rapidly
 */
 public class AutoPower extends Command {
     private boolean targetSet = false;
@@ -19,16 +20,17 @@ public class AutoPower extends Command {
     private PhotonTrackedTarget target;
     private Vision vision;
 
-    public AutoPower(Shooter shooter, Vision vision) {
+    public AutoPower(Shooter shooter, Vision vision, int targetId) {
         this.shooter = shooter;
         this.vision = vision;
+        this.targetId = targetId;
+        this.addRequirements(shooter);
     }
 
     @Override
     public void initialize() {
         System.out.println("Initializing AutoShoot command");
         // this.targetId = 4; // Example target ID, change as needed
-        this.targetId = TagUtil.Side.HUB_FRONT_CENTER.getTargettingId(); 
     }
 
     @Override

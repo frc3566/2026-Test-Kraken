@@ -26,7 +26,7 @@ import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
 import frc.robot.commands.vision.AutoPower;
-import frc.robot.commands.vision.TagUtil;
+import frc.robot.commands.vision.LogTargetDistance;
 import frc.robot.commands.vision.TurnToTag;
 import frc.robot.commands.vision.UpdateVisionPoseEstimate;
 import frc.robot.generated.TunerConstants;
@@ -125,10 +125,12 @@ public class RobotContainer {
 
         firstDriver.a().toggleOnTrue(new TurnToTag(
             drivetrain,
-            TagUtil.Side.HUB_FRONT_CENTER.getTargettingId(),
+            4,
             () -> -firstDriver.getLeftY() * MaxSpeed,
             () -> -firstDriver.getLeftX() * MaxSpeed
         ));
+
+        firstDriver.y().toggleOnTrue(new LogTargetDistance(vision));
 
         firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(50)));
         firstDriver.leftTrigger().onFalse(new InstantCommand( () -> shooter.stopLower()));
@@ -154,7 +156,7 @@ public class RobotContainer {
         secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(30)));
 
         // Auto Power
-        secondDriver.y().onTrue(new AutoPower(shooter, vision));
+        secondDriver.y().onTrue(new AutoPower(shooter, vision, 4));
 
         // Stop shooter and interrupt auto power
         secondDriver.a().onTrue(shooter.runOnce(() -> shooter.stopUpper()));

@@ -3,13 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.5,
-        "y": 0.625
+        "x": 1.5,
+        "y": 2.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.024365364806411,
-        "y": 0.6048876062101641
+        "x": 1.75,
+        "y": 2.0
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.5,
+        "y": 0.625
+      },
+      "prevControl": {
+        "x": 2.8046726811031553,
+        "y": 0.8250316955590741
+      },
+      "nextControl": {
+        "x": 4.002902399108356,
+        "y": 0.4803250866743313
       },
       "isLocked": false,
       "linkedName": null
@@ -20,12 +36,12 @@
         "y": 0.625
       },
       "prevControl": {
-        "x": 5.200120291295376,
-        "y": 0.6584569907394021
+        "x": 5.226748189549949,
+        "y": 0.5640205901586834
       },
       "nextControl": {
-        "x": 7.063628470606089,
-        "y": 0.580511050594267
+        "x": 6.565167044264378,
+        "y": 0.6695696374133858
       },
       "isLocked": false,
       "linkedName": null
@@ -36,12 +52,12 @@
         "y": 1.75
       },
       "prevControl": {
-        "x": 7.701499360253586,
-        "y": 1.392977834180503
+        "x": 7.694029188861019,
+        "y": 1.3756135348656648
       },
       "nextControl": {
-        "x": 8.020368251557286,
-        "y": 2.0491325454951173
+        "x": 8.110857190800084,
+        "y": 2.237933603128651
       },
       "isLocked": false,
       "linkedName": null
@@ -52,12 +68,12 @@
         "y": 7.0
       },
       "prevControl": {
-        "x": 8.337184662690035,
-        "y": 6.1245529587204395
+        "x": 8.25301995722512,
+        "y": 6.396945350205403
       },
       "nextControl": {
-        "x": 7.663083639150687,
-        "y": 7.401401357683483
+        "x": 7.594281973477609,
+        "y": 7.4478290310865125
       },
       "isLocked": false,
       "linkedName": null
@@ -68,12 +84,12 @@
         "y": 7.375
       },
       "prevControl": {
-        "x": 6.507936335410302,
-        "y": 7.300759744441545
+        "x": 6.717727410005974,
+        "y": 7.351060490888621
       },
       "nextControl": {
-        "x": 4.526088790365539,
-        "y": 7.446734111128232
+        "x": 4.236084323067197,
+        "y": 7.399847532062861
       },
       "isLocked": false,
       "linkedName": null
@@ -84,12 +100,12 @@
         "y": 7.375
       },
       "prevControl": {
-        "x": 4.464968576618071,
-        "y": 7.443388452849978
+        "x": 4.560122606575145,
+        "y": 7.4004107207369945
       },
       "nextControl": {
-        "x": 2.4488610962363584,
-        "y": 7.300504555173439
+        "x": 2.406943314590303,
+        "y": 7.3487998623834825
       },
       "isLocked": false,
       "linkedName": null
@@ -100,8 +116,8 @@
         "y": 6.0
       },
       "prevControl": {
-        "x": 2.329363972310244,
-        "y": 6.326144778467904
+        "x": 2.466310922373608,
+        "y": 6.203410480842527
       },
       "nextControl": null,
       "isLocked": false,
@@ -111,22 +127,26 @@
   "rotationTargets": [
     {
       "waypointRelativePos": 1,
-      "rotationDegrees": 180.0
-    },
-    {
-      "waypointRelativePos": 2,
-      "rotationDegrees": -90.0
-    },
-    {
-      "waypointRelativePos": 3,
-      "rotationDegrees": -90.0
-    },
-    {
-      "waypointRelativePos": 4,
       "rotationDegrees": 0.0
     },
     {
-      "waypointRelativePos": 5,
+      "waypointRelativePos": 2.0,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 3.0,
+      "rotationDegrees": -90.0
+    },
+    {
+      "waypointRelativePos": 4.0,
+      "rotationDegrees": -90.0
+    },
+    {
+      "waypointRelativePos": 5.0,
+      "rotationDegrees": 0.0
+    },
+    {
+      "waypointRelativePos": 6.0,
       "rotationDegrees": 0.0
     }
   ],
@@ -149,7 +169,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 180.0
+    "rotation": 27.0
   },
   "useDefaultConstraints": true
 }

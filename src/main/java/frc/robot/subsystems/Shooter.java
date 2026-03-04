@@ -21,7 +21,7 @@ public class Shooter extends SubsystemBase {
         var upperConfig = new Slot0Configs();
         var lowerConfig = new Slot0Configs();
 
-        upperConfig.kP = 0.8;
+        upperConfig.kP = 0.6;
         upperConfig.kV = 0.12;
 
         lowerConfig.kP = 0.35;
@@ -66,5 +66,9 @@ public class Shooter extends SubsystemBase {
         // 15.1 = one-shot sampled value, adjust as necessary
         double rps = 15.1 * distance;
         setUpperPower(rps);
+    }
+
+    public double getUpperVelocity(){
+        return upperMotor.getVelocity().getValueAsDouble();
     }
 }

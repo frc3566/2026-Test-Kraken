@@ -154,10 +154,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Intake Arm Power", armPower);
         SmartDashboard.putNumber("Intake Roller Power", rollerPower);
         SmartDashboard.putNumber("Intake Arm Position", armPosition);
-
-
-        SmartDashboard.putNumber("PID/Shooter percent", m_robotContainer.shooter.getUpperDutyCyle());
-        SmartDashboard.putNumber("PID/Shooter RPM", m_robotContainer.shooter.getUpperUpperVelocity());
+        SmartDashboard.putNumber("PID/Shooter RPM", m_robotContainer.shooter.getUpperVelocity());
         
     }
 }

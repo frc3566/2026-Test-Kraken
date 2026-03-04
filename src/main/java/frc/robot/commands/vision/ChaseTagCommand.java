@@ -29,8 +29,8 @@ import frc.robot.subsystems.Vision;
 public class ChaseTagCommand extends Command {
   /** Creates a new ChaseTagCommand. */
   // this is honestly useless but it cool for messing around and testing vision
-  private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(2, 1);
-  private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(2, 1);
+  private static final TrapezoidProfile.Constraints xConstraints = new TrapezoidProfile.Constraints(3, 3);
+  private static final TrapezoidProfile.Constraints yConstraints = new TrapezoidProfile.Constraints(3, 3);
   private static final TrapezoidProfile.Constraints rotConstraints = new TrapezoidProfile.Constraints(3/4 * Math.PI, 1/2 * Math.PI);
 
   private final int tagToChase;
@@ -42,8 +42,8 @@ public class ChaseTagCommand extends Command {
 //   private final PhotonCamera photonCamera;
   private final CommandSwerveDrivetrain swerve;
 
-  private final ProfiledPIDController xController = new ProfiledPIDController(2, 0, 0, xConstraints);
-  private final ProfiledPIDController yController = new ProfiledPIDController(2, 0, 0, yConstraints);
+  private final ProfiledPIDController xController = new ProfiledPIDController(0.5, 0, 0, xConstraints);
+  private final ProfiledPIDController yController = new ProfiledPIDController(0.5, 0, 0, yConstraints);
   private final ProfiledPIDController rotController = new ProfiledPIDController(2, 0, 0, rotConstraints);
   private final SwerveRequest.ApplyRobotSpeeds drive = new SwerveRequest.ApplyRobotSpeeds();
   private double xSpeed, ySpeed, rotSpeed;
@@ -109,10 +109,6 @@ public class ChaseTagCommand extends Command {
           var camToTarget = target.getBestCameraToTarget();
           var targetPose = cameraPose.transformBy(camToTarget);
           var goalPose = targetPose.transformBy(tagToGoal).toPose2d();
-
-          SmartDashboard.putString("Vision/xDiff", String.format("%.2f meters", (Math.abs(xController.getGoal().position - goalPose.getX()))));
-          SmartDashboard.putString("Vision/yDiff", String.format("%.2f meters", (Math.abs(yController.getGoal().position - goalPose.getY()))));
-          SmartDashboard.putString("Vision/rotDiff", String.format("%.2f rads", (Math.abs(rotController.getGoal().position - goalPose.getRotation().getRadians()))));
 
           SmartDashboard.putBoolean("Vision/xAtGoal", xController.atGoal());
           SmartDashboard.putBoolean("Vision/yAtGoal", yController.atGoal());

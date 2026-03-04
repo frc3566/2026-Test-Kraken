@@ -9,6 +9,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.cscore.UsbCamera;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -23,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
+import frc.robot.commands.vision.AutoPower;
 import frc.robot.commands.vision.UpdateVisionPoseEstimate;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -44,8 +47,8 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-        private final CommandXboxController firstDriver = new CommandXboxController(0);
-        private final CommandXboxController secondDriver = new CommandXboxController(1);
+    private final CommandXboxController firstDriver = new CommandXboxController(0);
+    private final CommandXboxController secondDriver = new CommandXboxController(1);
         
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
@@ -59,10 +62,19 @@ public class RobotContainer {
     public  SendableChooser<Command> thirdChooser;
 
     public RobotContainer() {
+
+        configureCamera();
+        
         configureAutoCommand();
         configureAutoChooser();
         configureBindings();
-        
+
+    }
+
+    private void configureCamera() {
+        UsbCamera camera = CameraServer.startAutomaticCapture();
+        camera.setResolution(320, 240);
+        camera.setFPS(15);
     }
 
     private void configureAutoChooser() {
@@ -126,21 +138,25 @@ public class RobotContainer {
         secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.3)));
         secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.stopArm()));
 
-        /* Scoring Speed */
+        // Scoring 
         secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(50)));
-        // Toggle Shooter (passing)
-        // secondDriver.y().toggleOnTrue(new InstantCommand(() -> shooter.setUpperPower(shooter.testSpeed)));
+        
+        // Passing 
+        secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(30)));
 
-        // secondDriver.y().onTrue(new AutoShoot(shooter));
+        // Auto Power
+        secondDriver.y().onTrue(new AutoPower(shooter, vision));
+
+        // Stop shooter and interrupt auto power
+        secondDriver.a().onTrue(shooter.runOnce(() -> shooter.stopUpper()));
+
         secondDriver.povDown().onTrue(new ArmSwitch(intake, true));
         secondDriver.povUp().onTrue(new ArmSwitch(intake, false));
         secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));
         secondDriver.povRight().onTrue(new InstantCommand(() -> intake.resetArmPosition(false)));
 
-        /* Passing speed */
-        secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(30)));
+        
 
-        secondDriver.a().onTrue(new InstantCommand(() -> shooter.stopUpper()));
 
         // secondDriver.povRight().onTrue(new InstantCommand( () -> shooter.addTestSpeed(0.01)));
         // secondDriver.povLeft().onTrue(new InstantCommand( () -> shooter.addTestSpeed(-0.01)));

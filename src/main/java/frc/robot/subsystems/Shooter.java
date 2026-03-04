@@ -5,7 +5,6 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -62,23 +61,10 @@ public class Shooter extends SubsystemBase {
         System.out.println("Test Speed: " + testSpeed);
     }
 
-
-    // Used with /Vision/AutoShoot
-    // NEED TO RETEST
+    /* Sets flywheel speed based on distance to target */
     public void autoPower(double distance){
-        // Percentage Power Calculation
-        double percentPower = 31.1 + ((3.3)*(Units.metersToFeet(distance))) + (-0.0714*Math.pow(Units.metersToFeet(distance), 2));
-        
-        System.out.println("Auto Power: " + percentPower);
-        setUpperPower(percentPower);
+        // 15.1 = one-shot sampled value, adjust as necessary
+        double rps = 15.1 * distance;
+        setUpperPower(rps);
     }
-
-    public double getUpperDutyCyle(){
-        return upperMotor.getDutyCycle().getValueAsDouble();
-    }
-
-    public double getUpperUpperVelocity(){
-        return upperMotor.getVelocity().getValueAsDouble();
-    }
-    
 }

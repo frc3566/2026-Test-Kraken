@@ -364,11 +364,11 @@ public class Vision extends SubsystemBase {
      * MAIN (Limelight3)
      */
     MAIN("limelight-2026-1",
-        new Rotation3d(0, -0.1745, 0),
+        new Rotation3d(0, 0.1745, 0),
         new Translation3d(
-          Units.inchesToMeters(14.5),
+          Units.inchesToMeters(14.337),
           Units.inchesToMeters(0),
-          Units.inchesToMeters(10)
+          Units.inchesToMeters(10.486)
         ),
         VecBuilder.fill(0.05, 0.05, 0.05), VecBuilder.fill(0.5, 0.5, 1));
     

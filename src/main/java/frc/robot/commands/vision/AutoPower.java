@@ -27,58 +27,68 @@ public class AutoPower extends Command {
     @Override
     public void initialize() {
         System.out.println("Initializing AutoShoot command");
-        this.targetId = TagUtil.Side.HUB_FRONT_CENTER.getTargettingId(); // Example target ID, change as needed
+        // this.targetId = 4; // Example target ID, change as needed
+        this.targetId = TagUtil.Side.HUB_FRONT_CENTER.getTargettingId(); 
     }
 
     @Override
     public void execute() {
         Vision.Cameras.MAIN.updateUnreadResults();
         var results = Vision.Cameras.MAIN.getLatestResult();
-        
-        if (!results.isEmpty()) {
-            var trackedTags = results.get().getTargets();
-            System.out.println("Tracked Tags: " + trackedTags.size());
-            try {
-                target = trackedTags.stream()
-                            .filter(t -> t.getFiducialId() == targetId)
-                            .findFirst()
-                            .orElse(null);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
 
-            var cameraToTarget = target.getBestCameraToTarget();
-            double measuredDist = Math.sqrt(Math.pow(cameraToTarget.getX(), 2) + Math.pow(cameraToTarget.getY(), 2));
-            double estimatedDist = vision.getDistanceFromAprilTag(targetId);
-            
-            SmartDashboard.putBoolean("Found Target Tag ID " + targetId, true);
-            SmartDashboard.putString("Camera to Target", cameraToTarget.toString());
-            SmartDashboard.putNumber("Distance to Target (VISION)", measuredDist);
-            SmartDashboard.putNumber("Distance to Target (POSE ESTIMATE)", estimatedDist);
-            
-            
-            if(target!=null){
-                shooter.autoPower(measuredDist);
-                targetFound = true;
-            } else{
-                targetFound = false;
-            }
-            SmartDashboard.putBoolean("Target Found: " + targetId, targetFound);
-
-        } 
-        else{
+        if(results.isEmpty()){
             System.out.println("Result is empty!");
+            return;
         }
+
+        var trackedTags = results.get().getTargets();
+
+        // Check if any tags are currently tracked
+        if(trackedTags.isEmpty()){
+            System.out.println("No tags currently tracked!");
+            return;
+        }
+
+        System.out.println("Tracked Tags: " + trackedTags.size());
+
+        // Attempt to find the target with the specified ID among the tracked tags
+        try {
+            target = trackedTags.stream()
+                        .filter(t -> t.getFiducialId() == targetId)
+                        .findFirst()
+                        .orElse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        // If the target is found, calculate distances and set shooter power
+        if(target == null){
+            System.out.println("Target ID " + targetId + " not found among tracked tags.");
+            return;
+        }
+
+        var cameraToTarget = target.getBestCameraToTarget();
+
+        double measuredDist = Math.sqrt(Math.pow(cameraToTarget.getX(), 2) + Math.pow(cameraToTarget.getY(), 2));
+        double estimatedDist = vision.getDistanceFromAprilTag(targetId);
+        
+        SmartDashboard.putBoolean("Found Target Tag ID " + targetId, true);
+        SmartDashboard.putString("Camera to Target", cameraToTarget.toString());
+        SmartDashboard.putNumber("Distance to Target (VISION)", measuredDist);
+        SmartDashboard.putNumber("Distance to Target (POSE ESTIMATE)", estimatedDist);
+        
+        shooter.autoPower(measuredDist);
 
     }
 
     @Override
     public void end(boolean interrupted) {
-    //    shooter.stopUpper();
+       System.out.println("AutoPower command ended.");
     }
 
     @Override
     public boolean isFinished() {
-        return true;
+        return false; // runs continuously until toggled off
     }
 }

@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -21,7 +22,7 @@ public class Shooter extends SubsystemBase {
         var upperConfig = new Slot0Configs();
         var lowerConfig = new Slot0Configs();
 
-        upperConfig.kP = 0.6;
+        upperConfig.kP = 0.55;
         upperConfig.kV = 0.12;
 
         lowerConfig.kP = 0.35;
@@ -61,10 +62,11 @@ public class Shooter extends SubsystemBase {
         System.out.println("Test Speed: " + testSpeed);
     }
 
-    /* Sets flywheel speed based on distance to target */
+    /* Sets flywheel speed based on distance in meters to target */
     public void autoPower(double distance){
         // 15.1 = one-shot sampled value, adjust as necessary
-        double rps = 15.1 * distance;
+        double distFeet = Units.metersToFeet(distance);
+        double rps = 39.7+ 0.0417 * distFeet + 0.137 * Math.pow(distFeet,2);
         setUpperPower(rps);
     }
 

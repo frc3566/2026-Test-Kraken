@@ -5,28 +5,27 @@
     "data": {
       "commands": [
         {
-          "type": "parallel",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "RightHumanToShoot"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "ArmDown"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutoPrime"
-                }
-              }
-            ]
+            "pathName": "RightShootToHuman"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "RightHumanToShoot"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0
           }
         },
         {

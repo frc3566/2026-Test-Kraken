@@ -27,6 +27,7 @@ import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
 import frc.robot.commands.vision.AutoPower;
 import frc.robot.commands.vision.LogTargetDistance;
+import frc.robot.commands.vision.TagUtil;
 import frc.robot.commands.vision.TurnToTag;
 import frc.robot.commands.vision.UpdateVisionPoseEstimate;
 import frc.robot.generated.TunerConstants;
@@ -125,7 +126,7 @@ public class RobotContainer {
 
         firstDriver.a().toggleOnTrue(new TurnToTag(
             drivetrain,
-            4,
+            TagUtil.Hub.FRONT_CENTER.getTargettingId(),
             () -> -firstDriver.getLeftY() * MaxSpeed,
             () -> -firstDriver.getLeftX() * MaxSpeed
         ));
@@ -156,7 +157,7 @@ public class RobotContainer {
         secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(30)));
 
         // Auto Power
-        secondDriver.y().onTrue(new AutoPower(shooter, vision, 4));
+        secondDriver.y().onTrue(new AutoPower(shooter, vision, TagUtil.Hub.FRONT_CENTER.getTargettingId()));
 
         // Stop shooter and interrupt auto power
         secondDriver.a().onTrue(shooter.runOnce(() -> shooter.stopUpper()));
@@ -221,7 +222,7 @@ public class RobotContainer {
         // Could be due to inaccurate field, use PrimeAndShoot if things are not right
         NamedCommands.registerCommand(
             "RightPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,60, 1, 5)
+            new PrimeAndShoot(shooter, intake,55, 1, 5)
         );
 
         NamedCommands.registerCommand(

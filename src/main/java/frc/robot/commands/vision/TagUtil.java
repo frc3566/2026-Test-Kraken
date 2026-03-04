@@ -9,19 +9,19 @@ public class TagUtil {
     }
 
     // Corresponding tag pairs. First is blue, second is red.
-    public enum Side {
+    public enum Hub {
         // FRONT = Facing the alliance, CENTER/LEFT = position on the face
-        HUB_FRONT_CENTER(new Pair<>(10, 26)), 
-        HUB_FRONT_LEFT(new Pair<>(9, 25)),
-        HUB_LEFT_CENTER(new Pair<>(5, 21)),
-        HUB_LEFT_RIGHT(new Pair<>(8, 24)),
-        HUB_RIGHT_CENTER(new Pair<>(2, 18)),
-        HUB_RIGHT_LEFT(new Pair<>(11, 27)),
+        FRONT_CENTER(new Pair<Integer, Integer>(10, 26)), 
+        FRONT_LEFT(new Pair<Integer, Integer>(9, 25)),
+        LEFT_CENTER(new Pair<Integer, Integer>(5, 21)),
+        LEFT_RIGHT(new Pair<Integer, Integer>(8, 24)),
+        RIGHT_CENTER(new Pair<Integer, Integer>(2, 18)),
+        RIGHT_LEFT(new Pair<Integer, Integer>(11, 27)),
         ;
 
         private Pair<Integer, Integer> targettingIds;
         
-        private Side(Pair<Integer, Integer> targettingIds) {
+        private Hub(Pair<Integer, Integer> targettingIds) {
             this.targettingIds = targettingIds;
         }
 

@@ -30,6 +30,7 @@ public final class Constants {
     public static final int IntakeRoller = 40;
     public static final int IntakeArm = 41;
     public static final int Agitator = 23;
+    public static final int Climber = 50;
   }
 
   public static class Arm{

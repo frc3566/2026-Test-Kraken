@@ -1,6 +1,7 @@
 package frc.robot.commands.vision;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class TagUtil {
@@ -37,6 +38,8 @@ public class TagUtil {
                 return targettingIds.getSecond();
             }
         }
+
+
     }
 
     // public enum BranchLevel {
@@ -50,4 +53,12 @@ public class TagUtil {
     //         return List.of(6, 7, 8, 9, 10, 11);
     //     }
     // }
+    public static Translation2d getHubCenterTranslation(){
+        if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
+            return new Translation2d(4.625, 4.03);
+        } else {
+            return new Translation2d(11.915, 4.03);
+
+        }
+    }
 }

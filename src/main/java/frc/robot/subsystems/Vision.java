@@ -146,6 +146,8 @@ public class Vision extends SubsystemBase {
     for (Cameras camera : Cameras.values()) {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
 
+      SmartDashboard.putBoolean("Vision/Pose Estimation Enabled", true);
+
       SmartDashboard.putBoolean("Vision/Pose Estimation Available", poseEst.isPresent());
 
       poseEst = filterPose(poseEst);

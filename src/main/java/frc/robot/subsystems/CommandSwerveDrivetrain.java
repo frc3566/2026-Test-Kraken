@@ -6,6 +6,8 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveModule.SteerRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -54,9 +56,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
-    private final SwerveRequest.ApplyRobotSpeeds autoRequest =new SwerveRequest.ApplyRobotSpeeds();
-        // .withDriveRequestType(SwerveModule.DriveRequestType.Velocity)
-        // .withSteerRequestType(SwerveModule.SteerRequestType.Position);
+    private final SwerveRequest.ApplyRobotSpeeds autoRequest =new SwerveRequest.ApplyRobotSpeeds()
+        .withDriveRequestType(DriveRequestType.Velocity)
+        .withSteerRequestType(SteerRequestType.Position);
 
     
     /* Swerve requests to apply during SysId characterization */

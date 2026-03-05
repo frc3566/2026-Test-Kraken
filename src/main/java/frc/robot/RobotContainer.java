@@ -11,6 +11,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -26,10 +28,10 @@ import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
 import frc.robot.commands.vision.AutoPower;
+import frc.robot.commands.vision.DriveToPose;
 import frc.robot.commands.vision.LogTargetDistance;
 import frc.robot.commands.vision.TagUtil;
-import frc.robot.commands.vision.TurnToTag;
-import frc.robot.commands.vision.UpdateVisionPoseEstimate;
+import frc.robot.commands.vision.TurnToHub;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
@@ -122,11 +124,8 @@ public class RobotContainer {
             
         firstDriver.x().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        firstDriver.b().onTrue(new UpdateVisionPoseEstimate(vision, drivetrain));
-
-        firstDriver.a().toggleOnTrue(new TurnToTag(
+        firstDriver.b().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(1,1, new Rotation2d()))); //TODO: Test pose 2d
             drivetrain,
-            TagUtil.Hub.FRONT_CENTER.getTargettingId(),
             () -> -firstDriver.getLeftY() * MaxSpeed,
             () -> -firstDriver.getLeftX() * MaxSpeed
         ));
@@ -202,32 +201,37 @@ public class RobotContainer {
         // Prime the shooter while driving
         NamedCommands.registerCommand(
             "AutoPrime",
-            new AutoPrime(shooter, intake,58, 5) // Make it long enough so keeps running until deadline group?
+            new AutoPrime(shooter, intake,58) // Make it long enough so keeps running until deadline group?
         );
 
         // Generic Prime and Shoot.
         // We want to wait until the robot is stead, so 1 second for another priming
         NamedCommands.registerCommand(
             "PrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,58, 1, 5)
+            new PrimeAndShoot(shooter, intake,58, 1, 4)
         );
 
 
         NamedCommands.registerCommand(
             "LeftPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,56, 1, 5)
+            new PrimeAndShoot(shooter, intake,56, 1, 4)
         );
 
         // For some reason right side need more power.
         // Could be due to inaccurate field, use PrimeAndShoot if things are not right
         NamedCommands.registerCommand(
             "RightPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,55, 1, 5)
+            new PrimeAndShoot(shooter, intake,52, 1, 4)
+        );
+
+        NamedCommands.registerCommand(
+            "RightPrimeAndShootLong",
+            new PrimeAndShoot(shooter, intake,52, 1, 6)
         );
 
         NamedCommands.registerCommand(
             "CenterPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake, 52, 1, 5)
+            new PrimeAndShoot(shooter, intake, 52, 1, 4)
         );
 
         NamedCommands.registerCommand(

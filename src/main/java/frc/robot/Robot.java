@@ -30,7 +30,7 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         m_timeAndJoystickReplay.update();
-        // m_robotContainer.vision.updatePoseEstimation(m_robotContainer.drivetrain);
+        m_robotContainer.vision.updatePoseEstimation(m_robotContainer.drivetrain);
         putSubsystemTelemetry();
         SmartDashboard.putNumber("Robot Velocity X (m/s)", m_robotContainer.drivetrain.getState().Speeds.vxMetersPerSecond);
         SmartDashboard.putNumber("Robot Velocity Y (m/s)", m_robotContainer.drivetrain.getState().Speeds.vyMetersPerSecond);

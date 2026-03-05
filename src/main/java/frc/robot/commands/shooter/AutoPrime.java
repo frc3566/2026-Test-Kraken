@@ -25,6 +25,7 @@ public class AutoPrime extends Command {
         this.shooter = shooter;
         this.speed = speed;
         this.intake = intake;
+        this.addRequirements(intake);
     }
 
     public AutoPrime(Shooter shooter, Intake intake, double speed, double primeTime) {
@@ -32,6 +33,7 @@ public class AutoPrime extends Command {
         this.speed = speed;
         this.intake = intake;
         this.primeTime = primeTime;
+        this.addRequirements(intake);
     }
 
     @Override

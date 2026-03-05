@@ -58,13 +58,13 @@ public class TurnToHub extends Command {
             .withDeadband(MaxSpeed * 0.1)
             .withRotationalDeadband(MaxAngularRate * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-            
+
         addRequirements(drivetrain);
 
         // Configure the built-in heading PID on the swerve request.
         // TODO: Tune these — run the SysId rotation routine in CommandSwerveDrivetrain
         //       to get accurate values.
-        drive.HeadingController.setPID(5.0, 0, 0.1);
+        drive.HeadingController.setPID(4.0, 0, 0.1);
         drive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
     }
 

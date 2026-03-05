@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
+import frc.robot.commands.shooter.PrimeAndShootFixed;
 import frc.robot.commands.vision.AutoPower;
 import frc.robot.commands.vision.DriveToPose;
 import frc.robot.commands.vision.LogTargetDistance;
@@ -214,30 +215,30 @@ public class RobotContainer {
         // We want to wait until the robot is stead, so 1 second for another priming
         NamedCommands.registerCommand(
             "PrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,58, 1, 4)
+            new PrimeAndShoot(shooter, intake, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation, 1, 4)
         );
 
 
         NamedCommands.registerCommand(
             "LeftPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,56, 1, 4)
+            new PrimeAndShootFixed(shooter, intake, 56, 1, 4)
         );
 
         // For some reason right side need more power.
         // Could be due to inaccurate field, use PrimeAndShoot if things are not right
         NamedCommands.registerCommand(
             "RightPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake,52, 1, 4)
+            new PrimeAndShootFixed(shooter, intake, 52, 1, 4)
         );
 
         NamedCommands.registerCommand(
             "RightPrimeAndShootLong",
-            new PrimeAndShoot(shooter, intake,52, 1, 6)
+            new PrimeAndShootFixed(shooter, intake, 52, 1, 6)
         );
 
         NamedCommands.registerCommand(
             "CenterPrimeAndShoot",
-            new PrimeAndShoot(shooter, intake, 52, 1, 4)
+            new PrimeAndShootFixed(shooter, intake, 52, 1, 4)
         );
 
         NamedCommands.registerCommand(

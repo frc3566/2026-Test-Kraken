@@ -70,6 +70,13 @@ public class Shooter extends SubsystemBase {
         setUpperPower(rps);
     }
 
+    public double getAutoPower(double distance){
+        // 15.1 = one-shot sampled value, adjust as necessary
+        double distFeet = Units.metersToFeet(distance);
+        double rps = 39.7+ 0.0417 * distFeet + 0.137 * Math.pow(distFeet,2);
+        return rps; 
+    }
+
     public double getUpperVelocity(){
         return upperMotor.getVelocity().getValueAsDouble();
     }

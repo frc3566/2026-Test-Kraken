@@ -1,4 +1,9 @@
 package frc.robot.commands.shooter;
+
+import java.util.function.Supplier;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
@@ -7,51 +12,51 @@ import frc.robot.subsystems.Shooter;
 public class PrimeAndShoot extends Command {
     private final Shooter shooter;
     private final Intake intake;
-    private final double speed; // In rotations per sec, -100 to 100
-    private double primeTime = 1.0; // Default
-    private double shootTime = 5.0; // Default
+    private final Supplier<Pose2d> robotPose;
+    private final Supplier<Translation2d> targetTranslation;
+    private double primeTime = 1.0;
+    private double shootTime = 5.0;
     private final Timer timer = new Timer();
 
-    public PrimeAndShoot(Shooter shooter, Intake intake, double rps, double primeTime, double shootTime) {
+    public PrimeAndShoot(Shooter shooter, Intake intake, Supplier<Pose2d> robotPose, Supplier<Translation2d> targetTranslation, double primeTime, double shootTime) {
         this.shooter = shooter;
-        this.speed = rps;
         this.intake = intake;
+        this.robotPose = robotPose;
+        this.targetTranslation = targetTranslation;
         this.primeTime = primeTime;
         this.shootTime = shootTime;
+        addRequirements(shooter, intake);
     }
 
-    public PrimeAndShoot(Shooter shooter, Intake intake, double speed, double primeTime) {
-        this.shooter = shooter;
-        this.speed = speed;
-        this.intake = intake;
-        this.primeTime = primeTime;
+    public PrimeAndShoot(Shooter shooter, Intake intake, Supplier<Pose2d> robotPose, Supplier<Translation2d> targetTranslation, double primeTime) {
+        this(shooter, intake, robotPose, targetTranslation, primeTime, 5.0);
     }
 
-    public PrimeAndShoot(Shooter shooter, Intake intake, double speed) {
-        this.shooter = shooter;
-        this.speed = speed;
-        this.intake = intake;
+    public PrimeAndShoot(Shooter shooter, Intake intake, Supplier<Pose2d> robotPose, Supplier<Translation2d> targetTranslation) {
+        this(shooter, intake, robotPose, targetTranslation, 1.0, 5.0);
     }
-
 
     @Override
     public void initialize() {
         System.out.println("Prime And Shoot Command Initialized");
         timer.reset();
         timer.start();
-        // shooter.setAgitatorPower(speed);
-        shooter.setUpperPower(speed);
-        intake.rollerIn(80);
+        double distance = robotPose.get().getTranslation().getDistance(targetTranslation.get());
+        shooter.autoPower(distance); // Initial spin-up
+        intake.rollerIn(100);
     }
 
     @Override
     public void execute() {
-        if (timer.get()>primeTime) { // Adjust the time as needed
-            System.out.println("Prime And Shoot Command: Lower shooter primed, starting upper shooter.");
-            shooter.setLowerPower(speed);
+        double distance = robotPose.get().getTranslation().getDistance(targetTranslation.get());
+        shooter.autoPower(distance); // Continuously update flywheel speed as distance changes
+
+        if (timer.get() > primeTime) {
+            // Flywheel is up to speed — engage the feeder
+            shooter.setLowerPower(shooter.getAutoPower(distance));
         }
     }
-    
+
     @Override
     public void end(boolean interrupted) {
         shooter.stopUpper();
@@ -62,6 +67,7 @@ public class PrimeAndShoot extends Command {
 
     @Override
     public boolean isFinished() {
-        return timer.get()>(primeTime + shootTime);
+        return timer.get() > (primeTime + shootTime);
     }
 }
+

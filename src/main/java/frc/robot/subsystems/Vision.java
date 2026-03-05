@@ -206,15 +206,15 @@ public class Vision extends SubsystemBase {
       return Optional.empty(); 
     }
 
-    double poseDiffOrigin = PhotonUtils.getDistanceToPose(currentPose.get(), new Pose2d(0,0, new Rotation2d(0)));
-      if(poseDiffOrigin <= 0.5){
-        return pose;
-      } 
+    // double poseDiffOrigin = PhotonUtils.getDistanceToPose(currentPose.get(), new Pose2d(0,0, new Rotation2d(0)));
+    //   if(poseDiffOrigin <= 0.5){
+    //     return pose;
+    //   } 
 
     // estimated pose is very far from recorded robot pose
     double poseDiffTag = PhotonUtils.getDistanceToPose(currentPose.get(), pose.get().estimatedPose.toPose2d());
     SmartDashboard.putNumber("Distance to Tag Pose", poseDiffTag); 
-    if (poseDiffTag > 1) {
+    if (poseDiffTag > 3) {
 
       longDistangePoseEstimationCount++;
 
@@ -229,7 +229,7 @@ public class Vision extends SubsystemBase {
     return pose;
   }
 
-  /**
+  /**ß
    * Generates the estimated robot pose. Returns empty if:
    * <ul>
    * <li>No Pose Estimates could be generated</li>

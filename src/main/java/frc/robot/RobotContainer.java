@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.climb.ClimbToHeight;
 import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
@@ -33,6 +34,7 @@ import frc.robot.commands.vision.LogTargetDistance;
 import frc.robot.commands.vision.TagUtil;
 import frc.robot.commands.vision.TurnToHub;
 import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -60,6 +62,7 @@ public class RobotContainer {
     public final Shooter shooter = new Shooter();
     public final Intake intake = new Intake();
     public final Vision vision = new Vision(drivetrain::getPose);
+    public final Climber climber = new Climber();
     // public final Climber climber = new Climber();
 
     public  SendableChooser<Command> firstChooser;
@@ -123,14 +126,15 @@ public class RobotContainer {
         // vision.setDefaultCommand(new UpdateVisionPoseEstimate(vision, drivetrain));
             
         firstDriver.x().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+     
+        firstDriver.y().toggleOnTrue(new LogTargetDistance(vision));
+
+        firstDriver.a().toggleOnTrue(new TurnToHub(drivetrain, 
+            () -> -firstDriver.getLeftY() * MaxSpeed, 
+            () -> -firstDriver.getLeftX() * MaxSpeed));
 
         firstDriver.b().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(1,1, new Rotation2d()))); //TODO: Test pose 2d
-            drivetrain,
-            () -> -firstDriver.getLeftY() * MaxSpeed,
-            () -> -firstDriver.getLeftX() * MaxSpeed
-        ));
-
-        firstDriver.y().toggleOnTrue(new LogTargetDistance(vision));
+       
 
         firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(50)));
         firstDriver.leftTrigger().onFalse(new InstantCommand( () -> shooter.stopLower()));
@@ -161,8 +165,10 @@ public class RobotContainer {
         // Stop shooter and interrupt auto power
         secondDriver.a().onTrue(shooter.runOnce(() -> shooter.stopUpper()));
 
-        secondDriver.povDown().onTrue(new ArmSwitch(intake, true));
-        secondDriver.povUp().onTrue(new ArmSwitch(intake, false));
+
+        secondDriver.povUp().onTrue(new ClimbToHeight(climber, Constants.Climber.topSetPoint));
+        secondDriver.povDown().onTrue(new ClimbToHeight(climber, Constants.Climber.bottomSetPoint));
+
         secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));
         secondDriver.povRight().onTrue(new InstantCommand(() -> intake.resetArmPosition(false)));
 

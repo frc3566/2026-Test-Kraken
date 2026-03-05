@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,7 +14,7 @@ public class Climber extends SubsystemBase {
     public final TalonFX climberMotor;
 
     // Reuse a single request object — just update the position each call
-    private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0)
+    private final PositionDutyCycle positionRequest = new PositionDutyCycle(0)
         .withSlot(0);
 
     /**
@@ -33,7 +33,7 @@ public class Climber extends SubsystemBase {
         // TODO: Tune on the real robot.
         // ------------------------------------------------------------------
         var slot0 = new Slot0Configs();
-        slot0.kP = 2.0;   // Proportional
+        slot0.kP = 0.6;   // Proportional
         slot0.kI = 0.0;
         slot0.kD = 0;    // Derivative — damp oscillation
         slot0.kV = 0.12;   // Velocity feedforward (V·s/rot)
@@ -47,21 +47,12 @@ public class Climber extends SubsystemBase {
         // TODO: Tune on the real robot — kG especially depends on robot weight.
         // ------------------------------------------------------------------
         var slot1 = new Slot1Configs();
-        slot1.kP = 4.0;   // Higher P to fight the load
+        slot1.kP = 0.8;   // Higher P to fight the load
         slot1.kI = 0.0;
-        slot1.kD = 0.2;
+        slot1.kD = 0;
         slot1.kV = 0.12;
         slot1.kG = 0.0;    // Feedforward to hold robot weight — tune this up if it sags
         config.Slot1 = slot1;
-
-        // ------------------------------------------------------------------
-        // MotionMagic profile constraints
-        // Descent (loaded) uses a slower cruise velocity — set via withSlot() in setPosition().
-        // TODO: Tune to your mechanism's safe speeds.
-        // ------------------------------------------------------------------
-        config.MotionMagic.MotionMagicCruiseVelocity = 80;   // rot/s — used for ascent (Slot 0)
-        config.MotionMagic.MotionMagicAcceleration   = 160;  // rot/s²
-        config.MotionMagic.MotionMagicJerk           = 1600; // rot/s³
 
         // ------------------------------------------------------------------
         // Current limits — critical when the motor fights the robot's full weight.
@@ -77,7 +68,7 @@ public class Climber extends SubsystemBase {
         // TODO: Set real limits once you know the travel of your climber.
         // ------------------------------------------------------------------
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable    = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 50.0; // TODO: Tune
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = -175.0; // TODO: Tune
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable    = true;
         config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
 
@@ -88,7 +79,7 @@ public class Climber extends SubsystemBase {
     }
 
     /**
-     * Commands the climber to a target position using MotionMagic.
+     * Commands the climber to a target position
      * Automatically selects the gain slot based on direction:
      *   - Slot 0 (unloaded) when moving up (target > current)
      *   - Slot 1 (loaded)   when moving down (target < current) — robot is hanging
@@ -98,7 +89,7 @@ public class Climber extends SubsystemBase {
     public void setPosition(double rotations) {
         boolean movingDown = rotations < getPosition();
         int slot = movingDown ? 1 : 0;
-        climberMotor.setControl(motionMagicRequest.withPosition(rotations).withSlot(slot));
+        climberMotor.setControl(positionRequest.withPosition(rotations).withSlot(slot));
     }
 
     /**
@@ -109,7 +100,7 @@ public class Climber extends SubsystemBase {
      * @param slot      0 = unloaded ascent, 1 = loaded descent.
      */
     public void setPosition(double rotations, int slot) {
-        climberMotor.setControl(motionMagicRequest.withPosition(rotations).withSlot(slot));
+        climberMotor.setControl(positionRequest.withPosition(rotations).withSlot(slot));
     }
 
     /**

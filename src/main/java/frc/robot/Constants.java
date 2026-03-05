@@ -36,6 +36,11 @@ public final class Constants {
   public static class Arm{
     public static final double GearRatio = 64.0;
   }
+
+  public static class Climber{
+    public static final double topSetPoint = 0.0;
+    public static final double bottomSetPoint = -175.0;
+  }
   
   public static class AprilTags{
     public static final int RED_STAGE_SIDE = 9;

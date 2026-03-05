@@ -14,11 +14,11 @@ import frc.robot.subsystems.Climber;
 public class ClimbToHeight extends Command {
 
     /** How close (in mechanism rotations) is "close enough" to the target. */
-    private static final double TOLERANCE_ROTATIONS = 0.5;
+    private static final double TOLERANCE_ROTATIONS = 1;
 
     private final Climber climber;
     private final double targetRotations;
-
+ 
     /**
      * @param climber         The climber subsystem.
      * @param targetRotations Target position in mechanism rotations.

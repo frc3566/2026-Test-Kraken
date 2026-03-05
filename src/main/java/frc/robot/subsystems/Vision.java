@@ -58,8 +58,9 @@ public class Vision extends SubsystemBase {
   /**
    * Ambiguity defined as a value between (0,1). Used in
    * {@link Vision#filterPose}.
+   * Lower value = stricter filtering. 0.15 rejects more borderline targets.
    */
-  private final double maximumAmbiguity = 0.20;
+  private final double maximumAmbiguity = 0.15;
   /**
    * Photon Vision Simulation
    */
@@ -197,35 +198,45 @@ public class Vision extends SubsystemBase {
   private Optional<EstimatedRobotPose> filterPose(Optional<EstimatedRobotPose> pose) {
     if (pose.isEmpty()) { return pose; }
 
-    var bestTargetAmbiguity = pose.get().targetsUsed.stream()
-      .map(target -> target.getPoseAmbiguity())
-      .min(Double::compare);
+    // Reject if ANY target used has high ambiguity (max, not min).
+    // This prevents a single noisy tag from polluting a multi-tag estimate.
+    double worstAmbiguity = pose.get().targetsUsed.stream()
+        .mapToDouble(target -> target.getPoseAmbiguity())
+        .max()
+        .orElse(1.0);
 
-    SmartDashboard.putNumber("Vision Pose Ambiguity", bestTargetAmbiguity.orElse(-1.0));
-    if (bestTargetAmbiguity.orElse(1.0) > maximumAmbiguity) { 
-      return Optional.empty(); 
+    SmartDashboard.putNumber("Vision/Worst Target Ambiguity", worstAmbiguity);
+    if (worstAmbiguity > maximumAmbiguity) {
+      SmartDashboard.putString("Vision/Filter Reject Reason", "High Ambiguity: " + worstAmbiguity);
+      return Optional.empty();
     }
 
-    // double poseDiffOrigin = PhotonUtils.getDistanceToPose(currentPose.get(), new Pose2d(0,0, new Rotation2d(0)));
-    //   if(poseDiffOrigin <= 0.5){
-    //     return pose;
-    //   } 
+    // Sanity check: estimated 3D pose Z should be near the floor (robot is ground-based).
+    double estimatedZ = pose.get().estimatedPose.getZ();
+    SmartDashboard.putNumber("Vision/Estimated Pose Z", estimatedZ);
+    if (Math.abs(estimatedZ) > 0.75) {
+      SmartDashboard.putString("Vision/Filter Reject Reason", "Bad Z Height: " + estimatedZ);
+      return Optional.empty();
+    }
 
-    // estimated pose is very far from recorded robot pose
+    // Reject if the vision estimate is too far from current odometry pose.
+    // Tightened from 4.0m to 2.5m to reduce impact of outlier estimates.
     double poseDiffTag = PhotonUtils.getDistanceToPose(currentPose.get(), pose.get().estimatedPose.toPose2d());
-    SmartDashboard.putNumber("Distance to Tag Pose", poseDiffTag); 
-    if (poseDiffTag > 3) {
-
+    SmartDashboard.putNumber("Vision/Distance to Odometry Pose", poseDiffTag);
+    if (poseDiffTag > 2.5) {
       longDistangePoseEstimationCount++;
-
-      // if it calculates that we're, say, 10 meter away for more than 50 times in a row its probably maybe potentially right 
+      // Allow through only after many consecutive far readings (robot may be genuinely lost)
       if (longDistangePoseEstimationCount < 50) {
-        SmartDashboard.putBoolean("Vision Pose Too Far", true);
+        SmartDashboard.putBoolean("Vision/Pose Too Far", true);
+        SmartDashboard.putString("Vision/Filter Reject Reason", "Pose Too Far: " + poseDiffTag);
         return Optional.empty();
       }
     } else {
       longDistangePoseEstimationCount = 0;
+      SmartDashboard.putBoolean("Vision/Pose Too Far", false);
     }
+
+    SmartDashboard.putString("Vision/Filter Reject Reason", "Passed");
     return pose;
   }
 
@@ -372,7 +383,7 @@ public class Vision extends SubsystemBase {
           Units.inchesToMeters(0),
           Units.inchesToMeters(10.486)
         ),
-        VecBuilder.fill(0.05, 0.05, 0.05), VecBuilder.fill(0.5, 0.5, 1));
+        VecBuilder.fill(0.1, 0.1, 0.05), VecBuilder.fill(0.5, 0.5, 1));
     
     /**
      * Latency alert to use when high latency is detected.
@@ -596,7 +607,7 @@ public class Vision extends SubsystemBase {
     private void updateEstimatedGlobalPose() {
       Optional<EstimatedRobotPose> visionEst = Optional.empty();
       for (var change : resultsList) {
-        visionEst = poseEstimator.estimateAverageBestTargetsPose(change); //TODO: Try different strategies?
+        visionEst = poseEstimator.update(change); // Uses MULTI_TAG_PNP_ON_COPROCESSOR, falls back to LOWEST_AMBIGUITY
         updateEstimationStdDevs(visionEst, change.getTargets());
       }
       // System.out.println("Localization estimation: " + visionEst.map(e -> e.estimatedPose.toPose2d()));
@@ -650,7 +661,7 @@ public class Vision extends SubsystemBase {
           }
           // Increase std devs based on (average) distance
           // Do not trust vision if only one tag and far away
-          if (numTags == 1 && avgDist > 4) {
+          if (numTags == 1 && avgDist > 3) {
             estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
           } else {
             estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));

@@ -1,92 +1,57 @@
 package frc.robot.commands.vision;
 
-import org.photonvision.targeting.PhotonTrackedTarget;
+import java.util.function.Supplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.Vision;
 
 /**
-* Sets the shooter power automatically based on the distance to a specific target ID using vision data.
-* Continuously adjusts. Tune down shooter upper kP if oscillates two much
-* Normally should work as long the distance don't change too rapidly
-*/
+ * Sets the shooter power automatically based on the distance from the robot's
+ * pose estimate to a target Translation2d on the field.
+ * Continuously adjusts. Tune down shooter upper kP if it oscillates too much.
+ */
 public class AutoPower extends Command {
-    private boolean targetSet = false;
-    private int targetId;
-    private Shooter shooter;
-    private boolean targetFound = false;
-    private PhotonTrackedTarget target;
-    private Vision vision;
+    private final Shooter shooter;
+    private final Supplier<Pose2d> robotPose;
+    private final Supplier<Translation2d> targetTranslation;
 
-    public AutoPower(Shooter shooter, Vision vision, int targetId) {
+    /**
+     * @param shooter           Shooter subsystem
+     * @param robotPose         Supplier of the current robot pose (e.g. drivetrain::getState().Pose)
+     * @param targetTranslation Supplier of the field Translation2d to shoot at
+     */
+    public AutoPower(Shooter shooter, Supplier<Pose2d> robotPose, Supplier<Translation2d> targetTranslation) {
         this.shooter = shooter;
-        this.vision = vision;
-        this.targetId = targetId;
+        this.robotPose = robotPose;
+        this.targetTranslation = targetTranslation;
         this.addRequirements(shooter);
     }
 
     @Override
     public void initialize() {
-        System.out.println("Initializing AutoShoot command");
-        // this.targetId = 4; // Example target ID, change as needed
+        System.out.println("Initializing AutoPower command");
     }
 
     @Override
     public void execute() {
-        Vision.Cameras.MAIN.updateUnreadResults();
-        var results = Vision.Cameras.MAIN.getLatestResult();
+        Pose2d pose = robotPose.get();
+        Translation2d target = targetTranslation.get();
 
-        if(results.isEmpty()){
-            System.out.println("Result is empty!");
-            return;
-        }
+        double distance = pose.getTranslation().getDistance(target);
 
-        var trackedTags = results.get().getTargets();
+        SmartDashboard.putNumber("AutoPower/Distance to Target (m)", distance);
+        SmartDashboard.putString("AutoPower/Robot Translation", pose.getTranslation().toString());
+        SmartDashboard.putString("AutoPower/Target Translation", target.toString());
 
-        // Check if any tags are currently tracked
-        if(trackedTags.isEmpty()){
-            System.out.println("No tags currently tracked!");
-            return;
-        }
-
-        System.out.println("Tracked Tags: " + trackedTags.size());
-
-        // Attempt to find the target with the specified ID among the tracked tags
-        try {
-            target = trackedTags.stream()
-                        .filter(t -> t.getFiducialId() == targetId)
-                        .findFirst()
-                        .orElse(null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-        // If the target is found, calculate distances and set shooter power
-        if(target == null){
-            System.out.println("Target ID " + targetId + " not found among tracked tags.");
-            return;
-        }
-
-        var cameraToTarget = target.getBestCameraToTarget();
-
-        double measuredDist = Math.sqrt(Math.pow(cameraToTarget.getX(), 2) + Math.pow(cameraToTarget.getY(), 2));
-        double estimatedDist = vision.getDistanceFromAprilTag(targetId);
-        
-        SmartDashboard.putBoolean("Found Target Tag ID " + targetId, true);
-        SmartDashboard.putString("Camera to Target", cameraToTarget.toString());
-        SmartDashboard.putNumber("Distance to Target (VISION)", measuredDist);
-        SmartDashboard.putNumber("Distance to Target (POSE ESTIMATE)", estimatedDist);
-        
-        shooter.autoPower(measuredDist);
-
+        shooter.autoPower(distance);
     }
 
     @Override
     public void end(boolean interrupted) {
-       System.out.println("AutoPower command ended.");
+        System.out.println("AutoPower command ended.");
     }
 
     @Override

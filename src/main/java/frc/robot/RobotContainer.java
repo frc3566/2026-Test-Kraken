@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.commands.climb.ClimbToHeight;
 import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
@@ -131,16 +130,17 @@ public class RobotContainer {
 
         firstDriver.a().toggleOnTrue(new TurnToHub(drivetrain, 
             () -> -firstDriver.getLeftY() * MaxSpeed, 
-            () -> -firstDriver.getLeftX() * MaxSpeed));
+            () -> -firstDriver.getLeftX() * MaxSpeed,
+            MaxSpeed,
+            MaxAngularRate));
 
-        firstDriver.b().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(1,1, new Rotation2d()))); //TODO: Test pose 2d
+        firstDriver.b().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(2,2, new Rotation2d()))); //TODO: Test pose 2d
        
 
         firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(50)));
         firstDriver.leftTrigger().onFalse(new InstantCommand( () -> shooter.stopLower()));
         // firstDriver.rightTrigger().onTrue(new ChaseTagCommand(drivetrain)); //TODO: Auto align+move to scoring pos
         // firstDriver.rightBumper().onTrue(new HeadingToHub()); //TODO: Heading snap to hub
-
 
         /* For Second Driver */
         secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(100)));
@@ -160,14 +160,14 @@ public class RobotContainer {
         secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(30)));
 
         // Auto Power
-        secondDriver.y().onTrue(new AutoPower(shooter, vision, TagUtil.Hub.FRONT_CENTER.getTargettingId()));
+        secondDriver.y().onTrue(new AutoPower(shooter, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation));
 
         // Stop shooter and interrupt auto power
         secondDriver.a().onTrue(shooter.runOnce(() -> shooter.stopUpper()));
 
-
-        secondDriver.povUp().onTrue(new ClimbToHeight(climber, Constants.Climber.topSetPoint));
-        secondDriver.povDown().onTrue(new ClimbToHeight(climber, Constants.Climber.bottomSetPoint));
+        
+        // secondDriver.povUp().onTrue(new ClimbToHeight(climber, Constants.Climber.topSetPoint));
+        // secondDriver.povDown().onTrue(new ClimbToHeight(climber, Constants.Climber.bottomSetPoint));
 
         secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));
         secondDriver.povRight().onTrue(new InstantCommand(() -> intake.resetArmPosition(false)));

@@ -68,9 +68,9 @@ public class Climber extends SubsystemBase {
         // TODO: Set real limits once you know the travel of your climber.
         // ------------------------------------------------------------------
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable    = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = -175.0; // TODO: Tune
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.0; // TODO: Tune
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable    = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0.0;
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -180.0;
 
         climberMotor.getConfigurator().apply(config);
 

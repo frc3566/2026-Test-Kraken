@@ -33,9 +33,7 @@ public class TurnToHub extends Command {
      * TODO: Tune HeadingController kP/kD via Phoenix Tuner X SysId rotation routine.
      *       Starting values below are conservative — increase kP if slow to snap.
      */
-    private final SwerveRequest.FieldCentricFacingAngle drive =
-        new SwerveRequest.FieldCentricFacingAngle()
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+    private final SwerveRequest.FieldCentricFacingAngle drive;
 
     /** Set to true in initialize() if the tag ID is not in the field layout. */
     private boolean tagNotInLayout = false;
@@ -50,10 +48,17 @@ public class TurnToHub extends Command {
      * @param velocityY  Strafe velocity supplier (m/s) from driver joystick.
      */
     public TurnToHub(CommandSwerveDrivetrain drivetrain,
-                        DoubleSupplier velocityX, DoubleSupplier velocityY) {
+                        DoubleSupplier velocityX, DoubleSupplier velocityY, double MaxSpeed, double MaxAngularRate) {
         this.drivetrain = drivetrain;
         this.velocityX = velocityX;
         this.velocityY = velocityY;
+
+        this.drive =
+        new SwerveRequest.FieldCentricFacingAngle()
+            .withDeadband(MaxSpeed * 0.1)
+            .withRotationalDeadband(MaxAngularRate * 0.1)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            
         addRequirements(drivetrain);
 
         // Configure the built-in heading PID on the swerve request.

@@ -3,6 +3,7 @@ package frc.robot.commands.vision;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
+import frc.robot.subsystems.Vision;
 
 public class TagUtil {
     public enum LeftRight {
@@ -60,5 +61,10 @@ public class TagUtil {
             return new Translation2d(11.915, 4.03);
 
         }
+    }
+
+    public static Translation2d getHubFrontCenterTagTranslation(){
+        var centerId = Hub.FRONT_CENTER.getTargettingId();
+        return Vision.fieldLayout.getTagPose(centerId).get().getTranslation().toTranslation2d();
     }
 }

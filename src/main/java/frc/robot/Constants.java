@@ -24,6 +24,10 @@ import static edu.wpi.first.math.util.Units.inchesToMeters;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static class Swerve {
+    public static final double MaxSpeed = 3.79;
+  }
   public static class Motors{
     public static final int ShooterHigh = 32;
     public static final int ShooterLow = 22;
@@ -39,7 +43,7 @@ public final class Constants {
 
   public static class Climber{
     public static final double topSetPoint = 0.0;
-    public static final double bottomSetPoint = -175.0;
+    public static final double bottomSetPoint = -180.0;
   }
   
   public static class AprilTags{

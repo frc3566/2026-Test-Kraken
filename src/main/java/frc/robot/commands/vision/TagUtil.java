@@ -12,12 +12,12 @@ public class TagUtil {
     // Corresponding tag pairs. First is blue, second is red.
     public enum Hub {
         // FRONT = Facing the alliance, CENTER/LEFT = position on the face
-        FRONT_CENTER(new Pair<Integer, Integer>(10, 26)), 
-        FRONT_LEFT(new Pair<Integer, Integer>(9, 25)),
-        LEFT_CENTER(new Pair<Integer, Integer>(5, 21)),
-        LEFT_RIGHT(new Pair<Integer, Integer>(8, 24)),
-        RIGHT_CENTER(new Pair<Integer, Integer>(2, 18)),
-        RIGHT_LEFT(new Pair<Integer, Integer>(11, 27)),
+        FRONT_CENTER(new Pair<Integer, Integer>(26, 10)), 
+        FRONT_LEFT(new Pair<Integer, Integer>(25, 9)),
+        LEFT_CENTER(new Pair<Integer, Integer>(21, 5)),
+        LEFT_RIGHT(new Pair<Integer, Integer>(24, 8)),
+        RIGHT_CENTER(new Pair<Integer, Integer>(18, 2)),
+        RIGHT_LEFT(new Pair<Integer, Integer>(27, 11)),
         ;
 
         private Pair<Integer, Integer> targettingIds;

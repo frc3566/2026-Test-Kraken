@@ -26,9 +26,9 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 public class DriveToPose extends Command {
 
     // TODO: Tune these gains on the real robot
-    private static final double kP_TRANSLATION              = 4.0;
+    private static final double kP_TRANSLATION              = 6.0;
     private static final double kD_TRANSLATION              = 0.0;
-    private static final double MAX_SPEED_MPS               = 3.5;  // m/s
+    private static final double MAX_SPEED_MPS               = 3.79;  // m/s
     private static final double MAX_ACCEL_MPS2              = 3.0;  // m/s²
     private static final double POSITION_TOLERANCE_METERS   = 0.05; // 5 cm
     private static final double HEADING_TOLERANCE_DEG       = 2.0;

@@ -265,7 +265,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             //         new ChassisSpeeds(1.0, 0.0, 0.0)
             //     )
             // );
-            System.out.println(this.getState().Pose);
+            // System.out.println(this.getState().Pose);
         }
         // updateOdometry();
 

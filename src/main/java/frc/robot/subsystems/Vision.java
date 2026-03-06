@@ -60,7 +60,7 @@ public class Vision extends SubsystemBase {
    * {@link Vision#filterPose}.
    * Lower value = stricter filtering. 0.15 rejects more borderline targets.
    */
-  private final double maximumAmbiguity = 0.15;
+  private final double maximumAmbiguity = 0.2;
   /**
    * Photon Vision Simulation
    */
@@ -211,19 +211,19 @@ public class Vision extends SubsystemBase {
       return Optional.empty();
     }
 
-    // Sanity check: estimated 3D pose Z should be near the floor (robot is ground-based).
-    double estimatedZ = pose.get().estimatedPose.getZ();
-    SmartDashboard.putNumber("Vision/Estimated Pose Z", estimatedZ);
-    if (Math.abs(estimatedZ) > 0.75) {
-      SmartDashboard.putString("Vision/Filter Reject Reason", "Bad Z Height: " + estimatedZ);
-      return Optional.empty();
-    }
+    // // Sanity check: estimated 3D pose Z should be near the floor (robot is ground-based).
+    // double estimatedZ = pose.get().estimatedPose.getZ();
+    // SmartDashboard.putNumber("Vision/Estimated Pose Z", estimatedZ);
+    // if (Math.abs(estimatedZ) > 0.75) {
+    //   SmartDashboard.putString("Vision/Filter Reject Reason", "Bad Z Height: " + estimatedZ);
+    //   return Optional.empty();
+    // }
 
     // Reject if the vision estimate is too far from current odometry pose.
     // Tightened from 4.0m to 2.5m to reduce impact of outlier estimates.
     double poseDiffTag = PhotonUtils.getDistanceToPose(currentPose.get(), pose.get().estimatedPose.toPose2d());
     SmartDashboard.putNumber("Vision/Distance to Odometry Pose", poseDiffTag);
-    if (poseDiffTag > 2.5) {
+    if (poseDiffTag > 3) {
       longDistangePoseEstimationCount++;
       // Allow through only after many consecutive far readings (robot may be genuinely lost)
       if (longDistangePoseEstimationCount < 50) {

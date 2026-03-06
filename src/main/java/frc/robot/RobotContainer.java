@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -70,8 +71,10 @@ public class RobotContainer {
     public  SendableChooser<Command> thirdChooser;
 
     public RobotContainer() {
+        if(!Utils.isSimulation()){
+            configureCamera();
+        }
 
-        configureCamera();
         
         configureAutoCommand();
         configureAutoChooser();

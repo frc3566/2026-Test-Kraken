@@ -60,7 +60,7 @@ public class TurnToHub extends Command {
             .withDeadband(MaxSpeed * 0.1)
             .withRotationalDeadband(MaxAngularRate * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-            .withForwardPerspective(SwerveRequest.ForwardPerspectiveValue.BlueAlliance); // field-relative, not robot-relative
+            .withForwardPerspective(SwerveRequest.ForwardPerspectiveValue.OperatorPerspective); // field-relative, not robot-relative
 
 
         addRequirements(drivetrain);

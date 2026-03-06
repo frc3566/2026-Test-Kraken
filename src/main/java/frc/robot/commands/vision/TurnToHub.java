@@ -7,6 +7,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -25,7 +26,7 @@ public class TurnToHub extends Command {
     private final CommandSwerveDrivetrain drivetrain;
     private final DoubleSupplier velocityX; // m/s, field-relative
     private final DoubleSupplier velocityY; // m/s, field-relative
-    private boolean isBlueAlliance;
+    private boolean isBlueAlliance; // resolved in initialize(), not at construction time
 
     /**
      * FieldCentricFacingAngle handles its own heading PID (HeadingController)
@@ -49,11 +50,10 @@ public class TurnToHub extends Command {
      * @param velocityY  Strafe velocity supplier (m/s) from driver joystick.
      */
     public TurnToHub(CommandSwerveDrivetrain drivetrain,
-                        DoubleSupplier velocityX, DoubleSupplier velocityY, double MaxSpeed, double MaxAngularRate, boolean isBlueAlliance) {
+                        DoubleSupplier velocityX, DoubleSupplier velocityY, double MaxSpeed, double MaxAngularRate) {
         this.drivetrain = drivetrain;
         this.velocityX = velocityX;
         this.velocityY = velocityY;
-        this.isBlueAlliance = isBlueAlliance;
 
         this.drive =
         new SwerveRequest.FieldCentricFacingAngle()
@@ -74,6 +74,9 @@ public class TurnToHub extends Command {
 
     @Override
     public void initialize() {
+        // Read alliance here, not at construction time — DS alliance is not available until
+        // the robot is enabled and the DS has communicated the alliance color.
+        isBlueAlliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
         center = TagUtil.getHubCenterTranslation();
     }
 

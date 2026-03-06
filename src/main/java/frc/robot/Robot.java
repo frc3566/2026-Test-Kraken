@@ -76,7 +76,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        // m_robotContainer.vision.updatePoseEstimation(m_robotContainer.drivetrain);
+        m_robotContainer.vision.updatePoseEstimation(m_robotContainer.drivetrain);
         setTeleopShifts();
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
         putSubsystemTelemetry();

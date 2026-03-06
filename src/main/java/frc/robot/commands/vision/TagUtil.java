@@ -63,8 +63,28 @@ public class TagUtil {
         }
     }
 
+    public static Translation2d getLeftTrenchTranslation(){
+        if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
+            return new Translation2d(3.0, 7.375);
+        } else {
+            return new Translation2d(13.5, 0.625);
+        }
+    }
+
+    public static Translation2d getRightTrenchTranslation(){
+        if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
+            return new Translation2d(3.0, 0.625);
+        } else {
+            return new Translation2d(13.5, 7.375);
+        }
+    }
+
+
+
     public static Translation2d getHubFrontCenterTagTranslation(){
         var centerId = Hub.FRONT_CENTER.getTargettingId();
         return Vision.fieldLayout.getTagPose(centerId).get().getTranslation().toTranslation2d();
     }
+
+
 }

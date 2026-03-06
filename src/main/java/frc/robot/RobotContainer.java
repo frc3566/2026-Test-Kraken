@@ -136,6 +136,9 @@ public class RobotContainer {
             MaxAngularRate));
 
         firstDriver.b().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(2,2, new Rotation2d()))); //TODO: Test pose 2d
+
+        firstDriver.povLeft().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(TagUtil.getLeftTrenchTranslation(), new Rotation2d())));
+        firstDriver.povRight().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(TagUtil.getRightTrenchTranslation(), new Rotation2d())));
        
 
         firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(50)));

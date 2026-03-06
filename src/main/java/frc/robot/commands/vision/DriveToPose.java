@@ -2,9 +2,9 @@ package frc.robot.commands.vision;
 
 import java.util.function.Supplier;
 
-import com.ctre.phoenix6.swerve.ForwardPerspectiveValue;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -49,7 +49,8 @@ public class DriveToPose extends Command {
     private final SwerveRequest.FieldCentricFacingAngle drive =
         new SwerveRequest.FieldCentricFacingAngle()
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-            .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
+            .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance); // field-relative, not robot-relative
+
 
     /**
      * @param drivetrain         The swerve drivetrain subsystem.
@@ -85,10 +86,8 @@ public class DriveToPose extends Command {
         // getState().Speeds is robot-relative; rotate it to the field frame using current heading.
         var robotSpeeds = drivetrain.getState().Speeds;
         double headingRad = currentPose.getRotation().getRadians();
-        double fieldVx = robotSpeeds.vx * Math.cos(headingRad) - robotSpeeds.vy * Math.sin(headingRad);
-        double fieldVy = robotSpeeds.vx * Math.sin(headingRad) + robotSpeeds.vy * Math.cos(headingRad);
-        xController.reset(currentPose.getX(), fieldVx);
-        yController.reset(currentPose.getY(), fieldVy);
+        xController.reset(currentPose.getX());
+        yController.reset(currentPose.getY());
 
         xController.setGoal(targetPose.getX());
         yController.setGoal(targetPose.getY());

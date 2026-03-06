@@ -25,6 +25,7 @@ public class TurnToHub extends Command {
     private final CommandSwerveDrivetrain drivetrain;
     private final DoubleSupplier velocityX; // m/s, field-relative
     private final DoubleSupplier velocityY; // m/s, field-relative
+    private boolean isBlueAlliance;
 
     /**
      * FieldCentricFacingAngle handles its own heading PID (HeadingController)
@@ -48,17 +49,19 @@ public class TurnToHub extends Command {
      * @param velocityY  Strafe velocity supplier (m/s) from driver joystick.
      */
     public TurnToHub(CommandSwerveDrivetrain drivetrain,
-                        DoubleSupplier velocityX, DoubleSupplier velocityY, double MaxSpeed, double MaxAngularRate) {
+                        DoubleSupplier velocityX, DoubleSupplier velocityY, double MaxSpeed, double MaxAngularRate, boolean isBlueAlliance) {
         this.drivetrain = drivetrain;
         this.velocityX = velocityX;
         this.velocityY = velocityY;
+        this.isBlueAlliance = isBlueAlliance;
 
         this.drive =
         new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(MaxSpeed * 0.1)
             .withRotationalDeadband(MaxAngularRate * 0.1)
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
-            .withForwardPerspective(SwerveRequest.ForwardPerspectiveValue.OperatorPerspective);
+            .withForwardPerspective(SwerveRequest.ForwardPerspectiveValue.BlueAlliance); // field-relative, not robot-relative
+
 
         addRequirements(drivetrain);
 
@@ -83,6 +86,11 @@ public class TurnToHub extends Command {
         double dx = center.getX() - robotPose.getX();
         double dy = center.getY() - robotPose.getY();
         Rotation2d targetHeading = new Rotation2d(Math.atan2(dy, dx));
+
+        // Add 180 degrees to adjust for field oriented (red front = 180 deg)
+        if(!isBlueAlliance){
+            targetHeading = targetHeading.plus(Rotation2d.kPi);
+        }
 
         double headingError = targetHeading.minus(robotPose.getRotation()).getDegrees();
 

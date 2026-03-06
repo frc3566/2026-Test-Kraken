@@ -2,6 +2,7 @@ package frc.robot.commands.vision;
 
 import java.util.function.Supplier;
 
+import com.ctre.phoenix6.swerve.ForwardPerspectiveValue;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -41,10 +42,14 @@ public class DriveToPose extends Command {
     private final ProfiledPIDController xController;
     private final ProfiledPIDController yController;
 
-    // FieldCentricFacingAngle runs the heading PID inside the swerve request itself
+    // FieldCentricFacingAngle runs the heading PID inside the swerve request itself.
+    // ForwardPerspective MUST be BlueAlliance so that withVelocityX/Y are always in the
+    // absolute field frame (matching odometry). OperatorPerspective (the default) would
+    // rotate these axes by whatever seedFieldCentric() last set, causing wrong positions.
     private final SwerveRequest.FieldCentricFacingAngle drive =
         new SwerveRequest.FieldCentricFacingAngle()
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+            .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance);
 
     /**
      * @param drivetrain         The swerve drivetrain subsystem.
@@ -75,10 +80,15 @@ public class DriveToPose extends Command {
         targetPose = targetPoseSupplier.get();
         Pose2d currentPose = drivetrain.getPose();
 
-        // Reset profiles from the robot's ACTUAL current position so the
-        // trapezoid ramps from here → target, not from 0 → target
-        xController.reset(currentPose.getX());
-        yController.reset(currentPose.getY());
+        // Reset profiles from the robot's ACTUAL current position AND velocity so the
+        // trapezoid ramps from here → target without a jerk if the robot is already moving.
+        // getState().Speeds is robot-relative; rotate it to the field frame using current heading.
+        var robotSpeeds = drivetrain.getState().Speeds;
+        double headingRad = currentPose.getRotation().getRadians();
+        double fieldVx = robotSpeeds.vx * Math.cos(headingRad) - robotSpeeds.vy * Math.sin(headingRad);
+        double fieldVy = robotSpeeds.vx * Math.sin(headingRad) + robotSpeeds.vy * Math.cos(headingRad);
+        xController.reset(currentPose.getX(), fieldVx);
+        yController.reset(currentPose.getY(), fieldVy);
 
         xController.setGoal(targetPose.getX());
         yController.setGoal(targetPose.getY());

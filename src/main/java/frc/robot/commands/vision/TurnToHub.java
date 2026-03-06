@@ -90,6 +90,10 @@ public class TurnToHub extends Command {
         // Add 180 degrees to adjust for field oriented (red front = 180 deg)
         if(!isBlueAlliance){
             targetHeading = targetHeading.plus(Rotation2d.kPi);
+            System.out.println("TurnToTagNew: Red alliance - adding 180 degrees to target heading");
+        } else{
+            System.out.println("TurnToTagNew: Blue alliance - using target heading as is");
+
         }
 
         double headingError = targetHeading.minus(robotPose.getRotation()).getDegrees();

@@ -12,8 +12,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -140,8 +138,8 @@ public class RobotContainer {
 
         // firstDriver.b().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(2,2, new Rotation2d()))); //TODO: Test pose 2d
 
-        firstDriver.leftBumper().whileTrue(new DriveToPose(drivetrain, () -> new Pose2d(TagUtil.getLeftTrenchTranslation(), new Rotation2d())));
-        firstDriver.rightBumper().whileTrue(new DriveToPose(drivetrain, () -> new Pose2d(TagUtil.getRightTrenchTranslation(), new Rotation2d())));
+        firstDriver.leftBumper().whileTrue(new DriveToPose(drivetrain, () -> TagUtil.getLeftTrenchPose()));
+        firstDriver.rightBumper().whileTrue(new DriveToPose(drivetrain, () -> TagUtil.getRightTrenchPose()));
        
 
         firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(50)));

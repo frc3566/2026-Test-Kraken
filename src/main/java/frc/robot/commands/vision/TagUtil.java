@@ -1,6 +1,8 @@
 package frc.robot.commands.vision;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import frc.robot.subsystems.Vision;
@@ -63,19 +65,21 @@ public class TagUtil {
         }
     }
 
-    public static Translation2d getLeftTrenchTranslation(){
+    // Pose2d from blue alliance's perspective
+    // Red front = 180 degrees
+    public static Pose2d getLeftTrenchPose(){
         if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
-            return new Translation2d(3.0, 7.375);
+            return new Pose2d(new Translation2d(3.0, 7.375), new Rotation2d(0));
         } else {
-            return new Translation2d(13.5, 0.625);
+            return new Pose2d(new Translation2d(13.5, 0.625), Rotation2d.kPi);
         }
     }
 
-    public static Translation2d getRightTrenchTranslation(){
+    public static Pose2d getRightTrenchPose(){
         if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
-            return new Translation2d(3.0, 0.625);
+            return new Pose2d(new Translation2d(3.0, 0.625), new Rotation2d(0));
         } else {
-            return new Translation2d(13.5, 7.375);
+            return new Pose2d(new Translation2d(13.5, 7.375), Rotation2d.kPi);
         }
     }
 

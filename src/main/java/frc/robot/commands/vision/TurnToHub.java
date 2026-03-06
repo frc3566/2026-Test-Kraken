@@ -57,7 +57,8 @@ public class TurnToHub extends Command {
         new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(MaxSpeed * 0.1)
             .withRotationalDeadband(MaxAngularRate * 0.1)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+            .withForwardPerspective(SwerveRequest.ForwardPerspectiveValue.OperatorPerspective);
 
         addRequirements(drivetrain);
 

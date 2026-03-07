@@ -7,7 +7,6 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -26,7 +25,6 @@ public class TurnToHub extends Command {
     private final CommandSwerveDrivetrain drivetrain;
     private final DoubleSupplier velocityX; // m/s, field-relative
     private final DoubleSupplier velocityY; // m/s, field-relative
-    private boolean isBlueAlliance; // resolved in initialize(), not at construction time
 
     /**
      * FieldCentricFacingAngle handles its own heading PID (HeadingController)
@@ -36,9 +34,6 @@ public class TurnToHub extends Command {
      *       Starting values below are conservative — increase kP if slow to snap.
      */
     private final SwerveRequest.FieldCentricFacingAngle drive;
-
-    /** Set to true in initialize() if the tag ID is not in the field layout. */
-    private boolean tagNotInLayout = false;
 
     /** Cached tag translation — doesn't change after initialize(). */
     private Translation2d center;
@@ -74,9 +69,6 @@ public class TurnToHub extends Command {
 
     @Override
     public void initialize() {
-        // Read alliance here, not at construction time — DS alliance is not available until
-        // the robot is enabled and the DS has communicated the alliance color.
-        isBlueAlliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
         center = TagUtil.getHubCenterTranslation();
         SmartDashboard.putBoolean("TurnToHub/Enabled", true);
     }
@@ -86,19 +78,12 @@ public class TurnToHub extends Command {
 
         var robotPose = drivetrain.getPose();
 
-        // Compute the field-relative angle from the robot to the tag
+        // Compute the field-relative angle from the robot to the hub center.
+        // getHubCenterTranslation() is alliance-aware, so atan2 already gives the
+        // correct direction to face for both blue and red — no further adjustment needed.
         double dx = center.getX() - robotPose.getX();
         double dy = center.getY() - robotPose.getY();
         Rotation2d targetHeading = new Rotation2d(Math.atan2(dy, dx));
-
-        // Add 180 degrees to adjust for field oriented (red front = 180 deg)
-        if(!isBlueAlliance){
-            targetHeading = targetHeading.plus(Rotation2d.kPi);
-            // System.out.println("TurnToHub: Red alliance - adding 180 degrees to target heading");
-        } else{
-            // System.out.println("TurnToHub: Blue alliance - using target heading as is");
-
-        }
 
         double headingError = targetHeading.minus(robotPose.getRotation()).getDegrees();
 

@@ -145,6 +145,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+
+        SmartDashboard.putBoolean("TurnToHub/Enabled", false);
     }
 
     /**
@@ -170,6 +172,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+
+        SmartDashboard.putBoolean("TurnToHub/Enabled", false);
     }
 
     /**
@@ -203,6 +207,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         if (Utils.isSimulation()) {
             startSimThread();
         }
+
+        SmartDashboard.putBoolean("TurnToHub/Enabled", false);
     }
 
     /**

@@ -103,6 +103,7 @@ public class DriveToPose extends Command {
         double vx = xController.atGoal() ? 0.0 : xController.calculate(currentPose.getX());
         double vy = yController.atGoal() ? 0.0 : yController.calculate(currentPose.getY());
 
+        SmartDashboard.putBoolean("DriveToTrench/Running", true);
         SmartDashboard.putNumber("DriveToPose/X Error (m)", targetPose.getX() - currentPose.getX());
         SmartDashboard.putNumber("DriveToPose/Y Error (m)", targetPose.getY() - currentPose.getY());
         SmartDashboard.putNumber("DriveToPose/Heading Error (deg)",
@@ -120,6 +121,7 @@ public class DriveToPose extends Command {
     public void end(boolean interrupted) {
         // Stop all motion cleanly
         drivetrain.setControl(new SwerveRequest.Idle());
+        SmartDashboard.putBoolean("DriveToTrench/Running", false);
         System.out.println("DriveToPose: ended. Interrupted=" + interrupted);
     }
 

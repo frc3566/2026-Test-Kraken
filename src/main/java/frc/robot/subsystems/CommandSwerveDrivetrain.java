@@ -147,6 +147,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         SmartDashboard.putBoolean("TurnToHub/Enabled", false);
+        SmartDashboard.putBoolean("DriveToTrench/Running", false);
     }
 
     /**
@@ -174,6 +175,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         SmartDashboard.putBoolean("TurnToHub/Enabled", false);
+        SmartDashboard.putBoolean("DriveToTrench/Running", false);
     }
 
     /**
@@ -209,6 +211,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         }
 
         SmartDashboard.putBoolean("TurnToHub/Enabled", false);
+        SmartDashboard.putBoolean("DriveToTrench/Running", false);
     }
 
     /**

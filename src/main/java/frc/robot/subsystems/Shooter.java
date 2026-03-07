@@ -101,5 +101,4 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter/Flywheel Supply Current (A)", upperMotor.getSupplyCurrent().getValueAsDouble());
         SmartDashboard.putNumber("Shooter/Feeder Supply Current (A)", lowerMotor.getSupplyCurrent().getValueAsDouble());
     }
-    }
 }

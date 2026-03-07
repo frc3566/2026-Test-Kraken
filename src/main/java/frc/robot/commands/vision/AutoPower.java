@@ -53,6 +53,8 @@ public class AutoPower extends Command {
     @Override
     public void end(boolean interrupted) {
         SmartDashboard.putBoolean("AutoPower/Enabled", false);
+        SmartDashboard.putNumber("AutoPower/Distance to Target (m)", 0);
+        SmartDashboard.putNumber("AutoPower/Target Flywheel Speed (RPS)", 0);
         System.out.println("AutoPower command ended.");
     }
 

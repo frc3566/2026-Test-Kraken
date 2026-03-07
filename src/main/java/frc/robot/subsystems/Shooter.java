@@ -98,5 +98,8 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter/Feeder Velocity (rps)", lowerMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Shooter/Flywheel Power", upperMotor.get());
         SmartDashboard.putNumber("Shooter/Feeder Power", lowerMotor.get());
+        SmartDashboard.putNumber("Shooter/Flywheel Supply Current (A)", upperMotor.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("Shooter/Feeder Supply Current (A)", lowerMotor.getSupplyCurrent().getValueAsDouble());
+    }
     }
 }

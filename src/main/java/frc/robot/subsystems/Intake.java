@@ -105,6 +105,6 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Intake/Arm Position (rot)", armMotor.getPosition().getValueAsDouble());
-        SmartDashboard.putNumber("Intake/Roller Velocity (rps)", rollerMotor.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Intake/Roller Velocity (rps)", rollerMotor.get());
     }
 }

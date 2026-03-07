@@ -35,7 +35,9 @@ public class Shooter extends SubsystemBase {
 
         SmartDashboard.putBoolean("Shooter/Flywheel", false);
         SmartDashboard.putBoolean("Shooter/Feeder", false);
-        SmartDashboard.putBoolean("Shooter/AutoPower", false);
+        SmartDashboard.putBoolean("AutoPower/Enabled", false);
+        SmartDashboard.putNumber("AutoPower/Distance to Target (m)", 0);
+        SmartDashboard.putNumber("AutoPower/Target Flywheel Speed (RPS)", 0);
     }
 
     /**

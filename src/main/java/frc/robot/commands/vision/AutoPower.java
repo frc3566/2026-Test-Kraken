@@ -46,7 +46,6 @@ public class AutoPower extends Command {
 
         SmartDashboard.putNumber("AutoPower/Distance to Target (m)", distance);
         SmartDashboard.putNumber("AutoPower/Target Flywheel Speed (RPS)", targetRps);
-        SmartDashboard.putNumber("AutoPower/Actual Flywheel Speed (RPS)", shooter.getUpperVelocity());
 
         shooter.autoPower(distance);
     }

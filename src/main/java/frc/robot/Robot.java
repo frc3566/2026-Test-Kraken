@@ -38,7 +38,12 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void disabledInit() {}
+    public void disabledInit() {
+        m_robotContainer.intake.stopArm();
+        m_robotContainer.shooter.stopUpper();
+        m_robotContainer.shooter.stopLower();
+    }
+
 
     @Override
     public void disabledPeriodic() {}

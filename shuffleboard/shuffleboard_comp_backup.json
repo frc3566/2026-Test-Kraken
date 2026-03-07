@@ -281,7 +281,28 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "5,1": {
+          "0,0": {
+            "size": [
+              4,
+              4
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://USB Camera 0",
+              "_title": "USB Camera 0",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": 89.0,
+              "fps": 15,
+              "imageWidth": 0,
+              "imageHeight": 0
+            }
+          },
+          "6,1": {
             "size": [
               2,
               1
@@ -296,7 +317,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "7,0": {
+          "8,2": {
             "size": [
               1,
               1
@@ -311,7 +332,22 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "7,1": {
+          "8,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Intake/Roller Out",
+              "_title": "Roller Out",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "6,2": {
             "size": [
               1,
               1
@@ -341,7 +377,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "5,0": {
+          "6,0": {
             "size": [
               2,
               1
@@ -356,7 +392,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "8,1": {
+          "6,3": {
             "size": [
               1,
               1
@@ -369,7 +405,20 @@
               "_showGlyph": false
             }
           },
-          "4,0": {
+          "7,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Shooter/Flywheel Power",
+              "_title": "Flywheel Power",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "5,0": {
             "size": [
               1,
               1
@@ -382,7 +431,7 @@
               "_showGlyph": false
             }
           },
-          "3,1": {
+          "4,1": {
             "size": [
               2,
               1
@@ -401,7 +450,7 @@
               "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "3,2": {
+          "4,2": {
             "size": [
               2,
               2
@@ -429,7 +478,7 @@
               "_showGlyph": false
             }
           },
-          "3,0": {
+          "4,0": {
             "size": [
               1,
               1
@@ -477,96 +526,15 @@
                 }
               ]
             }
-          },
-          "5,2": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/DriveToTrench/Running",
-              "_title": "DriveToTrench",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
-          "9,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Shooter/Flywheel Power",
-              "_title": "Flywheel Power",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
-          "5,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Number Bar",
-              "_source0": "network_table:///SmartDashboard/Robot Velocity X (m/s)",
-              "_title": "X",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Range/Min": -4.0,
-              "Range/Max": 4.0,
-              "Range/Center": 0.0,
-              "Visuals/Num tick marks": 9,
-              "Visuals/Show text": true,
-              "Visuals/Orientation": "HORIZONTAL"
-            }
-          },
-          "7,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Number Bar",
-              "_source0": "network_table:///SmartDashboard/Robot Velocity Y (m/s)",
-              "_title": "Y",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Range/Min": -4.0,
-              "Range/Max": 4.0,
-              "Range/Center": 0.0,
-              "Visuals/Num tick marks": 9,
-              "Visuals/Show text": true,
-              "Visuals/Orientation": "HORIZONTAL"
-            }
-          },
-          "8,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Vision/Filtered Pose Available",
-              "_title": "Updating Vision",
-              "_glyph": 148,
-              "_showGlyph": false,
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
           }
         }
       }
     }
   ],
   "windowGeometry": {
-    "x": -7.199999809265137,
-    "y": -7.199999809265137,
-    "width": 1550.4000244140625,
-    "height": 830.4000244140625
+    "x": -25.399999618530273,
+    "y": 864.7999877929688,
+    "width": 1544.0,
+    "height": 808.0
   }
 }

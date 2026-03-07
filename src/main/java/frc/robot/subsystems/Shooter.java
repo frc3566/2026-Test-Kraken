@@ -76,8 +76,8 @@ public class Shooter extends SubsystemBase {
     /* Sets flywheel speed based on distance in meters to target */
     public void autoPower(double distance){
         // 15.1 = one-shot sampled value, adjust as necessary
-        double distFeet = Units.metersToFeet(distance);
-        double rps = getAutoPower(distFeet);
+        // double distFeet = Units.metersToFeet(distance);
+        double rps = getAutoPower(distance);
         setUpperPower(rps);
     }
 
@@ -85,7 +85,7 @@ public class Shooter extends SubsystemBase {
         // 15.1 = one-shot sampled value, adjust as necessary
         double distFeet = Units.metersToFeet(distance);
         double rps = 39.7+ 0.0417 * distFeet + 0.137 * Math.pow(distFeet,2);
-        return rps; 
+        return Math.min(100,rps); 
     }
 
     public double getUpperVelocity(){

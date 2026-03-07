@@ -70,7 +70,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         if(!Utils.isSimulation()){
-            configureCamera();
+            // configureCamera();
         }
 
         
@@ -142,7 +142,7 @@ public class RobotContainer {
         firstDriver.rightBumper().whileTrue(new DriveToPose(drivetrain, () -> TagUtil.getRightTrenchPose()));
        
 
-        firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(50)));
+        firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(60)));
         firstDriver.leftTrigger().onFalse(new InstantCommand( () -> shooter.stopLower()));
         // firstDriver.rightTrigger().onTrue(new ChaseTagCommand(drivetrain)); //TODO: Auto align+move to scoring pos
         // firstDriver.rightBumper().onTrue(new HeadingToHub()); //TODO: Heading snap to hub
@@ -153,16 +153,16 @@ public class RobotContainer {
         secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(80)));
         secondDriver.leftBumper().onFalse(new InstantCommand(() -> intake.stopRoller()));
 
-        secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armUp(0.3)));
+        secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armUp(0.2)));
         secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.stopArm()));
-        secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.3)));
+        secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.2)));
         secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.stopArm()));
 
         // Scoring 
-        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(50)));
+        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(46)));
         
-        // Passing 
-        secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(30)));
+        // Neutral Passing 
+        secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(70)));
 
         // Auto Power
         secondDriver.y().onTrue(new AutoPower(shooter, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation));
@@ -212,7 +212,7 @@ public class RobotContainer {
         // Prime the shooter while driving
         NamedCommands.registerCommand(
             "AutoPrime",
-            new AutoPrime(shooter, intake,58) // Make it long enough so keeps running until deadline group?
+            new AutoPrime(shooter, intake,62) // Make it long enough so keeps running until deadline group?
         );
 
         // Generic Prime and Shoot.
@@ -225,29 +225,29 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
             "LeftPrimeAndShoot",
-            new PrimeAndShootFixed(shooter, intake, 56, 1, 4)
+            new PrimeAndShootFixed(shooter, intake, 62, 1, 4)
         );
 
         // For some reason right side need more power.
         // Could be due to inaccurate field, use PrimeAndShoot if things are not right
         NamedCommands.registerCommand(
             "RightPrimeAndShoot",
-            new PrimeAndShootFixed(shooter, intake, 52, 1, 4)
+            new PrimeAndShootFixed(shooter, intake, 62, 1, 4)
         );
 
         NamedCommands.registerCommand(
             "RightPrimeAndShootLong",
-            new PrimeAndShootFixed(shooter, intake, 52, 1, 6)
+            new PrimeAndShootFixed(shooter, intake, 62, 1, 6)
         );
 
         NamedCommands.registerCommand(
             "CenterPrimeAndShoot",
-            new PrimeAndShootFixed(shooter, intake, 52, 1, 4)
+            new PrimeAndShootFixed(shooter, intake, 54, 1, 4)
         );
 
         NamedCommands.registerCommand(
             "ArmDown",
-            new ArmSwitch(intake, true, 0.25, 0.5)
+            new ArmSwitch(intake, true, 0.2, 0.5)
         );
     }
 

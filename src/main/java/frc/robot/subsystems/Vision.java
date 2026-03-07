@@ -58,7 +58,6 @@ public class Vision extends SubsystemBase {
   /**
    * Ambiguity defined as a value between (0,1). Used in
    * {@link Vision#filterPose}.
-   * Lower value = stricter filtering. 0.15 rejects more borderline targets.
    */
   private final double maximumAmbiguity = 0.1;
   /**
@@ -202,7 +201,7 @@ public class Vision extends SubsystemBase {
     // This prevents a single noisy tag from polluting a multi-tag estimate.
     double worstAmbiguity = pose.get().targetsUsed.stream()
         .mapToDouble(target -> target.getPoseAmbiguity())
-        .max()
+        .min()
         .orElse(1.0);
 
     SmartDashboard.putNumber("Vision/Worst Target Ambiguity", worstAmbiguity);
@@ -220,21 +219,18 @@ public class Vision extends SubsystemBase {
     // }
 
     // Reject if the vision estimate is too far from current odometry pose.
-    // Tightened from 4.0m to 2.5m to reduce impact of outlier estimates.
     double poseDiffTag = PhotonUtils.getDistanceToPose(currentPose.get(), pose.get().estimatedPose.toPose2d());
     SmartDashboard.putNumber("Vision/Distance to Odometry Pose", poseDiffTag);
-    if (poseDiffTag > 1.5) {
+    if (poseDiffTag > 5) {
       longDistangePoseEstimationCount++;
-      return Optional.empty();
-
       // Allow through only after many consecutive far readings (robot may be genuinely lost)
       // The robot is probably never lost on the field, so this is likely just allowing through really bad estimates instead of actually helping in a lost robot scenario. Needs tuning and more investigation.
 
-      // if (longDistangePoseEstimationCount < 150) {
-      //   SmartDashboard.putBoolean("Vision/Pose Too Far", true);
-      //   SmartDashboard.putString("Vision/Filter Reject Reason", "Pose Too Far: " + poseDiffTag);
-      //   return Optional.empty();
-      // }
+      if (longDistangePoseEstimationCount < 100) {
+        SmartDashboard.putBoolean("Vision/Pose Too Far", true);
+        SmartDashboard.putString("Vision/Filter Reject Reason", "Pose Too Far: " + poseDiffTag);
+        return Optional.empty();
+      }
 
     } else {
       longDistangePoseEstimationCount = 0;
@@ -516,13 +512,13 @@ public class Vision extends SubsystemBase {
       }
 
       PhotonPipelineResult bestResult = resultsList.get(0);
-      double amiguity = bestResult.getBestTarget().getPoseAmbiguity();
+      double ambiguity = bestResult.getBestTarget().getPoseAmbiguity();
       double currentAmbiguity = 0;
       for (PhotonPipelineResult result : resultsList) {
         currentAmbiguity = result.getBestTarget().getPoseAmbiguity();
-        if (currentAmbiguity < amiguity && currentAmbiguity > 0) {
+        if (currentAmbiguity < ambiguity && currentAmbiguity > 0) {
           bestResult = result;
-          amiguity = currentAmbiguity;
+          ambiguity = currentAmbiguity;
         }
       }
       return Optional.of(bestResult);

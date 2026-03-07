@@ -58,7 +58,7 @@ public class TurnToHub extends Command {
         this.drive =
         new SwerveRequest.FieldCentricFacingAngle()
             .withDeadband(MaxSpeed * 0.1)
-            .withRotationalDeadband(MaxAngularRate * 0.1)
+            .withRotationalDeadband(0) // Heading PID manages rotation; deadband would cause steady-state error
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withForwardPerspective(SwerveRequest.ForwardPerspectiveValue.OperatorPerspective); // field-relative, not robot-relative
 

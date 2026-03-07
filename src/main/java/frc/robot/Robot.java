@@ -8,6 +8,7 @@ import com.ctre.phoenix6.HootAutoReplay;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -30,7 +31,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         m_timeAndJoystickReplay.update();
-        putSubsystemTelemetry();
         SmartDashboard.putNumber("Robot Velocity X (m/s)", m_robotContainer.drivetrain.getState().Speeds.vxMetersPerSecond);
         SmartDashboard.putNumber("Robot Velocity Y (m/s)", m_robotContainer.drivetrain.getState().Speeds.vyMetersPerSecond);
         SmartDashboard.putNumber("Robot Angular Rate (rads)", m_robotContainer.drivetrain.getState().Speeds.omegaRadiansPerSecond);
@@ -79,7 +79,6 @@ public class Robot extends TimedRobot {
         m_robotContainer.vision.updatePoseEstimation(m_robotContainer.drivetrain);
         setTeleopShifts();
         SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
-        putSubsystemTelemetry();
     }
 
     @Override
@@ -140,21 +139,15 @@ public class Robot extends TimedRobot {
         }
          SmartDashboard.putString("Teleop Shift", shift);
          SmartDashboard.putNumber("Teleop Shift Time", shiftTime);
+
+        // Flash at ~5 Hz during the last 5 seconds of each shift.
+        // shiftTime counts down to 0 at every shift boundary, so this
+        // condition fires universally regardless of which shift we're in.
+        // When a new shift starts, shiftTime jumps back up and flashing stops automatically.
+        boolean shiftWarning = shiftTime > 0 && shiftTime < 5.0
+            && (long)(Timer.getFPGATimestamp() * 5) % 2 == 0;
+        SmartDashboard.putBoolean("Teleop/Shift Warning", shiftWarning);
     }
 
-    public void putSubsystemTelemetry() {
-        double flywheelPower = m_robotContainer.shooter.upperMotor.get();
-        double feederPower = m_robotContainer.shooter.lowerMotor.get();
-        double armPower = m_robotContainer.intake.armMotor.get();
-        double rollerPower = m_robotContainer.intake.rollerMotor.get();
-        double armPosition = m_robotContainer.intake.armMotor.getPosition().getValueAsDouble() / Constants.Arm.GearRatio * 360; // Convert to output shaft position
-
-        SmartDashboard.putNumber("Shooter Flywheel Power", flywheelPower);
-        SmartDashboard.putNumber("Shooter Feeder Power", feederPower);
-        SmartDashboard.putNumber("Intake Arm Power", armPower);
-        SmartDashboard.putNumber("Intake Roller Power", rollerPower);
-        SmartDashboard.putNumber("Intake Arm Position", armPosition);
-        SmartDashboard.putNumber("PID/Shooter RPM", m_robotContainer.shooter.getUpperVelocity());
-        
-    }
 }
+

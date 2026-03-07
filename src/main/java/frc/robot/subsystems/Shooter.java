@@ -6,6 +6,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -31,6 +32,10 @@ public class Shooter extends SubsystemBase {
         upperMotor.getConfigurator().apply(upperConfig, 0.05);
         lowerMotor.getConfigurator().apply(lowerConfig, 0.05);
         // agitatorMotor = new TalonFX(Constants.Motors.Agitator);
+
+        SmartDashboard.putBoolean("Shooter/Flywheel", false);
+        SmartDashboard.putBoolean("Shooter/Feeder", false);
+        SmartDashboard.putBoolean("Shooter/AutoPower", false);
     }
 
     /**
@@ -42,19 +47,23 @@ public class Shooter extends SubsystemBase {
    
     public void setLowerPower(double rps) {
         lowerMotor.setControl(m_velocity.withVelocity(rps));
+        SmartDashboard.putBoolean("Shooter/Feeder", true);
     }
 
     public void stopLower() {
         lowerMotor.stopMotor();
+        SmartDashboard.putBoolean("Shooter/Feeder", false);
     }
 
     // PID-based, better consistency
     public void setUpperPower(double rps) {
-          upperMotor.setControl(m_velocity.withVelocity(rps));
+        upperMotor.setControl(m_velocity.withVelocity(rps));
+        SmartDashboard.putBoolean("Shooter/Flywheel", true);
     }
 
     public void stopUpper() {   
         upperMotor.stopMotor();
+        SmartDashboard.putBoolean("Shooter/Flywheel", false);
     }
 
     public void addTestSpeed(double increment) {
@@ -79,5 +88,13 @@ public class Shooter extends SubsystemBase {
 
     public double getUpperVelocity(){
         return upperMotor.getVelocity().getValueAsDouble();
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Shooter/Flywheel Velocity (rps)", upperMotor.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Shooter/Feeder Velocity (rps)", lowerMotor.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Shooter/Flywheel Power", upperMotor.get());
+        SmartDashboard.putNumber("Shooter/Feeder Power", lowerMotor.get());
     }
 }

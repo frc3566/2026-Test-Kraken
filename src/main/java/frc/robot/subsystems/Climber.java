@@ -6,6 +6,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -76,6 +77,8 @@ public class Climber extends SubsystemBase {
 
         // Zero the encoder on startup (assumes climber starts fully retracted)
         climberMotor.setPosition(0);
+
+        SmartDashboard.putBoolean("Climber/Running", false);
     }
 
     /**
@@ -90,6 +93,7 @@ public class Climber extends SubsystemBase {
         boolean movingDown = rotations < getPosition();
         int slot = movingDown ? 1 : 0;
         climberMotor.setControl(positionRequest.withPosition(rotations).withSlot(slot));
+        SmartDashboard.putBoolean("Climber/Running", true);
     }
 
     /**
@@ -101,6 +105,7 @@ public class Climber extends SubsystemBase {
      */
     public void setPosition(double rotations, int slot) {
         climberMotor.setControl(positionRequest.withPosition(rotations).withSlot(slot));
+        SmartDashboard.putBoolean("Climber/Running", true);
     }
 
     /**
@@ -115,6 +120,7 @@ public class Climber extends SubsystemBase {
      */
     public void stop() {
         climberMotor.stopMotor();
+        SmartDashboard.putBoolean("Climber/Running", false);
     }
 
     /**
@@ -124,5 +130,13 @@ public class Climber extends SubsystemBase {
      */
     public void set(double power) {
         climberMotor.set(power);
+        SmartDashboard.putBoolean("Climber/Running", power != 0);
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Climber/Position (rot)", climberMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Climber/Velocity (rps)", climberMotor.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Climber/Supply Current (A)", climberMotor.getSupplyCurrent().getValueAsDouble());
     }
 }

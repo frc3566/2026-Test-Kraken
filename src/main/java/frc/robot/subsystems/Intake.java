@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -41,46 +42,43 @@ public class Intake extends SubsystemBase {
         armMotor.getConfigurator().apply(armConfig);
         rollerMotor.getConfigurator().apply(rollerConfig);
 
-        // // PID gains (tune later)
-        // armConfig.Slot0.kP = 35.0;
-        // armConfig.Slot0.kI = 0.0;
-        // armConfig.Slot0.kD = 0.2;
-
-        // // Gravity feedforward (START small, tune upward)
-        // armConfig.Slot0.kG = 1.5;
-
-        // armConfig.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        // armConfig.Slot0.GravityArmPositionOffset = 0.25;
-
-        // // Motion Magic settings
-        // armConfig.MotionMagic.MotionMagicCruiseVelocity = 360;
-        // armConfig.MotionMagic.MotionMagicAcceleration = 120;
-
-
-        // // Apply configuration
-        // armMotor.getConfigurator().apply(armConfig);
-        
+        SmartDashboard.putBoolean("Intake/Roller In", false);
+        SmartDashboard.putBoolean("Intake/Roller Out", false);
+        SmartDashboard.putBoolean("Intake/Arm Moving Up", false);
+        SmartDashboard.putBoolean("Intake/Arm Moving Down", false);
     }
 
     public void rollerIn(double rps){
         rollerMotor.setControl(m_velocity.withVelocity(rps));
+        SmartDashboard.putBoolean("Intake/Roller In", true);
+        SmartDashboard.putBoolean("Intake/Roller Out", false);
     }
 
     public void rollerOut(double rps){
         rollerMotor.setControl(m_velocity.withVelocity(-rps));
+        SmartDashboard.putBoolean("Intake/Roller In", false);
+        SmartDashboard.putBoolean("Intake/Roller Out", true);
     }
     public void armUp(double percent){
         armMotor.set(percent);
+        SmartDashboard.putBoolean("Intake/Arm Moving Up", true);
+        SmartDashboard.putBoolean("Intake/Arm Moving Down", false);
     }
     public void armDown(double percent){
         armMotor.set(-percent);
+        SmartDashboard.putBoolean("Intake/Arm Moving Up", false);
+        SmartDashboard.putBoolean("Intake/Arm Moving Down", true);
     }
 
     public void stopRoller() {
         rollerMotor.stopMotor();
+        SmartDashboard.putBoolean("Intake/Roller In", false);
+        SmartDashboard.putBoolean("Intake/Roller Out", false);
     }
     public void stopArm() {
         armMotor.stopMotor();
+        SmartDashboard.putBoolean("Intake/Arm Moving Up", false);
+        SmartDashboard.putBoolean("Intake/Arm Moving Down", false);
     }
 
     public double getArmPosition() {
@@ -104,4 +102,9 @@ public class Intake extends SubsystemBase {
         return Math.abs(armMotor.getPosition().getValueAsDouble() - target) <= tolerance;
     }
 
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("Intake/Arm Position (rot)", armMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Intake/Roller Velocity (rps)", rollerMotor.getVelocity().getValueAsDouble());
+    }
 }

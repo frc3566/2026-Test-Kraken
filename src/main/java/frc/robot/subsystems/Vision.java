@@ -60,7 +60,7 @@ public class Vision extends SubsystemBase {
    * {@link Vision#filterPose}.
    * Lower value = stricter filtering. 0.15 rejects more borderline targets.
    */
-  private final double maximumAmbiguity = 0.2;
+  private final double maximumAmbiguity = 0.1;
   /**
    * Photon Vision Simulation
    */
@@ -223,14 +223,19 @@ public class Vision extends SubsystemBase {
     // Tightened from 4.0m to 2.5m to reduce impact of outlier estimates.
     double poseDiffTag = PhotonUtils.getDistanceToPose(currentPose.get(), pose.get().estimatedPose.toPose2d());
     SmartDashboard.putNumber("Vision/Distance to Odometry Pose", poseDiffTag);
-    if (poseDiffTag > 3) {
+    if (poseDiffTag > 1.5) {
       longDistangePoseEstimationCount++;
+      return Optional.empty();
+
       // Allow through only after many consecutive far readings (robot may be genuinely lost)
-      if (longDistangePoseEstimationCount < 50) {
-        SmartDashboard.putBoolean("Vision/Pose Too Far", true);
-        SmartDashboard.putString("Vision/Filter Reject Reason", "Pose Too Far: " + poseDiffTag);
-        return Optional.empty();
-      }
+      // The robot is probably never lost on the field, so this is likely just allowing through really bad estimates instead of actually helping in a lost robot scenario. Needs tuning and more investigation.
+
+      // if (longDistangePoseEstimationCount < 150) {
+      //   SmartDashboard.putBoolean("Vision/Pose Too Far", true);
+      //   SmartDashboard.putString("Vision/Filter Reject Reason", "Pose Too Far: " + poseDiffTag);
+      //   return Optional.empty();
+      // }
+
     } else {
       longDistangePoseEstimationCount = 0;
       SmartDashboard.putBoolean("Vision/Pose Too Far", false);

@@ -32,6 +32,7 @@ public class AutoPower extends Command {
 
     @Override
     public void initialize() {
+        SmartDashboard.putBoolean("AutoPower/Enabled", true);
         System.out.println("Initializing AutoPower command");
     }
 
@@ -41,16 +42,18 @@ public class AutoPower extends Command {
         Translation2d target = targetTranslation.get();
 
         double distance = pose.getTranslation().getDistance(target);
+        double targetRps = shooter.getAutoPower(distance);
 
         SmartDashboard.putNumber("AutoPower/Distance to Target (m)", distance);
-        SmartDashboard.putString("AutoPower/Robot Translation", pose.getTranslation().toString());
-        SmartDashboard.putString("AutoPower/Target Translation", target.toString());
+        SmartDashboard.putNumber("AutoPower/Target Flywheel Speed (RPS)", targetRps);
+        SmartDashboard.putNumber("AutoPower/Actual Flywheel Speed (RPS)", shooter.getUpperVelocity());
 
         shooter.autoPower(distance);
     }
 
     @Override
     public void end(boolean interrupted) {
+        SmartDashboard.putBoolean("AutoPower/Enabled", false);
         System.out.println("AutoPower command ended.");
     }
 

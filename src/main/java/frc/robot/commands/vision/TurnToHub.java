@@ -78,6 +78,7 @@ public class TurnToHub extends Command {
         // the robot is enabled and the DS has communicated the alliance color.
         isBlueAlliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
         center = TagUtil.getHubCenterTranslation();
+        SmartDashboard.putBoolean("TurnToHub/Enabled", true);
     }
 
     @Override
@@ -93,17 +94,17 @@ public class TurnToHub extends Command {
         // Add 180 degrees to adjust for field oriented (red front = 180 deg)
         if(!isBlueAlliance){
             targetHeading = targetHeading.plus(Rotation2d.kPi);
-            System.out.println("TurnToTagNew: Red alliance - adding 180 degrees to target heading");
+            // System.out.println("TurnToHub: Red alliance - adding 180 degrees to target heading");
         } else{
-            System.out.println("TurnToTagNew: Blue alliance - using target heading as is");
+            // System.out.println("TurnToHub: Blue alliance - using target heading as is");
 
         }
 
         double headingError = targetHeading.minus(robotPose.getRotation()).getDegrees();
 
-        SmartDashboard.putNumber("TurnToTagNew/Target Heading (deg)", targetHeading.getDegrees());
-        SmartDashboard.putNumber("TurnToTagNew/Heading Error (deg)", headingError);
-        SmartDashboard.putNumber("TurnToTagNew/Distance to Tag (m)",
+        SmartDashboard.putNumber("TurnToHub/Target Heading (deg)", targetHeading.getDegrees());
+        SmartDashboard.putNumber("TurnToHub/Heading Error (deg)", headingError);
+        SmartDashboard.putNumber("TurnToHub/Distance to Tag (m)",
             robotPose.getTranslation().getDistance(center));
 
         drivetrain.setControl(
@@ -115,8 +116,10 @@ public class TurnToHub extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        SmartDashboard.putBoolean("TurnToTagNew/Enabled", false);
-        System.out.println("TurnToTagNew: ended. Interrupted=" + interrupted);
+        SmartDashboard.putBoolean("TurnToHub/Enabled", false);
+        SmartDashboard.putNumber("TurnToHub/Target Heading (deg)", 0);
+        SmartDashboard.putNumber("TurnToHub/Heading Error (deg)", 0);
+        System.out.println("TurnToHub: ended. Interrupted=" + interrupted);
     }
 
     @Override

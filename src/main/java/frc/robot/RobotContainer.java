@@ -131,11 +131,19 @@ public class RobotContainer {
      
         firstDriver.y().toggleOnTrue(new LogTargetDistance(vision));
 
-        firstDriver.a().toggleOnTrue(new TurnToHub(drivetrain, 
+        firstDriver.a().whileTrue(new TurnToHub(drivetrain, 
             () -> -firstDriver.getLeftY() * MaxSpeed, 
             () -> -firstDriver.getLeftX() * MaxSpeed,
             MaxSpeed,
             MaxAngularRate));
+
+        firstDriver.a().onFalse(
+                drivetrain.applyRequest(() ->
+                drive.withVelocityX(-firstDriver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-firstDriver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-firstDriver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+            )
+        );
 
         // firstDriver.b().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(2,2, new Rotation2d()))); //TODO: Test pose 2d
 

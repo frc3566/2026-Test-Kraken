@@ -139,11 +139,11 @@ public class RobotContainer {
             MaxAngularRate));
 
         firstDriver.a().onFalse(
-                new SnapToForward(drivetrain,
-                    () -> -firstDriver.getLeftY() * MaxSpeed,
-                    () -> -firstDriver.getLeftX() * MaxSpeed,
-                    MaxSpeed, MaxAngularRate)
-                .withTimeout(1.5) // Safety fallback — resumes normal drive if snap takes too long
+                drivetrain.applyRequest(() ->
+                    drive.withVelocityX(-firstDriver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY(-firstDriver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(-firstDriver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                )
         );
 
         // firstDriver.b().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(2,2, new Rotation2d()))); //TODO: Test pose 2d

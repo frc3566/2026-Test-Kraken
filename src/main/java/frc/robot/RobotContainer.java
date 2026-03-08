@@ -41,6 +41,7 @@ import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
     private boolean enableDrive = true;
+    private double autonomousPower = 60;
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -159,7 +160,7 @@ public class RobotContainer {
         secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.stopArm()));
 
         // Scoring 
-        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(46)));
+        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(43)));
         
         // Neutral Passing 
         secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(70)));
@@ -212,7 +213,7 @@ public class RobotContainer {
         // Prime the shooter while driving
         NamedCommands.registerCommand(
             "AutoPrime",
-            new AutoPrime(shooter, intake,62) // Make it long enough so keeps running until deadline group?
+            new AutoPrime(shooter, intake) // Make it long enough so keeps running until deadline group?
         );
 
         // Generic Prime and Shoot.
@@ -225,19 +226,19 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
             "LeftPrimeAndShoot",
-            new PrimeAndShootFixed(shooter, intake, 62, 1, 4)
+            new PrimeAndShootFixed(shooter, intake, autonomousPower, 1, 4)
         );
 
         // For some reason right side need more power.
         // Could be due to inaccurate field, use PrimeAndShoot if things are not right
         NamedCommands.registerCommand(
             "RightPrimeAndShoot",
-            new PrimeAndShootFixed(shooter, intake, 62, 1, 4)
+            new PrimeAndShootFixed(shooter, intake, autonomousPower, 1, 4)
         );
 
         NamedCommands.registerCommand(
             "RightPrimeAndShootLong",
-            new PrimeAndShootFixed(shooter, intake, 62, 1, 6)
+            new PrimeAndShootFixed(shooter, intake, autonomousPower, 1, 7)
         );
 
         NamedCommands.registerCommand(

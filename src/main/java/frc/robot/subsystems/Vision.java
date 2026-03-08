@@ -59,7 +59,7 @@ public class Vision extends SubsystemBase {
    * Ambiguity defined as a value between (0,1). Used in
    * {@link Vision#filterPose}.
    */
-  private final double maximumAmbiguity = 0.1;
+  private final double maximumAmbiguity = 0.15;
   /**
    * Photon Vision Simulation
    */
@@ -226,7 +226,7 @@ public class Vision extends SubsystemBase {
       // Allow through only after many consecutive far readings (robot may be genuinely lost)
       // The robot is probably never lost on the field, so this is likely just allowing through really bad estimates instead of actually helping in a lost robot scenario. Needs tuning and more investigation.
 
-      if (longDistangePoseEstimationCount < 100) {
+      if (longDistangePoseEstimationCount < 50) {
         SmartDashboard.putBoolean("Vision/Pose Too Far", true);
         SmartDashboard.putString("Vision/Filter Reject Reason", "Pose Too Far: " + poseDiffTag);
         return Optional.empty();

@@ -6,9 +6,7 @@ import frc.robot.subsystems.Shooter;
 
 public class AutoPrime extends Command {
     private final Shooter shooter;
-    private final double speed;
     private final Intake intake;
-    private double primeTime; 
     private final Timer timer = new Timer();
 
     /**
@@ -20,18 +18,9 @@ public class AutoPrime extends Command {
      * @param speed
      * @param primeTime
      */
-
-    public AutoPrime(Shooter shooter, Intake intake, double speed) {
+    public AutoPrime(Shooter shooter, Intake intake) {
         this.shooter = shooter;
-        this.speed = speed;
         this.intake = intake;
-    }
-
-    public AutoPrime(Shooter shooter, Intake intake, double speed, double primeTime) {
-        this.shooter = shooter;
-        this.speed = speed;
-        this.intake = intake;
-        this.primeTime = primeTime;
     }
 
     @Override

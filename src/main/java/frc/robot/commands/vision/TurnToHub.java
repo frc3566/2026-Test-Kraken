@@ -79,13 +79,6 @@ public class TurnToHub extends Command {
         isBlueAlliance = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
         center = TagUtil.getHubCenterTranslation();
 
-        // Reset the heading PID from the robot's current heading so there's no stale
-        // integral/derivative error carried in from a previous run. Without this, CTRE's
-        // HeadingController resets its internal first-run flag and snaps to 0 on the
-        // first execute() tick, causing the jerky "lost setpoint" behavior.
-        drive.HeadingController.reset();
-        drive.HeadingController.setSetpoint(drivetrain.getState().Pose.getRotation().getRadians());
-
         SmartDashboard.putBoolean("TurnToHub/Enabled", true);
     }
 

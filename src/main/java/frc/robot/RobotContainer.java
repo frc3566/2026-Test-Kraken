@@ -30,6 +30,7 @@ import frc.robot.commands.shooter.PrimeAndShootFixed;
 import frc.robot.commands.vision.AutoPower;
 import frc.robot.commands.vision.DriveToPose;
 import frc.robot.commands.vision.LogTargetDistance;
+import frc.robot.commands.vision.SnapToForward;
 import frc.robot.commands.vision.TagUtil;
 import frc.robot.commands.vision.TurnToHub;
 import frc.robot.generated.TunerConstants;
@@ -138,11 +139,11 @@ public class RobotContainer {
             MaxAngularRate));
 
         firstDriver.a().onFalse(
-                drivetrain.applyRequest(() ->
-                drive.withVelocityX(-firstDriver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-firstDriver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-firstDriver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-            )
+                new SnapToForward(drivetrain,
+                    () -> -firstDriver.getLeftY() * MaxSpeed,
+                    () -> -firstDriver.getLeftX() * MaxSpeed,
+                    MaxSpeed, MaxAngularRate)
+                .withTimeout(1.5) // Safety fallback — resumes normal drive if snap takes too long
         );
 
         // firstDriver.b().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(2,2, new Rotation2d()))); //TODO: Test pose 2d

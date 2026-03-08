@@ -72,7 +72,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         if(!Utils.isSimulation()){
-            // configureCamera();
+            configureCamera();
         }
 
         
@@ -132,6 +132,7 @@ public class RobotContainer {
      
         firstDriver.y().toggleOnTrue(new LogTargetDistance(vision));
 
+        // A = always turn to hub
         firstDriver.a().whileTrue(new TurnToHub(drivetrain, 
             () -> -firstDriver.getLeftY() * MaxSpeed, 
             () -> -firstDriver.getLeftX() * MaxSpeed,
@@ -145,6 +146,41 @@ public class RobotContainer {
                         .withRotationalRate(-firstDriver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
                 )
         );
+
+        // Right trigger = rotate to forward, ends after done
+
+        firstDriver.rightTrigger().whileTrue(new SnapToForward(drivetrain, 
+            () -> -firstDriver.getLeftY() * MaxSpeed, 
+            () -> -firstDriver.getLeftX() * MaxSpeed,
+            MaxSpeed,
+            MaxAngularRate));
+
+        firstDriver.rightTrigger().onFalse(
+                drivetrain.applyRequest(() ->
+                    drive.withVelocityX(-firstDriver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY(-firstDriver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(-firstDriver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                )
+        );
+
+        // b = only straight forward, no left or right
+        firstDriver.b().whileTrue(
+             drivetrain.applyRequest(() ->
+                    drive.withVelocityX(-firstDriver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY(0) // Drive left with negative X (left)
+                        .withRotationalRate(-firstDriver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                )
+        );
+
+        firstDriver.b().onFalse(
+                drivetrain.applyRequest(() ->
+                    drive.withVelocityX(-firstDriver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY(-firstDriver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(-firstDriver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                )
+        );
+
+
 
         // firstDriver.b().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(2,2, new Rotation2d()))); //TODO: Test pose 2d
 

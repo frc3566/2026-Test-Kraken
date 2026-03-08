@@ -224,9 +224,8 @@ public class Vision extends SubsystemBase {
     if (poseDiffTag > 5) {
       longDistangePoseEstimationCount++;
       // Allow through only after many consecutive far readings (robot may be genuinely lost)
-      // The robot is probably never lost on the field, so this is likely just allowing through really bad estimates instead of actually helping in a lost robot scenario. Needs tuning and more investigation.
-
-      if (longDistangePoseEstimationCount < 50) {
+     
+      if (longDistangePoseEstimationCount < 30) {
         SmartDashboard.putBoolean("Vision/Pose Too Far", true);
         SmartDashboard.putString("Vision/Filter Reject Reason", "Pose Too Far: " + poseDiffTag);
         return Optional.empty();

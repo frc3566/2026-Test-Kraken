@@ -67,8 +67,8 @@ public class RobotContainer {
     // public final Climber climber = new Climber();
 
     public  SendableChooser<Command> firstChooser;
-    public  SendableChooser<Command> secondChooser;
-    public  SendableChooser<Command> thirdChooser;
+    // public  SendableChooser<Command> secondChooser;
+    // public  SendableChooser<Command> thirdChooser;
 
     public RobotContainer() {
         if(!Utils.isSimulation()){
@@ -90,12 +90,12 @@ public class RobotContainer {
 
     private void configureAutoChooser() {
         firstChooser = AutoBuilder.buildAutoChooser();
-        secondChooser = AutoBuilder.buildAutoChooser();
-        thirdChooser = AutoBuilder.buildAutoChooser();
+        // secondChooser = AutoBuilder.buildAutoChooser();
+        // thirdChooser = AutoBuilder.buildAutoChooser();
 
         Shuffleboard.getTab("Autonomous").add("First Auto", firstChooser);
-        Shuffleboard.getTab("Autonomous").add("Second Auto", secondChooser);
-        Shuffleboard.getTab("Autonomous").add("Third Auto", thirdChooser);
+        // Shuffleboard.getTab("Autonomous").add("Second Auto", secondChooser);
+        // Shuffleboard.getTab("Autonomous").add("Third Auto", thirdChooser);
     }
 
     private void configureBindings() {

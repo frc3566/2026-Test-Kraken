@@ -29,8 +29,8 @@ import frc.robot.commands.shooter.PrimeAndShoot;
 import frc.robot.commands.shooter.PrimeAndShootFixed;
 import frc.robot.commands.vision.AutoPower;
 import frc.robot.commands.vision.DriveToPose;
+import frc.robot.commands.vision.HeadToAngle;
 import frc.robot.commands.vision.LogTargetDistance;
-import frc.robot.commands.vision.SnapToForward;
 import frc.robot.commands.vision.TagUtil;
 import frc.robot.commands.vision.TurnToHub;
 import frc.robot.generated.TunerConstants;
@@ -149,13 +149,31 @@ public class RobotContainer {
 
         // Right trigger = rotate to forward, ends after done
 
-        firstDriver.rightTrigger().whileTrue(new SnapToForward(drivetrain, 
+        firstDriver.rightTrigger().whileTrue(new HeadToAngle(
+            0,
+            drivetrain, 
             () -> -firstDriver.getLeftY() * MaxSpeed, 
             () -> -firstDriver.getLeftX() * MaxSpeed,
             MaxSpeed,
             MaxAngularRate));
 
         firstDriver.rightTrigger().onFalse(
+                drivetrain.applyRequest(() ->
+                    drive.withVelocityX(-firstDriver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                        .withVelocityY(-firstDriver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                        .withRotationalRate(-firstDriver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                )
+        );
+
+        firstDriver.y().whileTrue(new HeadToAngle(
+            drivetrain.getPose().getRotation().getDegrees()+180,
+            drivetrain, 
+            () -> -firstDriver.getLeftY() * MaxSpeed, 
+            () -> -firstDriver.getLeftX() * MaxSpeed,
+            MaxSpeed,
+            MaxAngularRate));
+
+        firstDriver.y().onFalse(
                 drivetrain.applyRequest(() ->
                     drive.withVelocityX(-firstDriver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
                         .withVelocityY(-firstDriver.getLeftX() * MaxSpeed) // Drive left with negative X (left)

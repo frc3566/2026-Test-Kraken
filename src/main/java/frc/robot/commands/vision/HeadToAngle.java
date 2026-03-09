@@ -18,7 +18,7 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
  * at which point the drivetrain's default drive command naturally takes over.
  * Pair with {@code .withTimeout()} in RobotContainer as a safety fallback.
  */
-public class SnapToForward extends Command {
+public class HeadToAngle extends Command {
 
     private static final double HEADING_TOLERANCE_DEG = 1.5;
 
@@ -30,12 +30,16 @@ public class SnapToForward extends Command {
 
     private Rotation2d targetHeading;
 
-    public SnapToForward(CommandSwerveDrivetrain drivetrain,
+    private double degree;
+
+    public HeadToAngle(double degree,CommandSwerveDrivetrain drivetrain,
                          DoubleSupplier velocityX, DoubleSupplier velocityY,
                          double maxSpeed, double maxAngularRate) {
         this.drivetrain = drivetrain;
         this.velocityX = velocityX;
         this.velocityY = velocityY;
+        this.degree = degree;
+
 
         this.drive = new SwerveRequest.FieldCentricFacingAngle()
                 .withDeadband(maxSpeed * 0.1)
@@ -43,7 +47,7 @@ public class SnapToForward extends Command {
                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
                 .withForwardPerspective(SwerveRequest.ForwardPerspectiveValue.OperatorPerspective);
 
-        drive.HeadingController.setPID(8.0, 0.0, 0.2);
+        drive.HeadingController.setPID(4.0, 0.0, 0.1);
         drive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
 
         addRequirements(drivetrain);
@@ -55,7 +59,7 @@ public class SnapToForward extends Command {
                 .orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
 
         // 0° = away from blue driver station (toward red side), 180° = red alliance equivalent
-        targetHeading = isBlue ? Rotation2d.kZero : Rotation2d.kPi;
+        targetHeading = isBlue ? Rotation2d.fromDegrees(degree) : Rotation2d.fromDegrees(degree+180);
     }
 
     @Override

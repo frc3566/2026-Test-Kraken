@@ -243,12 +243,12 @@ public class RobotContainer {
         // because during testing we want to run auto many times in a row without restarting the robot code.
 
         Command start = firstChooser.getSelected();
-        Command second = secondChooser.getSelected();
-        Command third = thirdChooser.getSelected();
+        // Command second = secondChooser.getSelected();
+        // Command third = thirdChooser.getSelected();
 
         if (start != null) autoCommand.addCommands(new ProxyCommand(start));
-        if (second != null) autoCommand.addCommands(new ProxyCommand(second));
-        if (third != null) autoCommand.addCommands(new ProxyCommand(third));
+        // if (second != null) autoCommand.addCommands(new ProxyCommand(second));
+        // if (third != null) autoCommand.addCommands(new ProxyCommand(third));
 
         return autoCommand;
     }

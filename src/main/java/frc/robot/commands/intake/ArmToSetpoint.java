@@ -1,23 +1,26 @@
 package frc.robot.commands.intake;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 
 /**
- * NOT FULLY TESTED; USE WITH CAUTION
+ * Moves the intake arm to a target position (in mechanism rotations) using
+ * Phoenix 6 PositionDutyCycle closed-loop control running on the TalonFX.
+ *
+ * The heavy lifting (PID) happens inside the motor controller — this command
+ * just sends the target and waits.
  */
-
 public class ArmToSetpoint extends Command {
 
     private final Intake intake;
     private final double targetRotations;
-    private final double tolerance; // rotations (~7 degrees)
+    private final double tolerance;
 
     /**
-     * DO NOT USE. Arm encoders change when moving up and down.
-     * @param intake
-     * @param targetRotations
-     * @param tolerance
+     * @param intake          The intake subsystem.
+     * @param targetRotations Target position in mechanism rotations.
+     * @param tolerance       Acceptable error in mechanism rotations.
      */
     public ArmToSetpoint(Intake intake, double targetRotations, double tolerance) {
         this.intake = intake;
@@ -28,15 +31,17 @@ public class ArmToSetpoint extends Command {
 
     @Override
     public void initialize() {
-        System.out.println("Current Arm Pos:" + intake.getArmPosition());
-        System.out.println("Initiating ArmToSetpoint...");
-        // intake.setArmPosition(targetRotations);
+        intake.setArmPosition(targetRotations);
+        SmartDashboard.putNumber("Intake/Arm TargetRotations", targetRotations);
+        System.out.println("ArmToSetpoint: moving to " + targetRotations + " rotations");
     }
 
     @Override
-    public void execute(){
-        System.out.println("[PID IN ACTION] Current Arm Pos:" + intake.getArmPosition());
-
+    public void execute() {
+        // PositionDutyCycle runs on the motor controller — nothing extra needed here.
+        // Just publish telemetry so we can watch progress.
+        SmartDashboard.putNumber("Intake/Arm CurrentRotations", intake.getArmPosition());
+        SmartDashboard.putNumber("Intake/Arm ErrorRotations", targetRotations - intake.getArmPosition());
     }
 
     @Override
@@ -46,8 +51,11 @@ public class ArmToSetpoint extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        // Optional: hold position
-        System.out.println("ArmToSetpoint Ended. Arm Pos:" + intake.getArmPosition());
-        intake.armMotor.stopMotor();
+        if (interrupted) {
+            // Hold position by re-issuing the current position as the target
+            intake.setArmPosition(intake.getArmPosition());
+        }
+        System.out.println("ArmToSetpoint: finished. Interrupted=" + interrupted
+            + " | final pos=" + intake.getArmPosition() + " rotations");
     }
 }

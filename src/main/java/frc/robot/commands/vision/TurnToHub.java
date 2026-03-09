@@ -68,7 +68,7 @@ public class TurnToHub extends Command {
         // P: raised for faster snap. I: eliminates the steady-state 2° error that P alone can't correct.
         // D: increased slightly to dampen the higher P. iZone: only integrate when close to target
         // to prevent windup during large initial turns.
-        drive.HeadingController.setPID(8.0, 0.0, 0.2);
+        drive.HeadingController.setPID(4.0, 0.0, 0.1);
         drive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
     }
 

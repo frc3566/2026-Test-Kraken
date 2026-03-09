@@ -369,7 +369,7 @@
               "_showGlyph": false
             }
           },
-          "4,0": {
+          "4,1": {
             "size": [
               1,
               1
@@ -382,9 +382,9 @@
               "_showGlyph": false
             }
           },
-          "3,1": {
+          "4,2": {
             "size": [
-              2,
+              1,
               1
             ],
             "content": {
@@ -401,10 +401,10 @@
               "Visuals/Orientation": "HORIZONTAL"
             }
           },
-          "3,2": {
+          "4,3": {
             "size": [
-              2,
-              2
+              1,
+              1
             ],
             "content": {
               "_type": "Boolean Box",
@@ -416,7 +416,20 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "3,0": {
+          "8,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///Shuffleboard/Autonomous/First Auto",
+              "_title": "Auto",
+              "_glyph": 148,
+              "_showGlyph": false
+            }
+          },
+          "4,0": {
             "size": [
               1,
               1
@@ -480,19 +493,6 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "9,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Shooter/Flywheel Power",
-              "_title": "Flywheel Power",
-              "_glyph": 148,
-              "_showGlyph": false
-            }
-          },
           "5,3": {
             "size": [
               2,
@@ -546,27 +546,61 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "8,0": {
+          "0,0": {
             "size": [
-              2,
+              4,
+              4
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://USB Camera 0",
+              "_title": "USB Camera 0",
+              "_glyph": 148,
+              "_showGlyph": false,
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": 30,
+              "imageWidth": 0,
+              "imageHeight": 0
+            }
+          },
+          "9,1": {
+            "size": [
+              1,
               1
             ],
             "content": {
-              "_type": "ComboBox Chooser",
-              "_source0": "network_table:///Shuffleboard/Autonomous/First Auto",
-              "_title": "Shuffleboard/Autonomous/First Auto",
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Intake/Arm Position (rot)",
+              "_title": "SmartDashboard/Intake/Arm Position (rot)",
               "_glyph": 148,
               "_showGlyph": false
             }
           }
         }
       }
+    },
+    {
+      "title": "Tab 4",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "titleType": 0,
+        "tiles": {}
+      }
     }
   ],
   "windowGeometry": {
-    "x": -6.400000095367432,
-    "y": -6.400000095367432,
-    "width": 1548.800048828125,
-    "height": 828.7999877929688
+    "x": 0.800000011920929,
+    "y": 0.800000011920929,
+    "width": 1534.4000244140625,
+    "height": 814.4000244140625
   }
 }

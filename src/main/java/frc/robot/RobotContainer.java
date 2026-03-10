@@ -12,6 +12,8 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
+import edu.wpi.first.math.geometry.Rotation2d;
+
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -130,7 +132,7 @@ public class RobotContainer {
             
         firstDriver.x().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
      
-        firstDriver.y().toggleOnTrue(new LogTargetDistance(vision));
+        // firstDriver.y().toggleOnTrue(new LogTargetDistance(vision));
 
         // A = always turn to hub
         firstDriver.a().whileTrue(new TurnToHub(drivetrain, 
@@ -139,47 +141,25 @@ public class RobotContainer {
             MaxSpeed,
             MaxAngularRate));
 
-        firstDriver.a().onFalse(
-                drivetrain.applyRequest(() ->
-                    drive.withVelocityX(-firstDriver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                        .withVelocityY(-firstDriver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-firstDriver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-                )
-        );
-
         // Right trigger = rotate to forward, ends after done
 
         firstDriver.rightTrigger().whileTrue(new HeadToAngle(
-            0,
+            90,
             drivetrain, 
             () -> -firstDriver.getLeftY() * MaxSpeed, 
             () -> -firstDriver.getLeftX() * MaxSpeed,
             MaxSpeed,
             MaxAngularRate));
 
-        firstDriver.rightTrigger().onFalse(
-                drivetrain.applyRequest(() ->
-                    drive.withVelocityX(-firstDriver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                        .withVelocityY(-firstDriver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-firstDriver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-                )
-        );
 
         firstDriver.y().whileTrue(new HeadToAngle(
-            drivetrain.getPose().getRotation().getDegrees()+180,
+            -90,
             drivetrain, 
             () -> -firstDriver.getLeftY() * MaxSpeed, 
             () -> -firstDriver.getLeftX() * MaxSpeed,
             MaxSpeed,
             MaxAngularRate));
 
-        firstDriver.y().onFalse(
-                drivetrain.applyRequest(() ->
-                    drive.withVelocityX(-firstDriver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                        .withVelocityY(-firstDriver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-firstDriver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-                )
-        );
 
         // b = only straight forward, no left or right
         firstDriver.b().whileTrue(
@@ -190,13 +170,44 @@ public class RobotContainer {
                 )
         );
 
-        firstDriver.b().onFalse(
-                drivetrain.applyRequest(() ->
-                    drive.withVelocityX(-firstDriver.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                        .withVelocityY(-firstDriver.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                        .withRotationalRate(-firstDriver.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
-                )
+
+        firstDriver.povUp().whileTrue(new HeadToAngle(
+            0,
+            drivetrain, 
+            () -> -firstDriver.getLeftY() * MaxSpeed, 
+            () -> -firstDriver.getLeftX() * MaxSpeed,
+            MaxSpeed,
+            MaxAngularRate)
         );
+
+        // firstDriver.povRight().whileTrue(new HeadToAngle(
+        //     -90,
+        //     drivetrain, 
+        //     () -> -firstDriver.getLeftY() * MaxSpeed, 
+        //     () -> -firstDriver.getLeftX() * MaxSpeed,
+        //     MaxSpeed,
+        //     MaxAngularRate)
+        // );
+
+        firstDriver.povDown().whileTrue(new HeadToAngle(
+            -180,
+            drivetrain, 
+            () -> -firstDriver.getLeftY() * MaxSpeed, 
+            () -> -firstDriver.getLeftX() * MaxSpeed,
+            MaxSpeed,
+            MaxAngularRate)
+        );
+
+        // firstDriver.povLeft().whileTrue(new HeadToAngle(
+        //     90,
+        //     drivetrain, 
+        //     () -> -firstDriver.getLeftY() * MaxSpeed, 
+        //     () -> -firstDriver.getLeftX() * MaxSpeed,
+        //     MaxSpeed,
+        //     MaxAngularRate)
+        // );
+
+
 
 
 

@@ -1,5 +1,8 @@
 package frc.robot.commands.vision;
 
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -48,6 +51,7 @@ public class DriveToPose extends Command {
     // rotate these axes by whatever seedFieldCentric() last set, causing wrong positions.
     private final SwerveRequest.FieldCentricFacingAngle drive =
         new SwerveRequest.FieldCentricFacingAngle()
+            .withMaxAbsRotationalRate(RotationsPerSecond.of(0.75).in(RadiansPerSecond))
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
             .withForwardPerspective(ForwardPerspectiveValue.BlueAlliance); // field-relative, not robot-relative
 
@@ -70,7 +74,7 @@ public class DriveToPose extends Command {
         yController.setTolerance(POSITION_TOLERANCE_METERS);
 
         // TODO: Tune via SysId rotation routine in CommandSwerveDrivetrain
-        drive.HeadingController.setPID(5.0, 0, 0.1);
+        drive.HeadingController.setPID(3.0, 0, 0.1);
         drive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
 
         addRequirements(drivetrain);

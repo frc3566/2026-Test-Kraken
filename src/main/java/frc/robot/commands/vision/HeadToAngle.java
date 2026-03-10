@@ -9,6 +9,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import static edu.wpi.first.units.Units.MetersPerSecond;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 
 /**
  * Snaps the robot to face forward (0° for blue alliance, 180° for red alliance
@@ -45,9 +48,10 @@ public class HeadToAngle extends Command {
                 .withDeadband(maxSpeed * 0.1)
                 .withRotationalDeadband(0)
                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
+                .withMaxAbsRotationalRate(RotationsPerSecond.of(0.75).in(RadiansPerSecond))
                 .withForwardPerspective(SwerveRequest.ForwardPerspectiveValue.OperatorPerspective);
 
-        drive.HeadingController.setPID(4.0, 0.0, 0.1);
+        drive.HeadingController.setPID(2, 0.0, 0.0);
         drive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);
 
         addRequirements(drivetrain);

@@ -12,8 +12,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
-import edu.wpi.first.math.geometry.Rotation2d;
-
 import static edu.wpi.first.units.Units.MetersPerSecond;
 import static edu.wpi.first.units.Units.RadiansPerSecond;
 import static edu.wpi.first.units.Units.RotationsPerSecond;
@@ -32,7 +30,6 @@ import frc.robot.commands.shooter.PrimeAndShootFixed;
 import frc.robot.commands.vision.AutoPower;
 import frc.robot.commands.vision.DriveToPose;
 import frc.robot.commands.vision.HeadToAngle;
-import frc.robot.commands.vision.LogTargetDistance;
 import frc.robot.commands.vision.TagUtil;
 import frc.robot.commands.vision.TurnToHub;
 import frc.robot.generated.TunerConstants;
@@ -291,10 +288,10 @@ public class RobotContainer {
         );
 
         // Generic Prime and Shoot.
-        // We want to wait until the robot is stead, so 1 second for another priming
+        // We want to wait until the robot is stead, so 0.5 second for another priming
         NamedCommands.registerCommand(
             "PrimeAndShoot",
-            new PrimeAndShoot(shooter, intake, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation, 1, 4)
+            new PrimeAndShoot(shooter, intake, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation, 0.5, 4)
         );
 
 

@@ -69,17 +69,17 @@ public class TagUtil {
     // Red front = 180 degrees
     public static Pose2d getLeftTrenchPose(){
         if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
-            return new Pose2d(new Translation2d(3.0, 7.375), Rotation2d.kPi);
+            return new Pose2d(new Translation2d(3.0, 7.425), Rotation2d.kPi);
         } else {
-            return new Pose2d(new Translation2d(13.5, 0.625), new Rotation2d(0));
+            return new Pose2d(new Translation2d(13.5, 0.644), new Rotation2d(0));
         }
     }
 
     public static Pose2d getRightTrenchPose(){
         if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
-            return new Pose2d(new Translation2d(3.0, 0.625), Rotation2d.kPi);
+            return new Pose2d(new Translation2d(3.0, 0.644), Rotation2d.kPi);
         } else {
-            return new Pose2d(new Translation2d(13.5, 7.375), new Rotation2d(0));
+            return new Pose2d(new Translation2d(13.5, 7.425), new Rotation2d(0));
         }
     }
 

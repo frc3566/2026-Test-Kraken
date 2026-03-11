@@ -17,7 +17,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "RightNeutral"
+                  "pathName": "RightNeutralFirst"
                 }
               },
               {
@@ -32,7 +32,32 @@
         {
           "type": "named",
           "data": {
-            "name": "LeftPrimeAndShoot"
+            "name": "PrimeAndShoot"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "RightNeutralSecond"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "AutoPrime"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "PrimeAndShoot"
           }
         }
       ]

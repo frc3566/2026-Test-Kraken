@@ -197,47 +197,48 @@ public class Vision extends SubsystemBase {
   private Optional<EstimatedRobotPose> filterPose(Optional<EstimatedRobotPose> pose) {
     if (pose.isEmpty()) { return pose; }
 
-    // Reject if ANY target used has high ambiguity (max, not min).
-    // This prevents a single noisy tag from polluting a multi-tag estimate.
-    double worstAmbiguity = pose.get().targetsUsed.stream()
-        .mapToDouble(target -> target.getPoseAmbiguity())
-        .min()
-        .orElse(1.0);
+    // Keep only targets whose ambiguity is below the threshold.
+    // Targets with ambiguity < 0 are ignored by PhotonVision (multi-tag result);
+    // we pass those through unconditionally since they have no ambiguity value.
+    var goodTargets = pose.get().targetsUsed.stream()
+        .filter(t -> t.getPoseAmbiguity() < 0 || t.getPoseAmbiguity() < maximumAmbiguity)
+        .toList();
 
-    SmartDashboard.putNumber("Vision/Worst Target Ambiguity", worstAmbiguity);
-    if (worstAmbiguity > maximumAmbiguity) {
-      SmartDashboard.putString("Vision/Filter Reject Reason", "High Ambiguity: " + worstAmbiguity);
+    SmartDashboard.putNumber("Vision/Good Targets Count", goodTargets.size());
+    SmartDashboard.putNumber("Vision/Total Targets Count", pose.get().targetsUsed.size());
+
+    if (goodTargets.isEmpty()) {
+      SmartDashboard.putString("Vision/Filter Reject Reason",
+          "All targets above ambiguity threshold (" + maximumAmbiguity + ")");
       return Optional.empty();
     }
 
-    // // Sanity check: estimated 3D pose Z should be near the floor (robot is ground-based).
-    // double estimatedZ = pose.get().estimatedPose.getZ();
-    // SmartDashboard.putNumber("Vision/Estimated Pose Z", estimatedZ);
-    // if (Math.abs(estimatedZ) > 0.75) {
-    //   SmartDashboard.putString("Vision/Filter Reject Reason", "Bad Z Height: " + estimatedZ);
-    //   return Optional.empty();
-    // }
+    // Rebuild the pose with only the passing targets so that downstream
+    // std-dev calculations reflect only trustworthy observations.
+    var filtered = new EstimatedRobotPose(
+        pose.get().estimatedPose,
+        pose.get().timestampSeconds,
+        goodTargets,
+        pose.get().strategy);
 
     // Reject if the vision estimate is too far from current odometry pose.
-    double poseDiffTag = PhotonUtils.getDistanceToPose(currentPose.get(), pose.get().estimatedPose.toPose2d());
+    double poseDiffTag = PhotonUtils.getDistanceToPose(currentPose.get(), filtered.estimatedPose.toPose2d());
     SmartDashboard.putNumber("Vision/Distance to Odometry Pose", poseDiffTag);
     if (poseDiffTag > 5) {
       longDistangePoseEstimationCount++;
       // Allow through only after many consecutive far readings (robot may be genuinely lost)
-     
       if (longDistangePoseEstimationCount < 30) {
         SmartDashboard.putBoolean("Vision/Pose Too Far", true);
         SmartDashboard.putString("Vision/Filter Reject Reason", "Pose Too Far: " + poseDiffTag);
         return Optional.empty();
       }
-
     } else {
       longDistangePoseEstimationCount = 0;
       SmartDashboard.putBoolean("Vision/Pose Too Far", false);
     }
 
     SmartDashboard.putString("Vision/Filter Reject Reason", "Passed");
-    return pose;
+    return Optional.of(filtered);
   }
 
   /**ß

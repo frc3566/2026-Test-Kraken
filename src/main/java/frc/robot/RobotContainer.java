@@ -71,7 +71,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         if(!Utils.isSimulation()){
-            configureCamera();
+            // configureCamera();
         }
 
         
@@ -127,7 +127,7 @@ public class RobotContainer {
 
         // vision.setDefaultCommand(new UpdateVisionPoseEstimate(vision, drivetrain));
             
-        firstDriver.x().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // firstDriver.x().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
      
         // firstDriver.y().toggleOnTrue(new LogTargetDistance(vision));
 
@@ -186,7 +186,7 @@ public class RobotContainer {
         //     MaxAngularRate)
         // );
 
-        firstDriver.povDown().whileTrue(new HeadToAngle(
+        firstDriver.x().whileTrue(new HeadToAngle(
             -180,
             drivetrain, 
             () -> -firstDriver.getLeftY() * MaxSpeed, 

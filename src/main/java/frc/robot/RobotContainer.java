@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
@@ -110,10 +109,10 @@ public class RobotContainer {
         /* SysID stuffs */
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        secondDriver.povUp().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        secondDriver.povDown().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        secondDriver.povLeft().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        secondDriver.povRight().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // secondDriver.povUp().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // secondDriver.povDown().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // secondDriver.povLeft().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // secondDriver.povRight().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         if(enableDrive){
                 drivetrain.setDefaultCommand(
@@ -132,16 +131,16 @@ public class RobotContainer {
      
         // firstDriver.y().toggleOnTrue(new LogTargetDistance(vision));
 
-        // A = always turn to hub
-        firstDriver.a().whileTrue(new TurnToHub(drivetrain, 
+        // Right trigger = always turn to hub
+        firstDriver.rightTrigger().whileTrue(new TurnToHub(drivetrain, 
             () -> -firstDriver.getLeftY() * MaxSpeed, 
             () -> -firstDriver.getLeftX() * MaxSpeed,
             MaxSpeed,
             MaxAngularRate));
 
-        // Right trigger = rotate to forward, ends after done
+        // A = rotate to forward, ends after done
 
-        firstDriver.rightTrigger().whileTrue(new HeadToAngle(
+        firstDriver.a().whileTrue(new HeadToAngle(
             90,
             drivetrain, 
             () -> -firstDriver.getLeftY() * MaxSpeed, 

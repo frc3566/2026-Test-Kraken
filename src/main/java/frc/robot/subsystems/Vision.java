@@ -229,6 +229,12 @@ public class Vision extends SubsystemBase {
 
     SmartDashboard.putNumber("Vision/Good Targets Count", goodTargets.size());
     SmartDashboard.putNumber("Vision/Total Targets Count", pose.get().targetsUsed.size());
+    SmartDashboard.putString(
+      "Vision/Passed Target IDs",
+      goodTargets.stream()
+        .map(target -> Integer.toString(target.getFiducialId()))
+        .toList()
+        .toString());
 
     if (goodTargets.isEmpty()) {
       SmartDashboard.putString("Vision/Filter Reject Reason",
@@ -260,6 +266,7 @@ public class Vision extends SubsystemBase {
     SmartDashboard.putNumber("Vision/Distance to Odometry Pose", poseDiffTag);
     if (poseDiffTag > 4) {
       longDistangePoseEstimationCount++;
+      SmartDashboard.putNumber("Vision/Long Distance Pose Count", longDistangePoseEstimationCount);
       // Allow through only after many consecutive far readings (robot may be genuinely lost)
       if (longDistangePoseEstimationCount < 30) {
         SmartDashboard.putBoolean("Vision/Pose Too Far", true);
@@ -268,6 +275,7 @@ public class Vision extends SubsystemBase {
       }
     } else {
       longDistangePoseEstimationCount = 0;
+      SmartDashboard.putNumber("Vision/Long Distance Pose Count", longDistangePoseEstimationCount);
       SmartDashboard.putBoolean("Vision/Pose Too Far", false);
     }
 

@@ -29,6 +29,7 @@ import frc.robot.commands.shooter.PrimeAndShoot;
 import frc.robot.commands.shooter.PrimeAndShootFixed;
 import frc.robot.commands.vision.AutoPower;
 import frc.robot.commands.vision.DriveToPose;
+import frc.robot.commands.vision.DriveToPoseNew;
 import frc.robot.commands.vision.HeadToAngle;
 import frc.robot.commands.vision.TagUtil;
 import frc.robot.commands.vision.TurnToHub;
@@ -179,6 +180,8 @@ public class RobotContainer {
 
         firstDriver.leftBumper().whileTrue(new DriveToPose(drivetrain, vision, () -> TagUtil.getLeftTrenchPose()));
         firstDriver.rightBumper().whileTrue(new DriveToPose(drivetrain, vision, () -> TagUtil.getRightTrenchPose()));
+        firstDriver.povLeft().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getLeftTrenchPose()));
+        firstDriver.povRight().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getRightTrenchPose()));
        
 
         firstDriver.a().onTrue(new InstantCommand( () -> shooter.setLowerPower(60)));

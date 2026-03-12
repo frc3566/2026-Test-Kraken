@@ -131,16 +131,16 @@ public class RobotContainer {
      
         // firstDriver.y().toggleOnTrue(new LogTargetDistance(vision));
 
-        // Right trigger = always turn to hub
-        firstDriver.rightTrigger().whileTrue(new TurnToHub(drivetrain, 
+        // Left trigger = always turn to hub
+        firstDriver.leftTrigger().whileTrue(new TurnToHub(drivetrain, 
             () -> -firstDriver.getLeftY() * MaxSpeed, 
             () -> -firstDriver.getLeftX() * MaxSpeed,
             MaxSpeed,
             MaxAngularRate));
 
-        // A = rotate to forward, ends after done
+        // Right trigger = intake facing right
 
-        firstDriver.a().whileTrue(new HeadToAngle(
+        firstDriver.rightTrigger().whileTrue(new HeadToAngle(
             90,
             drivetrain, 
             () -> -firstDriver.getLeftY() * MaxSpeed, 
@@ -167,25 +167,7 @@ public class RobotContainer {
                 )
         );
 
-
-        firstDriver.povUp().whileTrue(new HeadToAngle(
-            0,
-            drivetrain, 
-            () -> -firstDriver.getLeftY() * MaxSpeed, 
-            () -> -firstDriver.getLeftX() * MaxSpeed,
-            MaxSpeed,
-            MaxAngularRate)
-        );
-
-        // firstDriver.povRight().whileTrue(new HeadToAngle(
-        //     -90,
-        //     drivetrain, 
-        //     () -> -firstDriver.getLeftY() * MaxSpeed, 
-        //     () -> -firstDriver.getLeftX() * MaxSpeed,
-        //     MaxSpeed,
-        //     MaxAngularRate)
-        // );
-
+        // x = turn back
         firstDriver.x().whileTrue(new HeadToAngle(
             -180,
             drivetrain, 
@@ -195,29 +177,12 @@ public class RobotContainer {
             MaxAngularRate)
         );
 
-        // firstDriver.povLeft().whileTrue(new HeadToAngle(
-        //     90,
-        //     drivetrain, 
-        //     () -> -firstDriver.getLeftY() * MaxSpeed, 
-        //     () -> -firstDriver.getLeftX() * MaxSpeed,
-        //     MaxSpeed,
-        //     MaxAngularRate)
-        // );
-
-
-
-
-
-        // firstDriver.b().onTrue(new DriveToPose(drivetrain, vision, () -> new Pose2d(2,2, new Rotation2d()))); //TODO: Test pose 2d
-
         firstDriver.leftBumper().whileTrue(new DriveToPose(drivetrain, vision, () -> TagUtil.getLeftTrenchPose()));
         firstDriver.rightBumper().whileTrue(new DriveToPose(drivetrain, vision, () -> TagUtil.getRightTrenchPose()));
        
 
-        firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(60)));
-        firstDriver.leftTrigger().onFalse(new InstantCommand( () -> shooter.stopLower()));
-        // firstDriver.rightTrigger().onTrue(new ChaseTagCommand(drivetrain)); //TODO: Auto align+move to scoring pos
-        // firstDriver.rightBumper().onTrue(new HeadingToHub()); //TODO: Heading snap to hub
+        firstDriver.a().onTrue(new InstantCommand( () -> shooter.setLowerPower(60)));
+        firstDriver.a().onFalse(new InstantCommand( () -> shooter.stopLower()));
 
         /* For Second Driver */
         secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(100)));

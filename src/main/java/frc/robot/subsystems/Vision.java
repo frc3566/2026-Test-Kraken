@@ -410,7 +410,7 @@ public class Vision extends SubsystemBase {
      * MAIN (Limelight3)
      */
     MAIN("limelight-2026-1",
-        new Rotation3d(0, 0.1745, 0),
+        new Rotation3d(0, -0.1745, 0),
         new Translation3d(
           Units.inchesToMeters(14.337),
           Units.inchesToMeters(0),

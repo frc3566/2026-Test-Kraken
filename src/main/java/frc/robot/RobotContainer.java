@@ -211,8 +211,8 @@ public class RobotContainer {
         secondDriver.a().onTrue(shooter.runOnce(() -> shooter.stopUpper()));
 
         
-        // secondDriver.povUp().onTrue(new ClimbToHeight(climber, Constants.Climber.topSetPoint));
-        // secondDriver.povDown().onTrue(new ClimbToHeight(climber, Constants.Climber.bottomSetPoint));
+        secondDriver.povUp().whileTrue(new InstantCommand(() -> intake.setArmPosition(0.0)));
+        secondDriver.povDown().whileTrue(new InstantCommand(() -> intake.setArmPosition(0.5)));
 
         secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));
         secondDriver.povRight().onTrue(new InstantCommand(() -> intake.resetArmPosition(false)));

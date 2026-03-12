@@ -2,9 +2,11 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -12,8 +14,7 @@ import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
 
-    public TalonFX rollerMotor;
-    public TalonFX armMotor;
+    public TalonFX rollerMotor, armLeaderMotor, armFollowerMotor;
 
     private final VelocityVoltage m_velocity = new VelocityVoltage(0);
 
@@ -28,7 +29,8 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         rollerMotor = new TalonFX(Constants.Motors.IntakeRoller);
-        armMotor = new TalonFX(Constants.Motors.IntakeArm);
+        armLeaderMotor = new TalonFX(Constants.Motors.IntakeArmLeader);
+        armFollowerMotor = new TalonFX(Constants.Motors.IntakeArmFollower);
 
         // ------------------------------------------------------------------
         // Arm configuration
@@ -37,13 +39,13 @@ public class Intake extends SubsystemBase {
 
         // Slot 0 — arm position PID
         // TODO: Tune on the real robot.
-        var armSlot0 = new Slot0Configs();
-        armSlot0.kP = 0.6;
-        armSlot0.kI = 0.0;
-        armSlot0.kD = 0.0;
-        armSlot0.kV = 0.12;
-        armSlot0.kG = 0.0;
-        armConfig.Slot0 = armSlot0;
+        // var armSlot0 = new Slot0Configs();
+        // armSlot0.kP = 0.6;
+        // armSlot0.kI = 0.0;
+        // armSlot0.kD = 0.0;
+        // armSlot0.kV = 0.12;
+        // armSlot0.kG = 0.0;
+        // armConfig.Slot0 = armSlot0;
 
         // Sensor-to-mechanism ratio so getArmPosition() reports mechanism rotations
         armConfig.Feedback.SensorToMechanismRatio = ARM_GEAR_RATIO;
@@ -52,13 +54,16 @@ public class Intake extends SubsystemBase {
         // Remember to power the robot on while the arm is up,
         // or the arm encoders will not work as intended.
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.0;  // Straight up
+        armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.01;  // Straight up
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.23; // All the way down
+        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.01; // All the way down
 
         armConfig.Feedback.RotorToSensorRatio = 1;
-        armConfig.Feedback.SensorToMechanismRatio = 64;
-        armMotor.getConfigurator().apply(armConfig);
+        armLeaderMotor.getConfigurator().apply(armConfig);
+        armFollowerMotor.getConfigurator().apply(armConfig);
+
+        armFollowerMotor.setControl(new Follower(armLeaderMotor.getDeviceID(), MotorAlignmentValue.Aligned));
+
 
         // ------------------------------------------------------------------
         // Roller configuration
@@ -86,7 +91,7 @@ public class Intake extends SubsystemBase {
      */
     public void setArmPosition(double rotations) {
         boolean movingUp = rotations > getArmPosition();
-        armMotor.setControl(positionRequest.withPosition(rotations));
+        armLeaderMotor.setControl(positionRequest.withPosition(rotations));
         SmartDashboard.putBoolean("Intake/Arm Moving Up", movingUp);
         SmartDashboard.putBoolean("Intake/Arm Moving Down", !movingUp);
     }
@@ -95,21 +100,21 @@ public class Intake extends SubsystemBase {
      * Returns the current arm mechanism position in rotations.
      */
     public double getArmPosition() {
-        return armMotor.getPosition().getValueAsDouble();
+        return armLeaderMotor.getPosition().getValueAsDouble();
     }
 
     /**
      * Returns true if the arm is within {@code tolerance} rotations of {@code target}.
      */
     public boolean armAtSetpoint(double target, double tolerance) {
-        return Math.abs(armMotor.getPosition().getValueAsDouble() - target) <= tolerance;
+        return Math.abs(armLeaderMotor.getPosition().getValueAsDouble() - target) <= tolerance;
     }
 
     /**
      * Stops the arm motor immediately (coast/brake depending on NeutralMode config).
      */
     public void stopArm() {
-        armMotor.stopMotor();
+        armLeaderMotor.stopMotor();
         SmartDashboard.putBoolean("Intake/Arm Moving Up", false);
         SmartDashboard.putBoolean("Intake/Arm Moving Down", false);
     }
@@ -120,7 +125,7 @@ public class Intake extends SubsystemBase {
      * @param percent [0, 1]
      */
     public void armUp(double percent) {
-        armMotor.set(percent);
+        armLeaderMotor.set(percent);
         SmartDashboard.putBoolean("Intake/Arm Moving Up", true);
         SmartDashboard.putBoolean("Intake/Arm Moving Down", false);
     }
@@ -131,7 +136,7 @@ public class Intake extends SubsystemBase {
      * @param percent [0, 1]
      */
     public void armDown(double percent) {
-        armMotor.set(-percent);
+        armLeaderMotor.set(-percent);
         SmartDashboard.putBoolean("Intake/Arm Moving Up", false);
         SmartDashboard.putBoolean("Intake/Arm Moving Down", true);
     }
@@ -142,7 +147,7 @@ public class Intake extends SubsystemBase {
      * @param isStraight true = arm is straight up (0 rot), false = arm is all the way down (-0.25 rot)
      */
     public void resetArmPosition(boolean isStraight) {
-        armMotor.setPosition(isStraight ? 0 : -0.25);
+        armLeaderMotor.setPosition(isStraight ? 0 : -0.25);
     }
 
     // ------------------------------------------------------------------
@@ -173,9 +178,11 @@ public class Intake extends SubsystemBase {
 
     @Override
     public void periodic() {
-        // SmartDashboard.putNumber("Intake/Arm Position (rot)", armMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Intake/Arm Position (rot)", armLeaderMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Intake/Roller Velocity (rps)", rollerMotor.getVelocity().getValueAsDouble());
-        // SmartDashboard.putNumber("Intake/Arm Supply Current (A)", armMotor.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("Intake/Arm Leader Supply Current (A)", armLeaderMotor.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("Intake/Arm Follower Supply Current (A)", armFollowerMotor.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("Intake/Arm Follower Position (rot)", armFollowerMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Intake/Roller Supply Current (A)", rollerMotor.getSupplyCurrent().getValueAsDouble());
     }
 }

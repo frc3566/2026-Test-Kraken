@@ -84,7 +84,7 @@ public class DriveToPose extends Command {
 
     @Override
     public void initialize() {
-        vision.setPoseEstimationEnabled(false);
+        // vision.setPoseEstimationEnabled(false); // Prevent vision from fighting the command's control over the drivetrain
         targetPose = targetPoseSupplier.get();
         Pose2d currentPose = drivetrain.getPose();
 

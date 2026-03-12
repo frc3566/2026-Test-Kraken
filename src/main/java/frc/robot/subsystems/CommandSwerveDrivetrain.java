@@ -6,6 +6,7 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -54,8 +55,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
-    private final SwerveRequest.ApplyRobotSpeeds autoRequest =new SwerveRequest.ApplyRobotSpeeds();
-        // .withDriveRequestType(DriveRequestType.Velocity)
+    private final SwerveRequest.ApplyRobotSpeeds autoRequest =new SwerveRequest.ApplyRobotSpeeds()
+        .withDriveRequestType(DriveRequestType.Velocity);
         // .withSteerRequestType(SteerRequestType.Position)
 
     
@@ -68,7 +69,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SysIdRoutine m_sysIdRoutineTranslation = new SysIdRoutine(
         new SysIdRoutine.Config(
             null,        // Use default ramp rate (1 V/s)
-            Volts.of(4), // Reduce dynamic step voltage to 4 V to prevent brownout
+            Volts.of(7), // Reduce dynamic step voltage to 4 V to prevent brownout
             Seconds.of(10),        // Use default timeout (10 s)
             // Log state with SignalLogger class
             state -> SignalLogger.writeString("SysIdTranslation_State", state.toString())

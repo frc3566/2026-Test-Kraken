@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
@@ -109,10 +110,10 @@ public class RobotContainer {
         /* SysID stuffs */
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        secondDriver.povUp().whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        secondDriver.povDown().whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        secondDriver.povLeft().whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        secondDriver.povRight().whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         if(enableDrive){
                 drivetrain.setDefaultCommand(
@@ -208,10 +209,10 @@ public class RobotContainer {
 
 
 
-        // firstDriver.b().onTrue(new DriveToPose(drivetrain, () -> new Pose2d(2,2, new Rotation2d()))); //TODO: Test pose 2d
+        // firstDriver.b().onTrue(new DriveToPose(drivetrain, vision, () -> new Pose2d(2,2, new Rotation2d()))); //TODO: Test pose 2d
 
-        firstDriver.leftBumper().whileTrue(new DriveToPose(drivetrain, () -> TagUtil.getLeftTrenchPose()));
-        firstDriver.rightBumper().whileTrue(new DriveToPose(drivetrain, () -> TagUtil.getRightTrenchPose()));
+        firstDriver.leftBumper().whileTrue(new DriveToPose(drivetrain, vision, () -> TagUtil.getLeftTrenchPose()));
+        firstDriver.rightBumper().whileTrue(new DriveToPose(drivetrain, vision, () -> TagUtil.getRightTrenchPose()));
        
 
         firstDriver.leftTrigger().onTrue(new InstantCommand( () -> shooter.setLowerPower(60)));

@@ -61,6 +61,16 @@ public class Vision extends SubsystemBase {
    */
   private final double maximumAmbiguity = 0.15;
   /**
+   * When false, {@link #updatePoseEstimation} is a no-op.
+   * Use {@link #setPoseEstimationEnabled} to toggle.
+   */
+  private boolean poseEstimationEnabled = true;
+  /**
+   * Maximum rotation difference in degrees between vision pose estimates and current odometry pose, prevent "other side" issues
+   */
+  private final double maximumRotationDifferenceDeg = 180;
+  /**
+   * 
    * Photon Vision Simulation
    */
   public VisionSystemSim visionSim;
@@ -142,11 +152,20 @@ public class Vision extends SubsystemBase {
    *
    * @param swerveDrive {@link SwerveDrive} instance.
    */
+  /** Enables or disables vision pose estimation updates. */
+  public void setPoseEstimationEnabled(boolean enabled) {
+    poseEstimationEnabled = enabled;
+    SmartDashboard.putBoolean("Vision/Pose Estimation Enabled", enabled);
+  }
+
+  public boolean isPoseEstimationEnabled() {
+    return poseEstimationEnabled;
+  }
+
   public void updatePoseEstimation(CommandSwerveDrivetrain swerveDrive) {
+    if (!poseEstimationEnabled) { return; }
     for (Cameras camera : Cameras.values()) {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
-
-      SmartDashboard.putBoolean("Vision/Pose Estimation Enabled", true);
 
       SmartDashboard.putBoolean("Vision/Pose Estimation Available", poseEst.isPresent());
 
@@ -221,10 +240,21 @@ public class Vision extends SubsystemBase {
         goodTargets,
         pose.get().strategy);
 
+    // Reject if the vision heading is more than 90 degrees off from current odometry heading.
+    double rotationDiffDeg = Math.abs(
+        filtered.estimatedPose.toPose2d().getRotation()
+            .minus(currentPose.get().getRotation())
+            .getDegrees());
+    SmartDashboard.putNumber("Vision/Rotation Diff to Odometry (deg)", rotationDiffDeg);
+    if (rotationDiffDeg > maximumRotationDifferenceDeg) {
+      SmartDashboard.putString("Vision/Filter Reject Reason", "Rotation Too Far: " + rotationDiffDeg + " deg");
+      return Optional.empty();
+    }
+
     // Reject if the vision estimate is too far from current odometry pose.
     double poseDiffTag = PhotonUtils.getDistanceToPose(currentPose.get(), filtered.estimatedPose.toPose2d());
     SmartDashboard.putNumber("Vision/Distance to Odometry Pose", poseDiffTag);
-    if (poseDiffTag > 5) {
+    if (poseDiffTag > 4) {
       longDistangePoseEstimationCount++;
       // Allow through only after many consecutive far readings (robot may be genuinely lost)
       if (longDistangePoseEstimationCount < 30) {

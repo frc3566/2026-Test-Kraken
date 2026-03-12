@@ -1,8 +1,5 @@
 package frc.robot.commands.vision;
 
-import static edu.wpi.first.units.Units.RadiansPerSecond;
-import static edu.wpi.first.units.Units.RotationsPerSecond;
-
 import java.util.function.Supplier;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
@@ -12,9 +9,12 @@ import com.ctre.phoenix6.swerve.SwerveRequest.ForwardPerspectiveValue;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import static edu.wpi.first.units.Units.RadiansPerSecond;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.Vision;
 
 /**
  * Drives the robot to a target {@link Pose2d} (position + heading) using:
@@ -34,10 +34,11 @@ public class DriveToPose extends Command {
     private static final double kD_TRANSLATION              = 0.0;
     private static final double MAX_SPEED_MPS               = 3.79;  // m/s
     private static final double MAX_ACCEL_MPS2              = 3.0;  // m/s²
-    private static final double POSITION_TOLERANCE_METERS   = 0.05; // 5 cm
+    private static final double POSITION_TOLERANCE_METERS   = 0.1; // 10 cm
     private static final double HEADING_TOLERANCE_DEG       = 2.0;
 
     private final CommandSwerveDrivetrain drivetrain;
+    private final Vision vision;
     private final Supplier<Pose2d> targetPoseSupplier;
     private Pose2d targetPose;
 
@@ -62,8 +63,9 @@ public class DriveToPose extends Command {
      *                           Evaluated once in {@link #initialize()}, so it can
      *                           be dynamic (e.g. computed from a tag pose + offset).
      */
-    public DriveToPose(CommandSwerveDrivetrain drivetrain, Supplier<Pose2d> targetPoseSupplier) {
+    public DriveToPose(CommandSwerveDrivetrain drivetrain, Vision vision, Supplier<Pose2d> targetPoseSupplier) {
         this.drivetrain = drivetrain;
+        this.vision = vision;
         this.targetPoseSupplier = targetPoseSupplier;
 
         var translationConstraints = new TrapezoidProfile.Constraints(MAX_SPEED_MPS, MAX_ACCEL_MPS2);
@@ -82,6 +84,7 @@ public class DriveToPose extends Command {
 
     @Override
     public void initialize() {
+        vision.setPoseEstimationEnabled(false);
         targetPose = targetPoseSupplier.get();
         Pose2d currentPose = drivetrain.getPose();
 
@@ -125,6 +128,7 @@ public class DriveToPose extends Command {
     public void end(boolean interrupted) {
         // Stop all motion cleanly
         drivetrain.setControl(new SwerveRequest.Idle());
+        vision.setPoseEstimationEnabled(true);
         SmartDashboard.putBoolean("DriveToTrench/Running", false);
         System.out.println("DriveToPose: ended. Interrupted=" + interrupted);
     }

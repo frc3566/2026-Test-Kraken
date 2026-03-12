@@ -6,7 +6,6 @@ import java.util.function.Supplier;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
 import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
-import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -55,8 +54,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
-    private final SwerveRequest.ApplyRobotSpeeds autoRequest =new SwerveRequest.ApplyRobotSpeeds()
-        .withDriveRequestType(DriveRequestType.Velocity);
+    private final SwerveRequest.ApplyRobotSpeeds autoRequest =new SwerveRequest.ApplyRobotSpeeds();
+        // .withDriveRequestType(DriveRequestType.Velocity);
         // .withSteerRequestType(SteerRequestType.Position)
 
     
@@ -283,7 +282,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         SmartDashboard.putNumber("Drivetrain Pose Y (m)", this.getState().Pose.getY());
         SmartDashboard.putNumber("Drivetrain Pose Rotation (deg)", this.getState().Pose.getRotation().getDegrees());
 
-        setFieldRobotPose();
+        // setFieldRobotPose();
         
 
     }
@@ -411,11 +410,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         );
     }
 
-    public void setFieldRobotPose(){
-        var pose = getState().Pose;
-        field.setRobotPose(
-            this.getState().Pose
-        );
-        SmartDashboard.putData("DRIVETRAIN FIELD", field);
-    }    
+    // public void setFieldRobotPose(){
+    //     var pose = getState().Pose;
+    //     field.setRobotPose(
+    //         this.getState().Pose
+    //     );
+    //     SmartDashboard.putData("DRIVETRAIN FIELD", field);
+    // }    
 }

@@ -1,6 +1,9 @@
 package frc.robot.subsystems;
 
 import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -73,7 +76,7 @@ public class Vision extends SubsystemBase {
    * 
    * Photon Vision Simulation
    */
-  public VisionSystemSim visionSim;
+  public static VisionSystemSim visionSim;
   /**
    * Count of times that the odom thinks we're more than 10meters away from the
    * april tag.
@@ -106,6 +109,7 @@ public class Vision extends SubsystemBase {
     if (Robot.isSimulation()) {
       visionSim = new VisionSystemSim("Vision");
       visionSim.addAprilTags(fieldLayout);
+      visionSim.getDebugField();
 
       for (Cameras c : Cameras.values()) {
         c.addToVisionSim(visionSim);
@@ -283,17 +287,17 @@ public class Vision extends SubsystemBase {
    */
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Cameras camera) {
     Optional<EstimatedRobotPose> poseEst = camera.getEstimatedGlobalPose();
-    // if (Robot.isSimulation()) {
-    //   Field2d debugField = visionSim.getDebugField();
-    //   // Uncomment to enable outputting of vision targets in sim.
-    //   poseEst.ifPresentOrElse(
-    //       est -> debugField
-    //           .getObject("VisionEstimation")
-    //           .setPose(est.estimatedPose.toPose2d()),
-    //       () -> {
-    //         debugField.getObject("VisionEstimation").setPoses();
-    //       });
-    // }
+    if (Robot.isSimulation()) {
+      Field2d debugField = visionSim.getDebugField();
+      // Uncomment to enable outputting of vision targets in sim.
+      poseEst.ifPresentOrElse(
+          est -> debugField
+              .getObject("VisionEstimation")
+              .setPose(est.estimatedPose.toPose2d()),
+          () -> {
+            debugField.getObject("VisionEstimation").setPoses();
+          });
+    }
     return poseEst;
   }
 
@@ -345,15 +349,15 @@ public class Vision extends SubsystemBase {
    */
   private void openSimCameraViews() {
     if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-      // try
-      // {
-      // Desktop.getDesktop().browse(new URI("http://localhost:1182/"));
+      try
+      {
+      Desktop.getDesktop().browse(new URI("http://localhost:1182/"));
       // Desktop.getDesktop().browse(new URI("http://localhost:1184/"));
       // Desktop.getDesktop().browse(new URI("http://localhost:1186/"));
-      // } catch (IOException | URISyntaxException e)
-      // {
-      // e.printStackTrace();
-      // }
+      } catch ( IOException | URISyntaxException e)
+      {
+      e.printStackTrace();
+      }
     }
   }
 
@@ -520,7 +524,7 @@ public class Vision extends SubsystemBase {
      */
     public void addToVisionSim(VisionSystemSim systemSim) {
       if (Robot.isSimulation()) {
-        systemSim.addCamera(cameraSim, robotToCamTransform);
+        systemSim.addCamera(cameraSim, Constants.Vision.robotToCamera); // ← uses real camera transform
       }
     }
 

@@ -294,7 +294,7 @@ public class Vision extends SubsystemBase {
    *         targets used to create the estimate
    */
   public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Cameras camera) {
-    Optional<EstimatedRobotPose> poseEst = camera.getEstimatedGlobalPose();
+    Optional<EstimatedRobotPose> poseEst = camera.getEstimatedGlobalPose(currentPose.get().getRotation());
     if (Robot.isSimulation()) {
       Field2d debugField = visionSim.getDebugField();
       // Uncomment to enable outputting of vision targets in sim.
@@ -507,7 +507,7 @@ public class Vision extends SubsystemBase {
       poseEstimator = new PhotonPoseEstimator(Vision.fieldLayout,
           PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
           robotToCamTransform);
-      poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+      poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
 
       this.singleTagStdDevs = singleTagStdDevs;
       this.multiTagStdDevs = multiTagStdDevsMatrix;
@@ -583,10 +583,14 @@ public class Vision extends SubsystemBase {
      * standard deviations, and flushes the
      * cache of results.
      *
+     * @param currentHeading Current field-relative robot heading from odometry.
      * @return Estimated pose.
      */
-    public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
+    public Optional<EstimatedRobotPose> getEstimatedGlobalPose(Rotation2d currentHeading) {
       updateUnreadResults();
+      if (!resultsList.isEmpty()) {
+        updateEstimatedGlobalPose(currentHeading);
+      }
       return estimatedRobotPose;
     }
 
@@ -596,9 +600,6 @@ public class Vision extends SubsystemBase {
     public void updateUnreadResults() {
       resultsList = Robot.isReal() ? camera.getAllUnreadResults() : cameraSim.getCamera().getAllUnreadResults();
       // System.out.println("Latests Camera readings? " + resultsList.get(resultsList.size() - 1));
-      if (!resultsList.isEmpty()) {
-          updateEstimatedGlobalPose();
-      }
       
       /* 
         the following function is not getting ran because mostRecentTimestamp > currentTimestamp by a lot
@@ -643,14 +644,17 @@ public class Vision extends SubsystemBase {
      * retrieved with
      * {@link Cameras#updateEstimationStdDevs}
      *
+     * @param currentHeading Current field-relative robot heading from odometry.
      * @return An {@link EstimatedRobotPose} with an estimated pose, estimate
      *         timestamp, and targets used for
      *         estimation.
      */
-    private void updateEstimatedGlobalPose() {
+    private void updateEstimatedGlobalPose(Rotation2d currentHeading) {
       Optional<EstimatedRobotPose> visionEst = Optional.empty();
+      SmartDashboard.putNumber("Vision/Heading For Pose Estimation (deg)", currentHeading.getDegrees());
       for (var change : resultsList) {
-        visionEst = poseEstimator.update(change); // Uses MULTI_TAG_PNP_ON_COPROCESSOR, falls back to LOWEST_AMBIGUITY
+        poseEstimator.addHeadingData(change.getTimestampSeconds(), currentHeading);
+        visionEst = poseEstimator.update(change); // Uses MULTI_TAG_PNP_ON_COPROCESSOR, falls back to PNP_DISTANCE_TRIG_SOLVE
         updateEstimationStdDevs(visionEst, change.getTargets());
       }
       // System.out.println("Localization estimation: " + visionEst.map(e -> e.estimatedPose.toPose2d()));

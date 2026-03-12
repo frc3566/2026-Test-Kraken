@@ -19,7 +19,7 @@ public class UpdateVisionPoseEstimate extends Command {
     @Override
     public void initialize() {
         System.out.println("Initializing UpdateVisionPoseEstimate command");
-        var pose = Cameras.MAIN.getEstimatedGlobalPose();
+        var pose = Cameras.MAIN.getEstimatedGlobalPose(drivetrain.getPose().getRotation());
         vision.updatePoseEstimation(drivetrain);
         SmartDashboard.putBoolean("Vision Pose Estimation Available", pose.isPresent());
     }

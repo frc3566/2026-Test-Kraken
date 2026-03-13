@@ -51,10 +51,7 @@ public class ArmToSetpoint extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        if (interrupted) {
-            // Hold position by re-issuing the current position as the target
-            intake.setArmPosition(intake.getArmPosition());
-        }
+        intake.stopArm();
         System.out.println("ArmToSetpoint: finished. Interrupted=" + interrupted
             + " | final pos=" + intake.getArmPosition() + " rotations");
     }

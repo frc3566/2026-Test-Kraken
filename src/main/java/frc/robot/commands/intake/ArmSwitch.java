@@ -1,55 +1,51 @@
 package frc.robot.commands.intake;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 
 public class ArmSwitch extends Command {
     private final Intake intake;
-    private boolean down;
-    private Timer timer;
-    private double power=0.25;
-    private double time =1;
+    private final boolean down;
+    private final double tolerance;
+    private double targetRotations;
 
 
-    public ArmSwitch(Intake intake, boolean down){
+    /**
+     * Moves the arm to a preset: up = 0.0 rotations, down = 0.40 rotations.
+     * @param intake intake subsystem
+     * @param down   true -> 0.40 rotations, false -> 0.0 rotations
+     * @param tolerance acceptable error in rotations
+     */
+    public ArmSwitch(Intake intake, boolean down, double tolerance) {
         this.intake = intake;
         this.down = down;
-    }
-    public ArmSwitch(Intake intake, boolean down, double power, double time) {
-        this.intake = intake;
-        this.down = down;
-        this.power = power;
-        this.time = time;
+        this.tolerance = tolerance;
         addRequirements(intake);
+    }
+
+    public ArmSwitch(Intake intake, boolean down) {
+        this(intake, down, 0.002);
     }
 
     @Override
     public void initialize() {
-        timer = new Timer();
-        timer.reset();
-        timer.start();
-        if(down){
-            intake.armDown(power);
-        } else{
-            intake.armUp(power);
-            time += 0.2; // More time to go up because of gravity
-        }
+        targetRotations = down ? 0.40 : 0.0;
+        intake.setArmPosition(targetRotations);
     }
 
     @Override
     public void execute(){
-
+        // Nothing else to do — TalonFX handles PositionDutyCycle on-board
     }
 
     @Override
     public boolean isFinished() {
-        return timer.hasElapsed(time);
+        return intake.armAtSetpoint(targetRotations, tolerance);
     }
 
     @Override
     public void end(boolean interrupted) {
-        // Optional: hold position
+        // Optional: hold position by leaving controller running; for now stop.
         intake.stopArm();
     }
 }

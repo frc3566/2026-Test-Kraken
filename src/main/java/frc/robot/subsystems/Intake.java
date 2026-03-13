@@ -2,10 +2,12 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -14,7 +16,7 @@ import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
 
-    public TalonFX rollerMotor, armLeaderMotor, armFollowerMotor;
+    public TalonFX rollerMotor, armLeaderMotor;
 
     private final VelocityVoltage m_velocity = new VelocityVoltage(0);
 
@@ -30,7 +32,7 @@ public class Intake extends SubsystemBase {
     public Intake() {
         rollerMotor = new TalonFX(Constants.Motors.IntakeRoller);
         armLeaderMotor = new TalonFX(Constants.Motors.IntakeArmLeader);
-        armFollowerMotor = new TalonFX(Constants.Motors.IntakeArmFollower);
+        // armFollowerMotor = new TalonFX(Constants.Motors.IntakeArmFollower);
 
         // ------------------------------------------------------------------
         // Arm configuration
@@ -53,16 +55,21 @@ public class Intake extends SubsystemBase {
         // Software limits — prevent over-extension / over-retraction.
         // Remember to power the robot on while the arm is up,
         // or the arm encoders will not work as intended.
-        armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.01;  // Straight up
-        armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.01; // All the way down
+        armConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
+        armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.45;  // Straight up
+        armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
+        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.05; // All the way down
+        armConfig.Slot0.kP = 0.8;
+        armConfig.Slot0.kI = 0.0;
+        armConfig.Slot0.kD = 0.0;
+        armConfig.Slot0.kV = 0.08;
 
         armConfig.Feedback.RotorToSensorRatio = 1;
         armLeaderMotor.getConfigurator().apply(armConfig);
-        armFollowerMotor.getConfigurator().apply(armConfig);
+        // armFollowerMotor.getConfigurator().apply(armConfig);
 
-        armFollowerMotor.setControl(new Follower(armLeaderMotor.getDeviceID(), MotorAlignmentValue.Aligned));
+        // armFollowerMotor.setControl(new Follower(armLeaderMotor.getDeviceID(), MotorAlignmentValue.Opposed));
 
 
         // ------------------------------------------------------------------
@@ -90,10 +97,13 @@ public class Intake extends SubsystemBase {
      * @param rotations Target position in mechanism rotations.
      */
     public void setArmPosition(double rotations) {
-        boolean movingUp = rotations > getArmPosition();
+        boolean movingDown = rotations > getArmPosition();
         armLeaderMotor.setControl(positionRequest.withPosition(rotations));
-        SmartDashboard.putBoolean("Intake/Arm Moving Up", movingUp);
-        SmartDashboard.putBoolean("Intake/Arm Moving Down", !movingUp);
+        // armFollowerMotor.setControl(new Follower(armLeaderMotor.getDeviceID(), MotorAlignmentValue.Opposed));
+
+
+        SmartDashboard.putBoolean("Intake/Arm Moving Down", movingDown);
+        SmartDashboard.putBoolean("Intake/Arm Moving Up", !movingDown);
     }
 
     /**
@@ -115,6 +125,7 @@ public class Intake extends SubsystemBase {
      */
     public void stopArm() {
         armLeaderMotor.stopMotor();
+        // armFollowerMotor.stopMotor();
         SmartDashboard.putBoolean("Intake/Arm Moving Up", false);
         SmartDashboard.putBoolean("Intake/Arm Moving Down", false);
     }
@@ -125,9 +136,7 @@ public class Intake extends SubsystemBase {
      * @param percent [0, 1]
      */
     public void armUp(double percent) {
-        armLeaderMotor.set(percent);
-        SmartDashboard.putBoolean("Intake/Arm Moving Up", true);
-        SmartDashboard.putBoolean("Intake/Arm Moving Down", false);
+        setArmPower(percent);
     }
 
     /**
@@ -136,9 +145,21 @@ public class Intake extends SubsystemBase {
      * @param percent [0, 1]
      */
     public void armDown(double percent) {
-        armLeaderMotor.set(-percent);
-        SmartDashboard.putBoolean("Intake/Arm Moving Up", false);
-        SmartDashboard.putBoolean("Intake/Arm Moving Down", true);
+        setArmPower(-percent);
+    }
+
+    /**
+     * Manual open-loop arm control — sets power directly on the leader motor.
+     * Positive values raise the arm; negative values lower it.
+     *
+     * Positive = Lower the arm, Negative = Raise the arm
+     * @param power [-1, 1]
+     */
+    public void setArmPower(double power) {
+        armLeaderMotor.setControl(new DutyCycleOut(power));
+        // armFollowerMotor.setControl(new Follower(armLeaderMotor.getDeviceID(), MotorAlignmentValue.Opposed));
+        SmartDashboard.putBoolean("Intake/Arm Moving Up", power > 0);
+        SmartDashboard.putBoolean("Intake/Arm Moving Down", power < 0);
     }
 
     /**
@@ -179,10 +200,12 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Intake/Arm Position (rot)", armLeaderMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Intake/Arm Leader Velocity (rps)", armLeaderMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Intake/Roller Velocity (rps)", rollerMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Intake/Arm Leader Supply Current (A)", armLeaderMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("Intake/Arm Follower Supply Current (A)", armFollowerMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("Intake/Arm Follower Position (rot)", armFollowerMotor.getPosition().getValueAsDouble());
+        // SmartDashboard.putNumber("Intake/Arm Follower Supply Current (A)", armFollowerMotor.getSupplyCurrent().getValueAsDouble());
+        // SmartDashboard.putNumber("Intake/Arm Follower Velocity (rps)", armFollowerMotor.getVelocity().getValueAsDouble());
+        // SmartDashboard.putNumber("Intake/Arm Follower Position (rot)", armFollowerMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Intake/Roller Supply Current (A)", rollerMotor.getSupplyCurrent().getValueAsDouble());
     }
 }

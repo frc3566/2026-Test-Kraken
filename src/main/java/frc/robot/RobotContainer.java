@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.intake.ArmSwitch;
+import frc.robot.commands.intake.ArmToSetpoint;
 import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
 import frc.robot.commands.shooter.PrimeAndShootFixed;
@@ -188,15 +189,15 @@ public class RobotContainer {
         firstDriver.a().onFalse(new InstantCommand( () -> shooter.stopLower()));
 
         /* For Second Driver */
-        secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(100)));
+        secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(50)));
         secondDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
-        secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(80)));
+        secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(50)));
         secondDriver.leftBumper().onFalse(new InstantCommand(() -> intake.stopRoller()));
 
-        secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armUp(0.2)));
-        secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.stopArm()));
-        secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.2)));
-        secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.stopArm()));
+        // secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armUp(0.2)));
+        // secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.stopArm()));
+        // secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.2)));
+        // secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.stopArm()));
 
         // Scoring 
         secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(43)));
@@ -211,13 +212,16 @@ public class RobotContainer {
         secondDriver.a().onTrue(shooter.runOnce(() -> shooter.stopUpper()));
 
         
-        secondDriver.povUp().whileTrue(new InstantCommand(() -> intake.setArmPosition(0.0)));
-        secondDriver.povDown().whileTrue(new InstantCommand(() -> intake.setArmPosition(0.5)));
+        secondDriver.povUp().whileTrue(new ArmToSetpoint(intake, 0.0, 0.0015));
+        secondDriver.povDown().whileTrue(new ArmToSetpoint(intake, -0.4, 0.0015));
 
-        secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));
-        secondDriver.povRight().onTrue(new InstantCommand(() -> intake.resetArmPosition(false)));
+        // secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));
+        // secondDriver.povRight().onTrue(new InstantCommand(() -> intake.resetArmPosition(false)));
 
-        
+        secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.setArmPower(0.06)));
+        secondDriver.povLeft().onFalse(new InstantCommand(() -> intake.stopArm()));
+        secondDriver.povRight().onTrue(new InstantCommand(() -> intake.setArmPower(-0.06)));
+        secondDriver.povRight().onFalse(new InstantCommand(() -> intake.stopArm()));
 
 
         // secondDriver.povRight().onTrue(new InstantCommand( () -> shooter.addTestSpeed(0.01)));
@@ -287,7 +291,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
             "ArmDown",
-            new ArmSwitch(intake, true, 0.2, 0.5)
+            new ArmSwitch(intake, true, 0.0015)
         );
     }
 

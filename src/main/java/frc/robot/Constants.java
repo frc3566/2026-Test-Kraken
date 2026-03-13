@@ -32,14 +32,14 @@ public final class Constants {
     public static final int ShooterHigh = 32;
     public static final int ShooterLow = 22;
     public static final int IntakeRoller = 40;
-    public static final int IntakeArmLeader = 41;
-      public static final int IntakeArmFollower = 42;
+    public static final int IntakeArmLeader = 42;
+      // public static final int IntakeArmFollower = 42;
     public static final int Agitator = 23;
     public static final int Climber = 50;
   }
 
   public static class Arm{
-    public static final double GearRatio = 5.0;
+    public static final double GearRatio = 25.0;
   }
 
   public static class Climber{

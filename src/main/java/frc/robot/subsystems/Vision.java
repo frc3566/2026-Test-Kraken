@@ -114,7 +114,7 @@ public class Vision extends SubsystemBase {
       for (Cameras c : Cameras.values()) {
         c.addToVisionSim(visionSim);
       }
-      openSimCameraViews();
+      // openSimCameraViews();
     }
   }
 

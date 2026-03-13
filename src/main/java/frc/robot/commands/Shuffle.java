@@ -9,8 +9,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
  * Kicks the drivetrain backward then forward quickly to jostle game pieces in the hopper.
  */
 public class Shuffle extends Command {
-    private static final double DEFAULT_PHASE_TIME_S = 0.2;
-    private static final double DEFAULT_SPEED_MPS = 2.0;
+    private static final double DEFAULT_PHASE_TIME_S = 0.15;
+    private static final double DEFAULT_SPEED_MPS = 3.4;
 
     private final CommandSwerveDrivetrain drivetrain;
     private final double phaseTimeSec;
@@ -36,7 +36,7 @@ public class Shuffle extends Command {
     @Override
     public void execute() {
         double t = timer.get();
-        if (t < phaseTimeSec) {
+        if (t < 0.75*phaseTimeSec) {
             // First phase: drive backward quickly
             drivetrain.driveRobotRelative(new ChassisSpeeds(-speedMps, 0.0, 0.0));
         } else if (t < 2 * phaseTimeSec) {

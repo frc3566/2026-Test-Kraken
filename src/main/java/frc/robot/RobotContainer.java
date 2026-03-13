@@ -184,7 +184,7 @@ public class RobotContainer {
         firstDriver.rightBumper().whileTrue(new DriveToPose(drivetrain, vision, () -> TagUtil.getRightTrenchPose()));
         firstDriver.povLeft().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getLeftTrenchPose()));
         firstDriver.povRight().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getRightTrenchPose()));
-        firstDriver.povUp().whileTrue(new Shuffle(drivetrain));
+        firstDriver.povUp().onTrue(new Shuffle(drivetrain));
        
 
         firstDriver.a().onTrue(new InstantCommand( () -> shooter.setLowerPower(60)));

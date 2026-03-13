@@ -1,10 +1,11 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -20,8 +21,18 @@ public class Intake extends SubsystemBase {
     private final VelocityVoltage m_velocity = new VelocityVoltage(0);
 
     // Reuse a single request object — just update the position each call
-    private final PositionDutyCycle positionRequest = new PositionDutyCycle(0)
+    private final MotionMagicDutyCycle motionMagicRequest = new MotionMagicDutyCycle(0)
         .withSlot(0);
+
+    // Separate Motion Magic limits for up vs down
+    private static final double MM_UP_CRUISE_VEL = 0.45; // rotations/sec
+    private static final double MM_UP_ACCEL = 2.5;       // rotations/sec^2
+    private static final double MM_DOWN_CRUISE_VEL = 0.75;
+    private static final double MM_DOWN_ACCEL = 4.0;
+
+    private final MotionMagicConfigs mmUp = new MotionMagicConfigs();
+    private final MotionMagicConfigs mmDown = new MotionMagicConfigs();
+    private Boolean lastAppliedMovingDown = null;
 
     /**
      * Gear ratio: rotor rotations per one full rotation of the arm mechanism.
@@ -38,16 +49,6 @@ public class Intake extends SubsystemBase {
         // ------------------------------------------------------------------
         var armConfig = new TalonFXConfiguration();
 
-        // Slot 0 — arm position PID
-        // TODO: Tune on the real robot.
-        // var armSlot0 = new Slot0Configs();
-        // armSlot0.kP = 0.6;
-        // armSlot0.kI = 0.0;
-        // armSlot0.kD = 0.0;
-        // armSlot0.kV = 0.12;
-        // armSlot0.kG = 0.0;
-        // armConfig.Slot0 = armSlot0;
-
         // Sensor-to-mechanism ratio so getArmPosition() reports mechanism rotations
         armConfig.Feedback.SensorToMechanismRatio = ARM_GEAR_RATIO;
 
@@ -59,18 +60,30 @@ public class Intake extends SubsystemBase {
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.45;  // Straight up
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.05; // All the way down
-        armConfig.Slot0.kP = 1.4;
+        armConfig.Slot0.kP = 1.5;
         armConfig.Slot0.kI = 0.0;
         armConfig.Slot0.kD = 0.0;
         armConfig.Slot0.kV = 0.12;
 
         // Slot 1 — slower PID for raising the arm to the top (0.0 rotations)
         var armSlot1 = new Slot1Configs();
-        armSlot1.kP = armConfig.Slot0.kP * 0.5;
-        armSlot1.kI = armConfig.Slot0.kI * 0.5;
-        armSlot1.kD = armConfig.Slot0.kD * 0.5;
+        armSlot1.kP = armConfig.Slot0.kP;
+        armSlot1.kI = armConfig.Slot0.kI;
+        armSlot1.kD = armConfig.Slot0.kD;
         armSlot1.kV = armConfig.Slot0.kV; // keep feedforward the same
         armConfig.Slot1 = armSlot1;
+
+    // Motion Magic defaults (overridden per-move in setArmPosition)
+    // Units are mechanism rotations per second (because of SensorToMechanismRatio above)
+    armConfig.MotionMagic.MotionMagicCruiseVelocity = MM_DOWN_CRUISE_VEL;
+    armConfig.MotionMagic.MotionMagicAcceleration = MM_DOWN_ACCEL;
+
+    // Pre-build directional Motion Magic configs so we can swap quickly without touching other settings
+    mmUp.MotionMagicCruiseVelocity = MM_UP_CRUISE_VEL;
+    mmUp.MotionMagicAcceleration = MM_UP_ACCEL;
+
+    mmDown.MotionMagicCruiseVelocity = MM_DOWN_CRUISE_VEL;
+    mmDown.MotionMagicAcceleration = MM_DOWN_ACCEL;
 
         armConfig.Feedback.RotorToSensorRatio = 1;
         armLeaderMotor.getConfigurator().apply(armConfig);
@@ -98,7 +111,7 @@ public class Intake extends SubsystemBase {
     // ------------------------------------------------------------------
 
     /**
-     * Commands the arm to a target position using PositionDutyCycle (Slot 0).
+     * Commands the arm to a target position using Motion Magic (Slot 0/1).
      * Automatically updates dashboard indicators based on movement direction.
      *
      * @param rotations Target position in mechanism rotations.
@@ -110,7 +123,19 @@ public class Intake extends SubsystemBase {
         boolean useSlowUpSlot = !movingDown && rotations >= 0.0;
         int slotToUse = useSlowUpSlot ? 1 : 0;
 
-        armLeaderMotor.setControl(positionRequest.withSlot(slotToUse).withPosition(rotations));
+        // Pick Motion Magic constraints based on direction
+        // Only reapply configs when direction changes to avoid CAN spam
+        if (lastAppliedMovingDown == null || lastAppliedMovingDown.booleanValue() != movingDown) {
+            armLeaderMotor.getConfigurator().apply(movingDown ? mmDown : mmUp);
+            lastAppliedMovingDown = movingDown;
+        }
+
+        // Use Motion Magic for built-in velocity/accel limiting
+        armLeaderMotor.setControl(
+            motionMagicRequest
+                .withSlot(slotToUse)
+                .withPosition(rotations)
+        );
         // armFollowerMotor.setControl(new Follower(armLeaderMotor.getDeviceID(), MotorAlignmentValue.Opposed));
 
 

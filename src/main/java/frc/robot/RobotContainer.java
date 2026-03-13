@@ -187,7 +187,7 @@ public class RobotContainer {
         firstDriver.povLeft().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getLeftTrenchPose()));
         firstDriver.povRight().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getRightTrenchPose()));
         firstDriver.povUp().onTrue(new Shuffle(drivetrain));
-        firstDriver.povDown().whileTrue(new ArmUpAndDown(intake));
+        
        
 
         firstDriver.a().whileTrue(
@@ -203,8 +203,11 @@ public class RobotContainer {
     secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.rollerOut(35)));
     secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
 
-    // Arm encoder resets on bumpers
-    secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.setArmEncoderPosition(0.4)));
+
+    // Hold left bumper to move arm up and down repeatedly for intaking multiple balls.
+    secondDriver.leftBumper().whileTrue(new ArmUpAndDown(intake));
+    
+    // Arm encoder resets on RB when arm is up
     secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.setArmEncoderPosition(0.0)));
 
         // secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armUp(0.2)));
@@ -225,7 +228,7 @@ public class RobotContainer {
         secondDriver.a().onTrue(shooter.runOnce(() -> shooter.stopUpper()));
 
         
-        secondDriver.povUp().whileTrue(new ArmToSetpoint(intake, 0.0, 0.03));
+        secondDriver.povUp().whileTrue(new ArmToSetpoint(intake, 0.0, 0.05));
         secondDriver.povDown().whileTrue(new ArmToSetpoint(intake, 0.4, 0.01));
 
         // secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));
@@ -307,7 +310,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
             "ArmDown",
-            new ArmSwitch(intake, true, 0.0015)
+            new ArmToSetpoint(intake, 0.4, 0.01)
         );
 
         NamedCommands.registerCommand(

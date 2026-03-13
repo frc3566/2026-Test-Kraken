@@ -34,7 +34,7 @@ public class ArmToSetpoint extends Command {
     }
 
     public ArmToSetpoint(Intake intake, double targetRotations) {
-        this(intake, targetRotations, 0.005);
+        this(intake, targetRotations, 0.01);
     }
 
     public ArmToSetpoint(Intake intake, double targetRotations, double tolerance) {

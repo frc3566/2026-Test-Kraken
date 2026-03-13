@@ -220,12 +220,18 @@ public class Vision extends SubsystemBase {
   private Optional<EstimatedRobotPose> filterPose(Optional<EstimatedRobotPose> pose) {
     if (pose.isEmpty()) { return pose; }
 
-    // Keep only targets whose ambiguity is below the threshold.
-    // Targets with ambiguity < 0 are ignored by PhotonVision (multi-tag result);
-    // we pass those through unconditionally since they have no ambiguity value.
-    var goodTargets = pose.get().targetsUsed.stream()
-        .filter(t -> t.getPoseAmbiguity() < 0 || t.getPoseAmbiguity() < maximumAmbiguity)
-        .toList();
+  // Keep only targets whose ambiguity is below the threshold.
+  // Use a looser threshold (0.25) when multiple tags are in view; otherwise 0.15.
+  double multiTagAmbiguity = 0.25;
+  double singleTagAmbiguity = maximumAmbiguity; // 0.15 by default
+  boolean multipleTagsInView = pose.get().targetsUsed.size() > 1;
+  double activeThreshold = multipleTagsInView ? multiTagAmbiguity : singleTagAmbiguity;
+
+  // Targets with ambiguity < 0 are ignored by PhotonVision (multi-tag result);
+  // we pass those through unconditionally since they have no ambiguity value.
+  var goodTargets = pose.get().targetsUsed.stream()
+    .filter(t -> t.getPoseAmbiguity() < 0 || t.getPoseAmbiguity() < activeThreshold)
+    .toList();
 
     SmartDashboard.putNumber("Vision/Good Targets Count", goodTargets.size());
     SmartDashboard.putNumber("Vision/Total Targets Count", pose.get().targetsUsed.size());
@@ -237,8 +243,8 @@ public class Vision extends SubsystemBase {
         .toString());
 
     if (goodTargets.isEmpty()) {
-      SmartDashboard.putString("Vision/Filter Reject Reason",
-          "All targets above ambiguity threshold (" + maximumAmbiguity + ")");
+    SmartDashboard.putString("Vision/Filter Reject Reason",
+      "All targets above ambiguity threshold (" + activeThreshold + ")");
       return Optional.empty();
     }
 
@@ -426,8 +432,7 @@ public class Vision extends SubsystemBase {
           Units.inchesToMeters(0),
           Units.inchesToMeters(10.486)
         ),
-        VecBuilder.fill(0.1, 0.1, 0.05), VecBuilder.fill(0.5, 0.5, 1));
-    
+        VecBuilder.fill(0.5, 0.5, 100), VecBuilder.fill(0.25, 0.25, 100));
     /**
      * Latency alert to use when high latency is detected.
      */
@@ -507,16 +512,16 @@ public class Vision extends SubsystemBase {
       poseEstimator = new PhotonPoseEstimator(Vision.fieldLayout,
           PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
           robotToCamTransform);
-      poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.PNP_DISTANCE_TRIG_SOLVE);
+      poseEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
 
       this.singleTagStdDevs = singleTagStdDevs;
       this.multiTagStdDevs = multiTagStdDevsMatrix;
 
       if (Robot.isSimulation()) {
         SimCameraProperties cameraProperties = new SimCameraProperties();
-        cameraProperties.setCalibration(640, 480, Rotation2d.fromDegrees(74.10));
-        cameraProperties.setCalibError(0.68, 0.08);
-        cameraProperties.setFPS(30);
+        cameraProperties.setCalibration(640, 480, Rotation2d.fromDegrees(75.09));
+        cameraProperties.setCalibError(0.55, 0.08);
+        cameraProperties.setFPS(40);
         cameraProperties.setAvgLatencyMs(35);
         cameraProperties.setLatencyStdDevMs(5);
 

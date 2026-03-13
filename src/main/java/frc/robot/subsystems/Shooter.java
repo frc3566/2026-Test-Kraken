@@ -48,7 +48,7 @@ public class Shooter extends SubsystemBase {
 
    
     public void setLowerPower(double rps) {
-        lowerMotor.setControl(m_velocity.withVelocity(rps));
+        lowerMotor.set(rps/100);
         SmartDashboard.putBoolean("Shooter/Feeder", true);
     }
 

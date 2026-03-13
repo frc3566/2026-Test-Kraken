@@ -212,15 +212,15 @@ public class RobotContainer {
         secondDriver.a().onTrue(shooter.runOnce(() -> shooter.stopUpper()));
 
         
-        secondDriver.povUp().whileTrue(new ArmToSetpoint(intake, 0.0, 0.0015));
-        secondDriver.povDown().whileTrue(new ArmToSetpoint(intake, -0.4, 0.0015));
+        secondDriver.povUp().whileTrue(new ArmToSetpoint(intake, 0.0, 0.01));
+        secondDriver.povDown().whileTrue(new ArmToSetpoint(intake, 0.4, 0.01));
 
         // secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));
         // secondDriver.povRight().onTrue(new InstantCommand(() -> intake.resetArmPosition(false)));
 
-        secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.setArmPower(0.06)));
+        secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.setArmPower(0.1)));
         secondDriver.povLeft().onFalse(new InstantCommand(() -> intake.stopArm()));
-        secondDriver.povRight().onTrue(new InstantCommand(() -> intake.setArmPower(-0.06)));
+        secondDriver.povRight().onTrue(new InstantCommand(() -> intake.setArmPower(-0.1)));
         secondDriver.povRight().onFalse(new InstantCommand(() -> intake.stopArm()));
 
 

@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.commands.Shuffle;
 import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.intake.ArmToSetpoint;
 import frc.robot.commands.shooter.AutoPrime;
@@ -183,6 +184,7 @@ public class RobotContainer {
         firstDriver.rightBumper().whileTrue(new DriveToPose(drivetrain, vision, () -> TagUtil.getRightTrenchPose()));
         firstDriver.povLeft().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getLeftTrenchPose()));
         firstDriver.povRight().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getRightTrenchPose()));
+        firstDriver.povUp().whileTrue(new Shuffle(drivetrain));
        
 
         firstDriver.a().onTrue(new InstantCommand( () -> shooter.setLowerPower(60)));
@@ -222,6 +224,9 @@ public class RobotContainer {
         secondDriver.povLeft().onFalse(new InstantCommand(() -> intake.stopArm()));
         secondDriver.povRight().onTrue(new InstantCommand(() -> intake.setArmPower(-0.1)));
         secondDriver.povRight().onFalse(new InstantCommand(() -> intake.stopArm()));
+
+        // Quick back/forth jostle to shift balls forward in the hopper
+        secondDriver.start().onTrue(new Shuffle(drivetrain));
 
 
         // secondDriver.povRight().onTrue(new InstantCommand( () -> shooter.addTestSpeed(0.01)));
@@ -292,6 +297,11 @@ public class RobotContainer {
         NamedCommands.registerCommand(
             "ArmDown",
             new ArmSwitch(intake, true, 0.0015)
+        );
+
+        NamedCommands.registerCommand(
+            "Shuffle",
+            new Shuffle(drivetrain)
         );
     }
 

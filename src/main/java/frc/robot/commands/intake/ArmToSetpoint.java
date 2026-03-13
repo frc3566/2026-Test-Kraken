@@ -18,7 +18,7 @@ public class ArmToSetpoint extends Command {
     private final double targetRotations;
     private final double tolerance;
     private final Timer timer = new Timer();
-    private double timeoutSeconds = 2.0; // Optional timeout to prevent getting stuck if something goes wrong
+    private double timeoutSeconds = 1.0; // Optional timeout to prevent getting stuck if something goes wrong
 
     /**
      * @param intake          The intake subsystem.
@@ -38,7 +38,7 @@ public class ArmToSetpoint extends Command {
     }
 
     public ArmToSetpoint(Intake intake, double targetRotations, double tolerance) {
-        this(intake, targetRotations, tolerance, 2.0);
+    this(intake, targetRotations, tolerance, 1.0);
     }
 
     @Override

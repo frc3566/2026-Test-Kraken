@@ -1,14 +1,13 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -60,10 +59,18 @@ public class Intake extends SubsystemBase {
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.45;  // Straight up
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.05; // All the way down
-        armConfig.Slot0.kP = 1.0;
+        armConfig.Slot0.kP = 1.4;
         armConfig.Slot0.kI = 0.0;
         armConfig.Slot0.kD = 0.0;
-        armConfig.Slot0.kV = 0.08;
+        armConfig.Slot0.kV = 0.12;
+
+        // Slot 1 — slower PID for raising the arm to the top (0.0 rotations)
+        var armSlot1 = new Slot1Configs();
+        armSlot1.kP = armConfig.Slot0.kP * 0.5;
+        armSlot1.kI = armConfig.Slot0.kI * 0.5;
+        armSlot1.kD = armConfig.Slot0.kD * 0.5;
+        armSlot1.kV = armConfig.Slot0.kV; // keep feedforward the same
+        armConfig.Slot1 = armSlot1;
 
         armConfig.Feedback.RotorToSensorRatio = 1;
         armLeaderMotor.getConfigurator().apply(armConfig);
@@ -98,7 +105,12 @@ public class Intake extends SubsystemBase {
      */
     public void setArmPosition(double rotations) {
         boolean movingDown = rotations > getArmPosition();
-        armLeaderMotor.setControl(positionRequest.withPosition(rotations));
+
+        // Use the slower Slot 1 gains when raising the arm to the top (0.0)
+        boolean useSlowUpSlot = !movingDown && rotations >= 0.0;
+        int slotToUse = useSlowUpSlot ? 1 : 0;
+
+        armLeaderMotor.setControl(positionRequest.withSlot(slotToUse).withPosition(rotations));
         // armFollowerMotor.setControl(new Follower(armLeaderMotor.getDeviceID(), MotorAlignmentValue.Opposed));
 
 
@@ -163,12 +175,11 @@ public class Intake extends SubsystemBase {
     }
 
     /**
-     * Resets the arm encoder to a known position.
-     *
-     * @param isStraight true = arm is straight up (0 rot), false = arm is all the way down (-0.25 rot)
+     * Directly sets the arm encoder position (mechanism rotations).
+     * Useful for zeroing or seeding during pre-match setup.
      */
-    public void resetArmPosition(boolean isStraight) {
-        armLeaderMotor.setPosition(isStraight ? 0 : -0.25);
+    public void setArmEncoderPosition(double rotations) {
+        armLeaderMotor.setPosition(rotations);
     }
 
     // ------------------------------------------------------------------

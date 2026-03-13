@@ -22,10 +22,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Shuffle;
 import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.intake.ArmToSetpoint;
+import frc.robot.commands.intake.ArmUpAndDown;
 import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
 import frc.robot.commands.shooter.PrimeAndShootFixed;
@@ -185,16 +187,25 @@ public class RobotContainer {
         firstDriver.povLeft().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getLeftTrenchPose()));
         firstDriver.povRight().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getRightTrenchPose()));
         firstDriver.povUp().onTrue(new Shuffle(drivetrain));
+        firstDriver.povDown().whileTrue(new ArmUpAndDown(intake));
        
 
-        firstDriver.a().onTrue(new InstantCommand( () -> shooter.setLowerPower(60)));
-        firstDriver.a().onFalse(new InstantCommand( () -> shooter.stopLower()));
+        firstDriver.a().whileTrue(
+                Commands.startEnd(
+                    () -> shooter.setLowerPower(60),
+                    () -> shooter.stopLower(),
+                    shooter)
+        );
 
         /* For Second Driver */
-        secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(35)));
-        secondDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
-        secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.rollerOut(35)));
-        secondDriver.leftBumper().onFalse(new InstantCommand(() -> intake.stopRoller()));
+    secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(35)));
+    secondDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
+    secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.rollerOut(35)));
+    secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
+
+    // Arm encoder resets on bumpers
+    secondDriver.leftBumper().onTrue(new InstantCommand(() -> intake.setArmEncoderPosition(0.4)));
+    secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.setArmEncoderPosition(0.0)));
 
         // secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armUp(0.2)));
         // secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.stopArm()));
@@ -214,7 +225,7 @@ public class RobotContainer {
         secondDriver.a().onTrue(shooter.runOnce(() -> shooter.stopUpper()));
 
         
-        secondDriver.povUp().whileTrue(new ArmToSetpoint(intake, 0.0, 0.01));
+        secondDriver.povUp().whileTrue(new ArmToSetpoint(intake, 0.0, 0.03));
         secondDriver.povDown().whileTrue(new ArmToSetpoint(intake, 0.4, 0.01));
 
         // secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));

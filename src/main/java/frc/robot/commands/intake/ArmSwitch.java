@@ -1,12 +1,14 @@
 package frc.robot.commands.intake;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
 
 public class ArmSwitch extends Command {
     private final Intake intake;
     private final boolean down;
-    private final double tolerance;
+    private double tolerance;
+    private final Timer timer = new Timer();
     private double targetRotations;
 
 
@@ -24,13 +26,15 @@ public class ArmSwitch extends Command {
     }
 
     public ArmSwitch(Intake intake, boolean down) {
-        this(intake, down, 0.002);
+        this(intake, down, 0.01);
     }
 
     @Override
     public void initialize() {
         targetRotations = down ? 0.40 : 0.0;
         intake.setArmPosition(targetRotations);
+        timer.reset();
+        timer.start();
     }
 
     @Override
@@ -40,7 +44,7 @@ public class ArmSwitch extends Command {
 
     @Override
     public boolean isFinished() {
-        return intake.armAtSetpoint(targetRotations, tolerance);
+        return intake.armAtSetpoint(targetRotations, tolerance) || timer.hasElapsed(1.0);
     }
 
     @Override

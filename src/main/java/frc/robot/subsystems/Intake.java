@@ -60,7 +60,7 @@ public class Intake extends SubsystemBase {
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.45;  // Straight up
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.05; // All the way down
-        armConfig.Slot0.kP = 0.8;
+        armConfig.Slot0.kP = 1.0;
         armConfig.Slot0.kI = 0.0;
         armConfig.Slot0.kD = 0.0;
         armConfig.Slot0.kV = 0.08;

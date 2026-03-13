@@ -3,6 +3,7 @@ package frc.robot.commands.intake;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Intake;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * Moves the intake arm to a target position (in mechanism rotations) using
@@ -16,21 +17,35 @@ public class ArmToSetpoint extends Command {
     private final Intake intake;
     private final double targetRotations;
     private final double tolerance;
+    private final Timer timer = new Timer();
+    private double timeoutSeconds = 2.0; // Optional timeout to prevent getting stuck if something goes wrong
 
     /**
      * @param intake          The intake subsystem.
      * @param targetRotations Target position in mechanism rotations.
      * @param tolerance       Acceptable error in mechanism rotations.
      */
-    public ArmToSetpoint(Intake intake, double targetRotations, double tolerance) {
+    public ArmToSetpoint(Intake intake, double targetRotations, double tolerance, double timeoutSeconds) {
         this.intake = intake;
         this.targetRotations = targetRotations;
         this.tolerance = tolerance;
+        this.timeoutSeconds = timeoutSeconds;
         addRequirements(intake);
+    }
+
+    public ArmToSetpoint(Intake intake, double targetRotations) {
+        this(intake, targetRotations, 0.005);
+    }
+
+    public ArmToSetpoint(Intake intake, double targetRotations, double tolerance) {
+        this(intake, targetRotations, tolerance, 2.0);
     }
 
     @Override
     public void initialize() {
+        timer.stop();
+        timer.reset();
+        timer.start();
         intake.setArmPosition(targetRotations);
         SmartDashboard.putNumber("Intake/Arm TargetRotations", targetRotations);
         System.out.println("ArmToSetpoint: moving to " + targetRotations + " rotations");
@@ -46,7 +61,7 @@ public class ArmToSetpoint extends Command {
 
     @Override
     public boolean isFinished() {
-        return intake.armAtSetpoint(targetRotations, tolerance);
+        return intake.armAtSetpoint(targetRotations, tolerance) || timer.hasElapsed(timeoutSeconds);
     }
 
     @Override

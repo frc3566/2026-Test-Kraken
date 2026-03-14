@@ -35,7 +35,7 @@ public class ArmUpAndDown extends Command {
      * Uses default values: interval 0.5s, high 0.40, low 0.30 rotations.
      */
     public ArmUpAndDown(Intake intake) {
-        this(intake, 0.5, 0.40, 0.20);
+        this(intake, 0.35, 0.40, 0.10);
     }
 
 

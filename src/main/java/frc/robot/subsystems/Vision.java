@@ -36,6 +36,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTablesJNI;
+import edu.wpi.first.units.Unit;
+
 import static edu.wpi.first.units.Units.Microseconds;
 import static edu.wpi.first.units.Units.Seconds;
 import edu.wpi.first.wpilibj.Alert;
@@ -270,7 +272,7 @@ public class Vision extends SubsystemBase {
     // Reject if the vision estimate is too far from current odometry pose.
     double poseDiffTag = PhotonUtils.getDistanceToPose(currentPose.get(), filtered.estimatedPose.toPose2d());
     SmartDashboard.putNumber("Vision/Distance to Odometry Pose", poseDiffTag);
-    if (poseDiffTag > 4) {
+    if (poseDiffTag > 3.5) {
       longDistangePoseEstimationCount++;
       SmartDashboard.putNumber("Vision/Long Distance Pose Count", longDistangePoseEstimationCount);
       // Allow through only after many consecutive far readings (robot may be genuinely lost)
@@ -432,7 +434,7 @@ public class Vision extends SubsystemBase {
           Units.inchesToMeters(0),
           Units.inchesToMeters(10.486)
         ),
-        VecBuilder.fill(0.5, 0.5, 100), VecBuilder.fill(0.25, 0.25, 100));
+        VecBuilder.fill(0.8, 0.8, Units.degreesToRadians(360)), VecBuilder.fill(0.4, 0.4, Units.degreesToRadians(360)));
     /**
      * Latency alert to use when high latency is detected.
      */
@@ -713,12 +715,13 @@ public class Vision extends SubsystemBase {
           }
           // Increase std devs based on (average) distance
           // Do not trust vision if only one tag and far away
-          if (numTags == 1 && avgDist > 3) {
+          if (numTags == 1 && avgDist > 4) {
             estStdDevs = VecBuilder.fill(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE);
           } else {
             estStdDevs = estStdDevs.times(1 + (avgDist * avgDist / 30));
           }
           curStdDevs = estStdDevs;
+          SmartDashboard.putString("Vision/StdDevs", curStdDevs.toString());
         }
       }
     }

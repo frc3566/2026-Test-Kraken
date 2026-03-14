@@ -27,7 +27,7 @@ public class Intake extends SubsystemBase {
     // Separate Motion Magic limits for up vs down
     private static final double MM_UP_CRUISE_VEL = 0.45; // rotations/sec
     private static final double MM_UP_ACCEL = 2.5;       // rotations/sec^2
-    private static final double MM_DOWN_CRUISE_VEL = 0.75;
+    private static final double MM_DOWN_CRUISE_VEL = 0.6;
     private static final double MM_DOWN_ACCEL = 4.0;
 
     private final MotionMagicConfigs mmUp = new MotionMagicConfigs();
@@ -60,7 +60,7 @@ public class Intake extends SubsystemBase {
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.45;  // Straight up
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.05; // All the way down
-        armConfig.Slot0.kP = 1.5;
+        armConfig.Slot0.kP = 1.65;
         armConfig.Slot0.kI = 0.0;
         armConfig.Slot0.kD = 0.0;
         armConfig.Slot0.kV = 0.12;
@@ -73,19 +73,19 @@ public class Intake extends SubsystemBase {
         armSlot1.kV = armConfig.Slot0.kV; // keep feedforward the same
         armConfig.Slot1 = armSlot1;
 
-    // Motion Magic defaults (overridden per-move in setArmPosition)
-    // Units are mechanism rotations per second (because of SensorToMechanismRatio above)
-    armConfig.MotionMagic.MotionMagicCruiseVelocity = MM_DOWN_CRUISE_VEL;
-    armConfig.MotionMagic.MotionMagicAcceleration = MM_DOWN_ACCEL;
+        // Motion Magic defaults (overridden per-move in setArmPosition)
+        // Units are mechanism rotations per second (because of SensorToMechanismRatio above)
+        armConfig.MotionMagic.MotionMagicCruiseVelocity = MM_DOWN_CRUISE_VEL;
+        armConfig.MotionMagic.MotionMagicAcceleration = MM_DOWN_ACCEL;
 
-    // Pre-build directional Motion Magic configs so we can swap quickly without touching other settings
-    mmUp.MotionMagicCruiseVelocity = MM_UP_CRUISE_VEL;
-    mmUp.MotionMagicAcceleration = MM_UP_ACCEL;
+        // Pre-build directional Motion Magic configs so we can swap quickly without touching other settings
+        mmUp.MotionMagicCruiseVelocity = MM_UP_CRUISE_VEL;
+        mmUp.MotionMagicAcceleration = MM_UP_ACCEL;
 
-    mmDown.MotionMagicCruiseVelocity = MM_DOWN_CRUISE_VEL;
-    mmDown.MotionMagicAcceleration = MM_DOWN_ACCEL;
+        mmDown.MotionMagicCruiseVelocity = MM_DOWN_CRUISE_VEL;
+        mmDown.MotionMagicAcceleration = MM_DOWN_ACCEL;
 
-        armConfig.Feedback.RotorToSensorRatio = 1;
+            armConfig.Feedback.RotorToSensorRatio = 1;
         armLeaderMotor.getConfigurator().apply(armConfig);
         // armFollowerMotor.getConfigurator().apply(armConfig);
 

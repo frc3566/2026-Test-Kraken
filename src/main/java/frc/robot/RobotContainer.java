@@ -229,7 +229,7 @@ public class RobotContainer {
 
         
         secondDriver.povUp().whileTrue(new ArmToSetpoint(intake, 0.0, 0.05));
-        secondDriver.povDown().whileTrue(new ArmToSetpoint(intake, 0.4, 0.01));
+        secondDriver.povDown().whileTrue(new ArmToSetpoint(intake, 0.41, 0.015));
 
         // secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));
         // secondDriver.povRight().onTrue(new InstantCommand(() -> intake.resetArmPosition(false)));
@@ -317,6 +317,10 @@ public class RobotContainer {
             "Shuffle",
             new Shuffle(drivetrain)
         );
+
+        NamedCommands.registerCommand(
+            "ArmUpAndDown", 
+            new ArmUpAndDown(intake));
     }
 
 }

@@ -44,7 +44,7 @@ public class ArmSwitch extends Command {
 
     @Override
     public boolean isFinished() {
-        return intake.armAtSetpoint(targetRotations, tolerance) || timer.hasElapsed(1.0);
+        return intake.armAtSetpoint(targetRotations, tolerance) || timer.hasElapsed(1.5);
     }
 
     @Override

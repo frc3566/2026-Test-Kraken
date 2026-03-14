@@ -37,9 +37,16 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "RightPrimeAndShoot"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "RightPrimeAndShoot"
+                }
+              }
+            ]
           }
         },
         {
@@ -61,9 +68,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "race",
           "data": {
-            "name": "RightPrimeAndShootLong"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "RightPrimeAndShootLong"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "ArmUpAndDown"
+                }
+              }
+            ]
           }
         }
       ]

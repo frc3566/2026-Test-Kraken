@@ -71,7 +71,9 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void autonomousExit() {}
+    public void autonomousExit() {
+        m_robotContainer.intake.setArmPosition(0.40);
+    }
 
     @Override
     public void teleopInit() {

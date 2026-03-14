@@ -28,14 +28,13 @@ public class ArmUpAndDown extends Command {
         this.intervalSeconds = intervalSeconds;
         this.highRotations = highRotations;
         this.lowRotations = lowRotations;
-        addRequirements(intake);
     }
 
     /**
      * Uses default values: interval 0.5s, high 0.40, low 0.30 rotations.
      */
     public ArmUpAndDown(Intake intake) {
-        this(intake, 0.35, 0.40, 0.10);
+        this(intake, 0.65, 0.40, 0);
     }
 
 

@@ -25,8 +25,8 @@ public class Intake extends SubsystemBase {
         .withSlot(0);
 
     // Separate Motion Magic limits for up vs down
-    private static final double MM_UP_CRUISE_VEL = 0.45; // rotations/sec
-    private static final double MM_UP_ACCEL = 2.5;       // rotations/sec^2
+    private static final double MM_UP_CRUISE_VEL = 0.5; // rotations/sec
+    private static final double MM_UP_ACCEL = 4.0;       // rotations/sec^2
     private static final double MM_DOWN_CRUISE_VEL = 0.6;
     private static final double MM_DOWN_ACCEL = 4.0;
 
@@ -67,7 +67,7 @@ public class Intake extends SubsystemBase {
 
         // Slot 1 — slower PID for raising the arm to the top (0.0 rotations)
         var armSlot1 = new Slot1Configs();
-        armSlot1.kP = armConfig.Slot0.kP;
+        armSlot1.kP = armConfig.Slot0.kP+1;
         armSlot1.kI = armConfig.Slot0.kI;
         armSlot1.kD = armConfig.Slot0.kD;
         armSlot1.kV = armConfig.Slot0.kV; // keep feedforward the same

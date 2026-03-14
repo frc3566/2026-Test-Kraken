@@ -32,6 +32,7 @@ public class ArmUpAndDown extends Command {
 
     /**
      * Uses default values: interval 0.5s, high 0.40, low 0.15 rotations.
+     * This is counter intuitive. High = down, Low = up
      */
     public ArmUpAndDown(Intake intake) {
         this(intake, 0.75, 0.4, 0.15);
@@ -40,7 +41,7 @@ public class ArmUpAndDown extends Command {
 
     @Override
     public void initialize() {
-        currentTarget = highRotations;
+        currentTarget = lowRotations;
         intake.setArmPosition(currentTarget);
         timer.restart();
     }

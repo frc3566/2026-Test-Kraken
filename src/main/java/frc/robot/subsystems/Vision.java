@@ -434,7 +434,7 @@ public class Vision extends SubsystemBase {
           Units.inchesToMeters(0),
           Units.inchesToMeters(10.486)
         ),
-        VecBuilder.fill(0.4, 0.4, Units.degreesToRadians(45)), VecBuilder.fill(0.2, 0.2, Units.degreesToRadians(30)));
+        VecBuilder.fill(0.75, 0.75, Units.degreesToRadians(45)), VecBuilder.fill(0.4, 0.4, Units.degreesToRadians(45)));
     /**
      * Latency alert to use when high latency is detected.
      */

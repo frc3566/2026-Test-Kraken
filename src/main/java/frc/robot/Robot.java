@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        m_robotContainer.vision.updatePoseEstimation(m_robotContainer.drivetrain);
+        // m_robotContainer.vision.updatePoseEstimation(m_robotContainer.drivetrain);
         SmartDashboard.putNumber("Auto Time", DriverStation.getMatchTime());
     }
 

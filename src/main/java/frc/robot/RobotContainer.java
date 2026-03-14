@@ -191,8 +191,14 @@ public class RobotContainer {
        
 
         firstDriver.a().whileTrue(
-                Commands.startEnd(
-                    () -> shooter.setLowerPower(60),
+                Commands.runEnd(
+                    () -> {
+                        if (shooter.getUpperVelocity() > 40) {
+                            shooter.setLowerPower(60);
+                        } else {
+                            shooter.stopLower();
+                        }
+                    },
                     () -> shooter.stopLower(),
                     shooter)
         );
@@ -282,13 +288,13 @@ public class RobotContainer {
         // We want to wait until the robot is stead, so 0.5 second for another priming
         NamedCommands.registerCommand(
             "PrimeAndShoot",
-            new PrimeAndShoot(shooter, intake, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation, 0.5, 4)
+            new PrimeAndShoot(shooter, intake, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation, 0.5, 10)
         );
 
 
         NamedCommands.registerCommand(
             "LeftPrimeAndShoot",
-            new PrimeAndShootFixed(shooter, intake, autonomousPower, 1, 4)
+            new PrimeAndShootFixed(shooter, intake, autonomousPower, 1, 10)
         );
 
         // For some reason right side need more power.
@@ -305,7 +311,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
             "CenterPrimeAndShoot",
-            new PrimeAndShootFixed(shooter, intake, 54, 1, 4)
+            new PrimeAndShootFixed(shooter, intake, 54, 1, 10)
         );
 
         NamedCommands.registerCommand(

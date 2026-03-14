@@ -46,7 +46,7 @@ import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
     private boolean enableDrive = true;
-    private double autonomousPower = 60;
+    private double autonomousPower = 55;
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -137,7 +137,7 @@ public class RobotContainer {
         // firstDriver.y().toggleOnTrue(new LogTargetDistance(vision));
 
         // Left trigger = always turn to hub
-        firstDriver.leftTrigger().whileTrue(new TurnToHub(drivetrain, 
+        firstDriver.a().whileTrue(new TurnToHub(drivetrain, 
             () -> -firstDriver.getLeftY() * MaxSpeed, 
             () -> -firstDriver.getLeftX() * MaxSpeed,
             MaxSpeed,
@@ -190,11 +190,11 @@ public class RobotContainer {
         
        
 
-        firstDriver.a().whileTrue(
+        firstDriver.leftTrigger().whileTrue(
                 Commands.runEnd(
                     () -> {
-                        if (shooter.getUpperVelocity() > 40) {
-                            shooter.setLowerPower(60);
+                        if (shooter.getUpperVelocity() > 15) {
+                            shooter.setLowerPower(90);
                         } else {
                             shooter.stopLower();
                         }

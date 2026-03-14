@@ -53,7 +53,7 @@ public class PrimeAndShoot extends Command {
 
         if (timer.get() > primeTime) {
             // Flywheel is up to speed — engage the feeder
-            shooter.setLowerPower(60);
+            shooter.setLowerPower(90);
         }
     }
 

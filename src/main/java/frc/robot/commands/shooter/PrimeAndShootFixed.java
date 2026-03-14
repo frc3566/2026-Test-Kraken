@@ -46,7 +46,7 @@ public class PrimeAndShootFixed extends Command {
     @Override
     public void execute() {
         if (timer.get() > primeTime) {
-            shooter.setLowerPower(30);
+            shooter.setLowerPower(90);
         }
     }
 

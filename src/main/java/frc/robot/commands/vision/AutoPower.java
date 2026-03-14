@@ -27,7 +27,7 @@ public class AutoPower extends Command {
         this.shooter = shooter;
         this.robotPose = robotPose;
         this.targetTranslation = targetTranslation;
-        this.addRequirements(shooter);
+        // this.addRequirements(shooter);
     }
 
     @Override

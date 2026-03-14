@@ -20,6 +20,8 @@ import org.photonvision.simulation.VisionSystemSim;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import com.ctre.phoenix6.SignalLogger;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -243,6 +245,22 @@ public class Vision extends SubsystemBase {
         .map(target -> Integer.toString(target.getFiducialId()))
         .toList()
         .toString());
+
+    // Log target counts and per-target ambiguity to the SignalLogger
+    SignalLogger.writeDouble("Vision/Targets/Total", pose.get().targetsUsed.size(), "count");
+    SignalLogger.writeDouble("Vision/Targets/Passed", goodTargets.size(), "count");
+    int targetIndex = 0;
+    for (var target : pose.get().targetsUsed) {
+      SignalLogger.writeDouble(
+        "Vision/Targets/Ambiguity/Fid" + target.getFiducialId(),
+        target.getPoseAmbiguity(),
+        "unitless");
+      SignalLogger.writeDouble(
+        "Vision/Targets/Ambiguity/Index" + targetIndex,
+        target.getPoseAmbiguity(),
+        "unitless");
+      targetIndex++;
+    }
 
     if (goodTargets.isEmpty()) {
     SmartDashboard.putString("Vision/Filter Reject Reason",

@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -78,13 +79,16 @@ public class Shooter extends SubsystemBase {
         // 15.1 = one-shot sampled value, adjust as necessary
         // double distFeet = Units.metersToFeet(distance);
         double rps = getAutoPower(distance);
+        SignalLogger.writeDouble("Shooter/AutoPower/DistanceMeters", distance, "m");
+        SignalLogger.writeDouble("Shooter/AutoPower/TargetRPS", rps, "rps");
         setUpperPower(rps);
     }
 
     public double getAutoPower(double distance){
         // 15.1 = one-shot sampled value, adjust as necessary
-        double distFeet = Units.metersToFeet(distance);
-        double rps = 39.7+ 0.0417 * distFeet + 0.137 * Math.pow(distFeet,2)-2;
+        // double distFeet = Units.metersToFeet(distance);
+        // double rps = 39.7+ 0.0417 * distFeet + 0.137 * Math.pow(distFeet,2)-4;
+        double rps = 36.5 - 0.594*distance + 1.45 * Math.pow(distance, 2);
         return Math.min(100,rps); 
     }
 
@@ -100,5 +104,6 @@ public class Shooter extends SubsystemBase {
         SmartDashboard.putNumber("Shooter/Feeder Power", lowerMotor.get());
         SmartDashboard.putNumber("Shooter/Flywheel Supply Current (A)", upperMotor.getSupplyCurrent().getValueAsDouble());
         SmartDashboard.putNumber("Shooter/Feeder Supply Current (A)", lowerMotor.getSupplyCurrent().getValueAsDouble());
+        SignalLogger.writeDouble("Shooter/UpperVelocityRPS", upperMotor.getVelocity().getValueAsDouble(), "rps");
     }
 }

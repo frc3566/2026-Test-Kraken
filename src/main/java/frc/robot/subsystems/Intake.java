@@ -27,7 +27,7 @@ public class Intake extends SubsystemBase {
     // Separate Motion Magic limits for up vs down
     private static final double MM_UP_CRUISE_VEL = 0.5; // rotations/sec
     private static final double MM_UP_ACCEL = 4.0;       // rotations/sec^2
-    private static final double MM_DOWN_CRUISE_VEL = 0.6;
+    private static final double MM_DOWN_CRUISE_VEL = 0.5;
     private static final double MM_DOWN_ACCEL = 4.0;
 
     private final MotionMagicConfigs mmUp = new MotionMagicConfigs();
@@ -60,7 +60,7 @@ public class Intake extends SubsystemBase {
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.45;  // Straight up
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.05; // All the way down
-        armConfig.Slot0.kP = 1.65;
+        armConfig.Slot0.kP = 2;
         armConfig.Slot0.kI = 0.0;
         armConfig.Slot0.kD = 0.0;
         armConfig.Slot0.kV = 0.12;
@@ -119,18 +119,21 @@ public class Intake extends SubsystemBase {
     public void setArmPosition(double rotations) {
         boolean movingDown = rotations > getArmPosition();
 
-        // Use the slower Slot 1 gains when raising the arm to the top (0.0)
-        boolean useSlowUpSlot = !movingDown && rotations >= 0.0;
-        int slotToUse = useSlowUpSlot ? 1 : 0;
+        // // Use the slower Slot 1 gains when raising the arm to the top (0.0)
+        // boolean useSlowUpSlot = !movingDown && rotations >= 0.0;
+        // int slotToUse = useSlowUpSlot ? 1 : 0;
+   
 
         // Pick Motion Magic constraints based on direction
         // Only reapply configs when direction changes to avoid CAN spam
-        if (lastAppliedMovingDown == null || lastAppliedMovingDown.booleanValue() != movingDown) {
-            armLeaderMotor.getConfigurator().apply(movingDown ? mmDown : mmUp);
-            lastAppliedMovingDown = movingDown;
-        }
+        // if (lastAppliedMovingDown == null || lastAppliedMovingDown.booleanValue() != movingDown) {
+        //     armLeaderMotor.getConfigurator().apply(movingDown ? mmDown : mmUp);
+        //     lastAppliedMovingDown = movingDown;
+        // }
 
+        int slotToUse = 0;
         // Use Motion Magic for built-in velocity/accel limiting
+        // Only use slot 0 since motion magic takes care of max velocity?
         armLeaderMotor.setControl(
             motionMagicRequest
                 .withSlot(slotToUse)

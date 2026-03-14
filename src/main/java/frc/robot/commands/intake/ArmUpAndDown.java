@@ -31,10 +31,10 @@ public class ArmUpAndDown extends Command {
     }
 
     /**
-     * Uses default values: interval 0.5s, high 0.40, low 0.30 rotations.
+     * Uses default values: interval 0.5s, high 0.40, low 0.15 rotations.
      */
     public ArmUpAndDown(Intake intake) {
-        this(intake, 0.65, 0.40, 0);
+        this(intake, 0.75, 0.4, 0.15);
     }
 
 
@@ -62,6 +62,6 @@ public class ArmUpAndDown extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        intake.stopArm();
+        intake.setArmPosition(0.4);
     }
 }

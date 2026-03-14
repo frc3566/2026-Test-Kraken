@@ -43,7 +43,7 @@ public class PrimeAndShoot extends Command {
         timer.start();
         double distance = robotPose.get().getTranslation().getDistance(targetTranslation.get());
         shooter.autoPower(distance); // Initial spin-up
-        intake.rollerIn(100);
+        intake.rollerIn(30);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class PrimeAndShoot extends Command {
 
         if (timer.get() > primeTime) {
             // Flywheel is up to speed — engage the feeder
-            shooter.setLowerPower(80);
+            shooter.setLowerPower(60);
         }
     }
 

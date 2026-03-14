@@ -49,7 +49,7 @@ public class HeadToAngle extends Command {
                 .withRotationalDeadband(0)
                 .withDriveRequestType(DriveRequestType.OpenLoopVoltage)
                 .withMaxAbsRotationalRate(RotationsPerSecond.of(0.75).in(RadiansPerSecond))
-                .withForwardPerspective(SwerveRequest.ForwardPerspectiveValue.OperatorPerspective);
+                .withForwardPerspective(SwerveRequest.ForwardPerspectiveValue.BlueAlliance);
 
         drive.HeadingController.setPID(2, 0.0, 0.0);
         drive.HeadingController.enableContinuousInput(-Math.PI, Math.PI);

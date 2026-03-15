@@ -35,7 +35,7 @@ public class ArmUpAndDown extends Command {
      * This is counter intuitive. High = down, Low = up
      */
     public ArmUpAndDown(Intake intake) {
-        this(intake, 0.75, 0.4, 0.15);
+        this(intake, 0.6, 0.4, 0.15);
     }
 
 

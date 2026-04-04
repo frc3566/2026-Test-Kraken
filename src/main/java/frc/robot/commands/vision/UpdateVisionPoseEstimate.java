@@ -4,7 +4,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.Vision.Cameras;
 
 
 public class UpdateVisionPoseEstimate extends Command {
@@ -19,9 +18,8 @@ public class UpdateVisionPoseEstimate extends Command {
     @Override
     public void initialize() {
         System.out.println("Initializing UpdateVisionPoseEstimate command");
-        var pose = Cameras.MAIN.getEstimatedGlobalPose(drivetrain.getPose().getRotation());
         vision.updatePoseEstimation(drivetrain);
-        SmartDashboard.putBoolean("Vision Pose Estimation Available", pose.isPresent());
+        SmartDashboard.putBoolean("Vision Pose Estimation Requested", true);
     }
 
     @Override

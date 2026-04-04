@@ -25,9 +25,9 @@ public class Intake extends SubsystemBase {
         .withSlot(0);
 
     // Separate Motion Magic limits for up vs down
-    private static final double MM_UP_CRUISE_VEL = 0.5; // rotations/sec
+    private static final double MM_UP_CRUISE_VEL = 0.7; // rotations/sec
     private static final double MM_UP_ACCEL = 4.0;       // rotations/sec^2
-    private static final double MM_DOWN_CRUISE_VEL = 0.5;
+    private static final double MM_DOWN_CRUISE_VEL = 0.7;
     private static final double MM_DOWN_ACCEL = 4.0;
 
     private final MotionMagicConfigs mmUp = new MotionMagicConfigs();

@@ -47,7 +47,9 @@ public class Robot extends TimedRobot {
 
 
     @Override
-    public void disabledPeriodic() {}
+    public void disabledPeriodic() {
+        m_robotContainer.vision.seedInternalImu(m_robotContainer.drivetrain);
+    }
 
     @Override
     public void disabledExit() {}

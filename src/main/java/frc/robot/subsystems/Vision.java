@@ -23,6 +23,7 @@ import frc.robot.Robot;
 import limelight.Limelight;
 import limelight.networktables.LimelightPoseEstimator;
 import limelight.networktables.LimelightPoseEstimator.EstimationMode;
+import limelight.networktables.LimelightSettings.ImuMode;
 import limelight.networktables.Orientation3d;
 import limelight.networktables.PoseEstimate;
 
@@ -41,6 +42,7 @@ public class Vision extends SubsystemBase {
   private static final List<String> LIMELIGHT_NAMES = List.of("limelight-2026-1");
 
   private boolean poseEstimationEnabled = true;
+  private boolean updatePoseEstimation = true;
 
   public static VisionSystemSim visionSim;
 
@@ -79,7 +81,7 @@ public class Vision extends SubsystemBase {
    *                    itself correctly.
    * @return The target pose of the AprilTag.
    */
-  
+
   // public static Pose2d getAprilTagPose(int aprilTag, Transform2d robotOffset) {
   //   Optional<Pose3d> aprilTagPose3d = fieldLayout.getTagPose(aprilTag);
   //   if (aprilTagPose3d.isPresent()) {
@@ -105,6 +107,20 @@ public class Vision extends SubsystemBase {
     return poseEstimationEnabled;
   }
 
+  public void seedInternalImu(CommandSwerveDrivetrain swerveDrive) {
+    var pigeon = swerveDrive.getPigeon2();
+    for (Limelight limelight : limelights) {
+      limelight.getSettings().withImuMode(ImuMode.SyncInternalImu)
+          .withRobotOrientation(
+              new Orientation3d(
+                  swerveDrive.getRotation3d(),
+                  pigeon.getAngularVelocityZDevice().getValue(),
+                  pigeon.getAngularVelocityYDevice().getValue(),
+                  pigeon.getAngularVelocityXDevice().getValue()))
+          .save();
+    }
+  }
+
   public void updatePoseEstimation(CommandSwerveDrivetrain swerveDrive) {
     if (!poseEstimationEnabled) { return; }
     var pigeon = swerveDrive.getPigeon2();
@@ -114,14 +130,16 @@ public class Vision extends SubsystemBase {
       LimelightPoseEstimator estimator = limelightPoseEstimators.get(i);
 
       // Required for MegaTag2 localization.
-      limelight.getSettings().withRobotOrientation(
+      limelight.getSettings()
+      .withRobotOrientation(
           new Orientation3d(
               swerveDrive.getRotation3d(),
               pigeon.getAngularVelocityZDevice().getValue(),
               pigeon.getAngularVelocityYDevice().getValue(),
               pigeon.getAngularVelocityXDevice().getValue()))
+      .withImuMode(ImuMode.InternalImuExternalAssist)
           .save();
-
+          
       Optional<PoseEstimate> poseEstimate = estimator.getPoseEstimate();
       boolean poseValid = poseEstimate.isPresent() && poseEstimate.get().hasData;
       SmartDashboard.putBoolean("Vision/Pose Estimation Available", poseValid);
@@ -131,16 +149,23 @@ public class Vision extends SubsystemBase {
 
       PoseEstimate mt2Estimate = poseEstimate.get();
 
-      Matrix<N3, N1> stdDevs = mt2Estimate.tagCount >= 2
-          ? VecBuilder.fill(0.6, 0.6, Units.degreesToRadians(15))
-          : VecBuilder.fill(1.2, 1.2, Units.degreesToRadians(30));
+      Matrix<N3, N1> stdDevs =VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(3600));
 
       if (mt2Estimate.avgTagDist > 4.0) {
         stdDevs = stdDevs.times(1.5);
       }
+      if (mt2Estimate.rawFiducials[0].ambiguity > 0.5 ||
+          mt2Estimate.tagCount == 0) {
+        updatePoseEstimation = false;
+      }
 
       Pose2d visionPose = mt2Estimate.pose.toPose2d();
-      swerveDrive.addVisionMeasurement(visionPose, mt2Estimate.timestampSeconds, stdDevs);
+
+      if (updatePoseEstimation) {
+        swerveDrive.addVisionMeasurement(visionPose, mt2Estimate.timestampSeconds, stdDevs);
+      }
+
+      SmartDashboard.putBoolean("Vision/Pose Estimation Update Applied", updatePoseEstimation);
       SmartDashboard.putString("Vision/Filtered Pose", visionPose.toString());
       SmartDashboard.putNumber("Vision/Limelight Tag Count", mt2Estimate.tagCount);
       SmartDashboard.putNumber("Vision/Limelight Avg Tag Dist", mt2Estimate.avgTagDist);

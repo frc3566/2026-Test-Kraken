@@ -77,13 +77,10 @@ public class RobotContainer {
     public RobotContainer() {
         if(!Utils.isSimulation()){
             // configureCamera();
-        }
-
-        
+        }        
         configureAutoCommand();
         configureAutoChooser();
         configureBindings();
-
     }
 
     private void configureCamera() {

@@ -32,13 +32,8 @@ public class TurnToHub extends Command {
      * FieldCentricFacingAngle handles its own heading PID (HeadingController)
      * internally on the swerve request. We just set the target Rotation2d.
      *
-     * TODO: Tune HeadingController kP/kD via Phoenix Tuner X SysId rotation routine.
-     *       Starting values below are conservative — increase kP if slow to snap.
      */
     private final SwerveRequest.FieldCentricFacingAngle drive;
-
-    /** Set to true in initialize() if the tag ID is not in the field layout. */
-    private boolean tagNotInLayout = false;
 
     /** Cached tag translation — doesn't change after initialize(). */
     private Translation2d center;

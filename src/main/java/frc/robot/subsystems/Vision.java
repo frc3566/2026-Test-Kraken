@@ -116,7 +116,7 @@ public class Vision extends SubsystemBase {
       visionSim.getDebugField();
 
       for (Cameras c : Cameras.values()) {
-        c.addToVisionSim(visionSim);
+        c.addToVisionSim(visionSim, c.robotToCamTransform);
       }
       // openSimCameraViews();
     }
@@ -143,16 +143,17 @@ public class Vision extends SubsystemBase {
   /** 
    * @return the Pose2d from robot center to AprilTag target
    */
-  public static Transform2d getRobotRelativeTransformTo(PhotonTrackedTarget target) {
-      Transform3d transform = target.getBestCameraToTarget();
-      Translation2d end = transform.getTranslation().toTranslation2d()
-          .plus(Constants.Vision.robotToCamera.getTranslation().toTranslation2d());
 
-      double zAngleTheta = transform.getRotation().getZ();
-      Rotation2d yaw = Rotation2d.fromRadians(Math.signum(zAngleTheta) * (Math.PI - Math.abs(zAngleTheta))).unaryMinus();
+  // public static Transform2d getRobotRelativeTransformTo(PhotonTrackedTarget target) {
+  //     Transform3d transform = target.getBestCameraToTarget();
+  //     Translation2d end = transform.getTranslation().toTranslation2d()
+  //         .plus(Constants.Vision.robotToCamera.getTranslation().toTranslation2d());
 
-      return new Transform2d(end, yaw);
-  }
+  //     double zAngleTheta = transform.getRotation().getZ();
+  //     Rotation2d yaw = Rotation2d.fromRadians(Math.signum(zAngleTheta) * (Math.PI - Math.abs(zAngleTheta))).unaryMinus();
+
+  //     return new Transform2d(end, yaw);
+  // }
 
   /**
    * Update pose estimation inside of {@link SwerveDrive} with all of the
@@ -421,38 +422,51 @@ public class Vision extends SubsystemBase {
     // field2d.getObject("tracked targets").setPoses(poses);
   }
 
-  public void printAllResults() {
-    System.out.println("Vision log:");
-    Cameras.MAIN.updateUnreadResults();
-    var result = Cameras.MAIN.getLatestResult();
-
-    if (result.isEmpty() || !result.get().hasTargets()) {
-        System.out.println("> No targets found.");
-        return;
-    }
-
-    var r = result.get();
-
-    System.out.println("> Single AprilTag: " + r.getBestTarget());
-    System.out.println("> All AprilTags: " + r.getTargets());
-    System.out.println("> Multi AprilTag: " + r.getMultiTagResult());
-  }
-
   /**
    * Camera Enum to select each camera
    */
   public enum Cameras {
     /**
-     * MAIN (Limelight3)
+     * Ray (LL4), front
+     * TODO: Set New Position
      */
-    MAIN("limelight-2026-1",
+    FRONT("RAY",
         new Rotation3d(0, -0.1745, 0),
         new Translation3d(
           Units.inchesToMeters(14.337),
           Units.inchesToMeters(0),
           Units.inchesToMeters(10.486)
         ),
-        VecBuilder.fill(0.75, 0.75, Units.degreesToRadians(45)), VecBuilder.fill(0.4, 0.4, Units.degreesToRadians(45)));
+        VecBuilder.fill(0.75, 0.75, Units.degreesToRadians(180)), VecBuilder.fill(0.4, 0.4, Units.degreesToRadians(360))),
+    
+    /**
+     * Dingyi (LL3), Right
+     * TODO: Set New Position
+     * StdDev is higher b/c less accurate
+     */
+    RIGHT("DINGYI",
+        new Rotation3d(0, -0.1745,-1.571),
+        new Translation3d(
+          Units.inchesToMeters(0),
+          Units.inchesToMeters(-14.337),
+          Units.inchesToMeters(10.486)
+        ),
+        VecBuilder.fill(1, 1, Units.degreesToRadians(180)), VecBuilder.fill(0.6, 0.6, Units.degreesToRadians(360))),
+
+    /**
+     * LEO (LL4), Left
+     * TODO: Set New Position
+     */
+    LEFT("LEO",
+        new Rotation3d(0, -0.1745, 1.571),
+        new Translation3d(
+          Units.inchesToMeters(0),
+          Units.inchesToMeters(14.337),
+          Units.inchesToMeters(10.486)
+        ),
+        VecBuilder.fill(0.75, 0.75, Units.degreesToRadians(180)), VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(360)));
+
+    
     /**
      * Latency alert to use when high latency is detected.
      */
@@ -539,9 +553,9 @@ public class Vision extends SubsystemBase {
 
       if (Robot.isSimulation()) {
         SimCameraProperties cameraProperties = new SimCameraProperties();
-        cameraProperties.setCalibration(640, 480, Rotation2d.fromDegrees(75.09));
-        cameraProperties.setCalibError(0.55, 0.08);
-        cameraProperties.setFPS(40);
+        cameraProperties.setCalibration(1280, 800, Rotation2d.fromDegrees(99.41));
+        cameraProperties.setCalibError(1, 0.08);
+        cameraProperties.setFPS(50);
         cameraProperties.setAvgLatencyMs(35);
         cameraProperties.setLatencyStdDevMs(5);
 
@@ -555,9 +569,9 @@ public class Vision extends SubsystemBase {
      *
      * @param systemSim {@link VisionSystemSim} to use.
      */
-    public void addToVisionSim(VisionSystemSim systemSim) {
+    public void addToVisionSim(VisionSystemSim systemSim, Transform3d robotToCamera) {
       if (Robot.isSimulation()) {
-        systemSim.addCamera(cameraSim, Constants.Vision.robotToCamera); // ← uses real camera transform
+        systemSim.addCamera(cameraSim, robotToCamera); // uses real camera transform
       }
     }
 

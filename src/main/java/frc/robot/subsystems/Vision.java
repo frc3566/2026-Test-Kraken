@@ -38,7 +38,7 @@ public class Vision extends SubsystemBase {
    * April Tag Field Layout of the year.
    */
   public static final AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadField(
-      AprilTagFields.k2026RebuiltWelded);
+      AprilTagFields.k2026RebuiltAndymark);
   private static final List<String> LIMELIGHT_NAMES = List.of("limelight-2026-1");
 
   private boolean poseEstimationEnabled = true;

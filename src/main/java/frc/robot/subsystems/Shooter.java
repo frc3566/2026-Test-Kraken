@@ -4,9 +4,10 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -26,6 +27,7 @@ public class Shooter extends SubsystemBase {
         var upperConfig = new Slot0Configs();
         var lowerConfig = new Slot0Configs();
 
+        //TODO: Tune these values
         upperConfig.kP = 0.55;
         upperConfig.kV = 0.12;
 
@@ -38,6 +40,9 @@ public class Shooter extends SubsystemBase {
         IndexerRight.getConfigurator().apply(lowerConfig, 0.05);
         // agitatorMotor = new TalonFX(Constants.Motors.Agitator);
 
+        ShooterLeft.setControl(new Follower(ShooterRight.getDeviceID(), MotorAlignmentValue.Aligned));
+        IndexerLeft.setControl(new Follower(IndexerRight.getDeviceID(), MotorAlignmentValue.Aligned));
+        
         SmartDashboard.putBoolean("Shooter/Flywheel", false);
         SmartDashboard.putBoolean("Shooter/Feeder", false);
         SmartDashboard.putBoolean("AutoPower/Enabled", false);
@@ -53,13 +58,11 @@ public class Shooter extends SubsystemBase {
 
    
     public void setLowerPower(double rps) {
-        IndexerLeft.set(rps/100);
         IndexerRight.set(rps/100);
         SmartDashboard.putBoolean("Shooter/Feeder", true);
     }
 
     public void stopLower() {
-        IndexerLeft.stopMotor();
         IndexerRight.stopMotor();
         SmartDashboard.putBoolean("Shooter/Feeder", false);
     }
@@ -68,13 +71,11 @@ public class Shooter extends SubsystemBase {
     public void setUpperPower(double rps) {
         // ShooterLeft.setControl(m_velocity.withVelocity(rps));
         // ShooterRight.setControl(m_velocity.withVelocity(rps));
-        ShooterLeft.set(rps/100);
         ShooterRight.set(rps/100);
         SmartDashboard.putBoolean("Shooter/Flywheel", true);
     }
 
     public void stopUpper() {   
-        ShooterLeft.stopMotor();
         ShooterRight.stopMotor();
         SmartDashboard.putBoolean("Shooter/Flywheel", false);
     }
@@ -98,6 +99,7 @@ public class Shooter extends SubsystemBase {
         // 15.1 = one-shot sampled value, adjust as necessary
         // double distFeet = Units.metersToFeet(distance);
         // double rps = 39.7+ 0.0417 * distFeet + 0.137 * Math.pow(distFeet,2)-4;
+        // TODO: Redo the equation
         double rps = 36.5 - 0.594*distance + 1.45 * Math.pow(distance, 2);
         return Math.min(100,rps); 
     }

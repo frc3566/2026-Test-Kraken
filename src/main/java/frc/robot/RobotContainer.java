@@ -219,10 +219,10 @@ public class RobotContainer {
         // secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.stopArm()));
 
         // Scoring 
-        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(65)));
+        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(50)));
         
         // Neutral Passing 
-        secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(70)));
+        secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(75)));
 
         // Auto Power
         secondDriver.y().onTrue(new AutoPower(shooter, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation));

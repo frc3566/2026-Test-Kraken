@@ -50,24 +50,24 @@ public class Intake extends SubsystemBase {
         var armConfig = new TalonFXConfiguration();
 
         // Sensor-to-mechanism ratio so getArmPosition() reports mechanism rotations
-        armConfig.Feedback.SensorToMechanismRatio = ARM_GEAR_RATIO;
+        // armConfig.Feedback.SensorToMechanismRatio = ARM_GEAR_RATIO;
 
         // Software limits — prevent over-extension / over-retraction.
         // Remember to power the robot on while the arm is up,
         // or the arm encoders will not work as intended.
-        armConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        // armConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.45;  // Straight up
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.05; // All the way down
-        armConfig.Slot0.kP = 2;
+        // armConfig.Slot0.kP = 0.1;
         armConfig.Slot0.kI = 0.0;
         armConfig.Slot0.kD = 0.0;
         armConfig.Slot0.kV = 0.12;
 
         // Slot 1 — slower PID for raising the arm to the top (0.0 rotations)
         var armSlot1 = new Slot1Configs();
-        armSlot1.kP = armConfig.Slot0.kP+1;
+        armSlot1.kP = armConfig.Slot0.kP+0.1;
         armSlot1.kI = armConfig.Slot0.kI;
         armSlot1.kD = armConfig.Slot0.kD;
         armSlot1.kV = armConfig.Slot0.kV; // keep feedforward the same

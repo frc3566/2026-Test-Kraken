@@ -237,9 +237,9 @@ public class RobotContainer {
         // secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));
         // secondDriver.povRight().onTrue(new InstantCommand(() -> intake.resetArmPosition(false)));
 
-        secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.setArmPower(0.1)));
+        secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.setArmPower(0.15)));
         secondDriver.povLeft().onFalse(new InstantCommand(() -> intake.stopArm()));
-        secondDriver.povRight().onTrue(new InstantCommand(() -> intake.setArmPower(-0.1)));
+        secondDriver.povRight().onTrue(new InstantCommand(() -> intake.setArmPower(-0.15)));
         secondDriver.povRight().onFalse(new InstantCommand(() -> intake.stopArm()));
 
         // Quick back/forth jostle to shift balls forward in the hopper

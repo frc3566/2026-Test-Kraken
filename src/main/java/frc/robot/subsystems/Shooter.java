@@ -4,7 +4,7 @@ import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.signals.MotorAlignmentValue;
 
 import edu.wpi.first.math.MathUtil;
@@ -28,11 +28,11 @@ public class Shooter extends SubsystemBase {
         var lowerConfig = new Slot0Configs();
 
         //TODO: Tune these values
-        upperConfig.kP = 0.55;
-        upperConfig.kV = 0.12;
+        // upperConfig.kP = 0.55;
+        // upperConfig.kV = 0.12;
 
-        lowerConfig.kP = 0.35;
-        lowerConfig.kV = 0.12;
+        // lowerConfig.kP = 0.35;
+        // lowerConfig.kV = 0.12;
 
         ShooterLeft.getConfigurator().apply(upperConfig, 0.05);
         ShooterRight.getConfigurator().apply(upperConfig, 0.05);
@@ -40,8 +40,8 @@ public class Shooter extends SubsystemBase {
         IndexerRight.getConfigurator().apply(lowerConfig, 0.05);
         // agitatorMotor = new TalonFX(Constants.Motors.Agitator);
 
-        ShooterLeft.setControl(new Follower(ShooterRight.getDeviceID(), MotorAlignmentValue.Aligned));
-        IndexerLeft.setControl(new Follower(IndexerRight.getDeviceID(), MotorAlignmentValue.Aligned));
+        ShooterLeft.setControl(new StrictFollower(ShooterRight.getDeviceID()));
+        IndexerLeft.setControl(new StrictFollower(IndexerRight.getDeviceID()));
         
         SmartDashboard.putBoolean("Shooter/Flywheel", false);
         SmartDashboard.putBoolean("Shooter/Feeder", false);

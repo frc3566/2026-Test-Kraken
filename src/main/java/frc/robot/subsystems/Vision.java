@@ -173,14 +173,20 @@ public class Vision extends SubsystemBase {
 
   public void updatePoseEstimation(CommandSwerveDrivetrain swerveDrive) {
     if (!poseEstimationEnabled) { return; }
+    boolean anyPoseAvailable = false;
+    boolean anyFilteredAvailable = false;
+
     for (Cameras camera : Cameras.values()) {
+      String cameraKey = "Vision/" + camera.name();
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
 
-      SmartDashboard.putBoolean("Vision/Pose Estimation Available", poseEst.isPresent());
+      SmartDashboard.putBoolean(cameraKey + "/Pose Estimation Available", poseEst.isPresent());
+      anyPoseAvailable |= poseEst.isPresent();
 
-      poseEst = filterPose(poseEst);
+      poseEst = filterPose(poseEst, camera.name());
 
-      SmartDashboard.putBoolean("Vision/Filtered Pose Available", poseEst.isPresent());
+      SmartDashboard.putBoolean(cameraKey + "/Filtered Pose Available", poseEst.isPresent());
+      anyFilteredAvailable |= poseEst.isPresent();
 
       if(poseEst.isPresent()){
         var pose = poseEst.get().estimatedPose.toPose2d();
@@ -188,9 +194,13 @@ public class Vision extends SubsystemBase {
               pose,
               poseEst.get().timestampSeconds,
               camera.curStdDevs);
-        SmartDashboard.putString("Vision/Filtered Pose", pose.toString());
+        SmartDashboard.putString(cameraKey + "/Filtered Pose", pose.toString());
       }
     }
+
+    // Keep aggregate booleans for existing dashboards/widgets.
+    SmartDashboard.putBoolean("Vision/Pose Estimation Available", anyPoseAvailable);
+    SmartDashboard.putBoolean("Vision/Filtered Pose Available", anyFilteredAvailable);
   }
 
   /**
@@ -222,8 +232,10 @@ public class Vision extends SubsystemBase {
       
    
 
-  private Optional<EstimatedRobotPose> filterPose(Optional<EstimatedRobotPose> pose) {
+  private Optional<EstimatedRobotPose> filterPose(Optional<EstimatedRobotPose> pose, String cameraName) {
     if (pose.isEmpty()) { return pose; }
+
+  String cameraKey = "Vision/" + cameraName;
 
   // Keep only targets whose ambiguity is below the threshold.
   // Use a looser threshold (0.25) when multiple tags are in view; otherwise 0.15.
@@ -238,33 +250,33 @@ public class Vision extends SubsystemBase {
     .filter(t -> t.getPoseAmbiguity() < 0 || t.getPoseAmbiguity() < activeThreshold)
     .toList();
 
-    SmartDashboard.putNumber("Vision/Good Targets Count", goodTargets.size());
-    SmartDashboard.putNumber("Vision/Total Targets Count", pose.get().targetsUsed.size());
+    SmartDashboard.putNumber(cameraKey + "/Good Targets Count", goodTargets.size());
+    SmartDashboard.putNumber(cameraKey + "/Total Targets Count", pose.get().targetsUsed.size());
     SmartDashboard.putString(
-      "Vision/Passed Target IDs",
+      cameraKey + "/Passed Target IDs",
       goodTargets.stream()
         .map(target -> Integer.toString(target.getFiducialId()))
         .toList()
         .toString());
 
     // Log target counts and per-target ambiguity to the SignalLogger
-    SignalLogger.writeDouble("Vision/Targets/Total", pose.get().targetsUsed.size(), "count");
-    SignalLogger.writeDouble("Vision/Targets/Passed", goodTargets.size(), "count");
+    SignalLogger.writeDouble("Vision/" + cameraName + "/Targets/Total", pose.get().targetsUsed.size(), "count");
+    SignalLogger.writeDouble("Vision/" + cameraName + "/Targets/Passed", goodTargets.size(), "count");
     int targetIndex = 0;
     for (var target : pose.get().targetsUsed) {
       SignalLogger.writeDouble(
-        "Vision/Targets/Ambiguity/Fid" + target.getFiducialId(),
+        "Vision/" + cameraName + "/Targets/Ambiguity/Fid" + target.getFiducialId(),
         target.getPoseAmbiguity(),
         "unitless");
       SignalLogger.writeDouble(
-        "Vision/Targets/Ambiguity/Index" + targetIndex,
+        "Vision/" + cameraName + "/Targets/Ambiguity/Index" + targetIndex,
         target.getPoseAmbiguity(),
         "unitless");
       targetIndex++;
     }
 
     if (goodTargets.isEmpty()) {
-    SmartDashboard.putString("Vision/Filter Reject Reason",
+    SmartDashboard.putString(cameraKey + "/Filter Reject Reason",
       "All targets above ambiguity threshold (" + activeThreshold + ")");
       return Optional.empty();
     }
@@ -282,31 +294,31 @@ public class Vision extends SubsystemBase {
         filtered.estimatedPose.toPose2d().getRotation()
             .minus(currentPose.get().getRotation())
             .getDegrees());
-    SmartDashboard.putNumber("Vision/Rotation Diff to Odometry (deg)", rotationDiffDeg);
+    SmartDashboard.putNumber(cameraKey + "/Rotation Diff to Odometry (deg)", rotationDiffDeg);
     if (rotationDiffDeg > maximumRotationDifferenceDeg) {
-      SmartDashboard.putString("Vision/Filter Reject Reason", "Rotation Too Far: " + rotationDiffDeg + " deg");
+      SmartDashboard.putString(cameraKey + "/Filter Reject Reason", "Rotation Too Far: " + rotationDiffDeg + " deg");
       return Optional.empty();
     }
 
     // Reject if the vision estimate is too far from current odometry pose.
     double poseDiffTag = PhotonUtils.getDistanceToPose(currentPose.get(), filtered.estimatedPose.toPose2d());
-    SmartDashboard.putNumber("Vision/Distance to Odometry Pose", poseDiffTag);
+    SmartDashboard.putNumber(cameraKey + "/Distance to Odometry Pose", poseDiffTag);
     if (poseDiffTag > 3.5) {
       longDistangePoseEstimationCount++;
-      SmartDashboard.putNumber("Vision/Long Distance Pose Count", longDistangePoseEstimationCount);
+      SmartDashboard.putNumber(cameraKey + "/Long Distance Pose Count", longDistangePoseEstimationCount);
       // Allow through only after many consecutive far readings (robot may be genuinely lost)
       if (longDistangePoseEstimationCount < 30) {
-        SmartDashboard.putBoolean("Vision/Pose Too Far", true);
-        SmartDashboard.putString("Vision/Filter Reject Reason", "Pose Too Far: " + poseDiffTag);
+        SmartDashboard.putBoolean(cameraKey + "/Pose Too Far", true);
+        SmartDashboard.putString(cameraKey + "/Filter Reject Reason", "Pose Too Far: " + poseDiffTag);
         return Optional.empty();
       }
     } else {
       longDistangePoseEstimationCount = 0;
-      SmartDashboard.putNumber("Vision/Long Distance Pose Count", longDistangePoseEstimationCount);
-      SmartDashboard.putBoolean("Vision/Pose Too Far", false);
+      SmartDashboard.putNumber(cameraKey + "/Long Distance Pose Count", longDistangePoseEstimationCount);
+      SmartDashboard.putBoolean(cameraKey + "/Pose Too Far", false);
     }
 
-    SmartDashboard.putString("Vision/Filter Reject Reason", "Passed");
+    SmartDashboard.putString(cameraKey + "/Filter Reject Reason", "Passed");
     return Optional.of(filtered);
   }
 

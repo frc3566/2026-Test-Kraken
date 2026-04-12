@@ -40,7 +40,7 @@ public final class Constants {
   }
 
   public static class Arm{
-    public static final double GearRatio = 25.0;
+    public static final double GearRatio = 45.0;
   }
 
   public static class Climber{

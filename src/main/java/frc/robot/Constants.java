@@ -78,20 +78,20 @@ public final class Constants {
     /**
      * Reference coordinate system: 
      * https://docs.wpilib.org/en/stable/docs/software/basic-programming/coordinate-system.html 
-     */
-    public static final Transform3d robotToCamera = new Transform3d(
-        new Translation3d(
-            Units.inchesToMeters(14.337),
-            Units.inchesToMeters(0),
-            Units.inchesToMeters(10.486)
-        ),
-        new Rotation3d(0, -0.1745, 0)
-        );
+    //  */
+    // public static final Transform3d robotToCamera = new Transform3d(
+    //     new Translation3d(
+    //         Units.inchesToMeters(14.337),
+    //         Units.inchesToMeters(0),
+    //         Units.inchesToMeters(10.486)
+    //     ),
+    //     new Rotation3d(0, -0.1745, 0)
+    //     );
 
-    public static final Transform2d robotToCamera2d = new Transform2d(
-      new Translation2d(inchesToMeters(14.337), 0.0), 
-      new Rotation2d(0.0)
-    );
+    // public static final Transform2d robotToCamera2d = new Transform2d(
+    //   new Translation2d(inchesToMeters(14.337), 0.0), 
+    //   new Rotation2d(0.0)
+    // );
     }
 
 

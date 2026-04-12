@@ -431,38 +431,36 @@ public class Vision extends SubsystemBase {
      * TODO: Set New Position
      */
     FRONT("RAY",
-        new Rotation3d(0, -0.1745, 0),
+        new Rotation3d(0, -0.412, 0),
         new Translation3d(
-          Units.inchesToMeters(14.337),
-          Units.inchesToMeters(0),
-          Units.inchesToMeters(10.486)
+          Units.inchesToMeters(13.957), // Front from center
+          Units.inchesToMeters(0), //  Left from center
+          Units.inchesToMeters(7.282) // Height from center
         ),
         VecBuilder.fill(0.75, 0.75, Units.degreesToRadians(180)), VecBuilder.fill(0.4, 0.4, Units.degreesToRadians(360))),
     
     /**
      * Dingyi (LL3), Right
-     * TODO: Set New Position
      * StdDev is higher b/c less accurate
      */
     RIGHT("DINGYI",
-        new Rotation3d(0, -0.1745,-1.571),
+        new Rotation3d(0, -0.412,-1.571),
         new Translation3d(
-          Units.inchesToMeters(0),
-          Units.inchesToMeters(-14.337),
-          Units.inchesToMeters(10.486)
+          Units.inchesToMeters(5.5),
+          Units.inchesToMeters(-12.289),
+          Units.inchesToMeters(8.586)
         ),
         VecBuilder.fill(1, 1, Units.degreesToRadians(180)), VecBuilder.fill(0.6, 0.6, Units.degreesToRadians(360))),
 
     /**
      * LEO (LL4), Left
-     * TODO: Set New Position
      */
     LEFT("LEO",
-        new Rotation3d(0, -0.1745, 1.571),
+        new Rotation3d(0, -0.412, 1.571),
         new Translation3d(
-          Units.inchesToMeters(0),
-          Units.inchesToMeters(14.337),
-          Units.inchesToMeters(10.486)
+          Units.inchesToMeters(5.5),
+          Units.inchesToMeters(12.289),
+          Units.inchesToMeters(8.586)
         ),
         VecBuilder.fill(0.75, 0.75, Units.degreesToRadians(180)), VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(360)));
 

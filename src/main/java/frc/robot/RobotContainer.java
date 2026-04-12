@@ -38,7 +38,6 @@ import frc.robot.commands.vision.HeadToAngle;
 import frc.robot.commands.vision.TagUtil;
 import frc.robot.commands.vision.TurnToHub;
 import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
@@ -67,8 +66,6 @@ public class RobotContainer {
     public final Shooter shooter = new Shooter();
     public final Intake intake = new Intake();
     public final Vision vision = new Vision(drivetrain::getPose);
-    public final Climber climber = new Climber();
-    // public final Climber climber = new Climber();
 
     public  SendableChooser<Command> firstChooser;
     // public  SendableChooser<Command> secondChooser;
@@ -193,8 +190,8 @@ public class RobotContainer {
         firstDriver.leftTrigger().whileTrue(
                 Commands.runEnd(
                     () -> {
-                        if (shooter.getUpperVelocity() > 15) {
-                            shooter.setLowerPower(90);
+                        if (shooter.getUpperVelocity() > 10) {
+                            shooter.setLowerPower(80);
                         } else {
                             shooter.stopLower();
                         }
@@ -222,7 +219,7 @@ public class RobotContainer {
         // secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.stopArm()));
 
         // Scoring 
-        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(43)));
+        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(65)));
         
         // Neutral Passing 
         secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(70)));

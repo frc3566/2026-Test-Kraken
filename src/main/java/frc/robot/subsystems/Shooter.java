@@ -12,14 +12,16 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
-    public TalonFX lowerMotor, upperMotor, agitatorMotor;
+    public TalonFX ShooterLeft, ShooterRight, IndexerLeft, IndexerRight;
     public double testSpeed = 0;
     private VelocityVoltage m_velocity = new VelocityVoltage(0);
 
 
     public Shooter() {
-        lowerMotor = new TalonFX(Constants.Motors.ShooterLow);
-        upperMotor = new TalonFX(Constants.Motors.ShooterHigh);
+        ShooterLeft = new TalonFX(Constants.Motors.ShooterLeft);
+        ShooterRight = new TalonFX(Constants.Motors.ShooterRight);
+        IndexerLeft = new TalonFX(Constants.Motors.IndexerLeft);
+        IndexerRight = new TalonFX(Constants.Motors.IndexerRight);
 
         var upperConfig = new Slot0Configs();
         var lowerConfig = new Slot0Configs();
@@ -30,8 +32,10 @@ public class Shooter extends SubsystemBase {
         lowerConfig.kP = 0.35;
         lowerConfig.kV = 0.12;
 
-        upperMotor.getConfigurator().apply(upperConfig, 0.05);
-        lowerMotor.getConfigurator().apply(lowerConfig, 0.05);
+        ShooterLeft.getConfigurator().apply(upperConfig, 0.05);
+        ShooterRight.getConfigurator().apply(upperConfig, 0.05);
+        IndexerLeft.getConfigurator().apply(lowerConfig, 0.05);
+        IndexerRight.getConfigurator().apply(lowerConfig, 0.05);
         // agitatorMotor = new TalonFX(Constants.Motors.Agitator);
 
         SmartDashboard.putBoolean("Shooter/Flywheel", false);
@@ -49,23 +53,29 @@ public class Shooter extends SubsystemBase {
 
    
     public void setLowerPower(double rps) {
-        lowerMotor.set(rps/100);
+        IndexerLeft.set(rps/100);
+        IndexerRight.set(rps/100);
         SmartDashboard.putBoolean("Shooter/Feeder", true);
     }
 
     public void stopLower() {
-        lowerMotor.stopMotor();
+        IndexerLeft.stopMotor();
+        IndexerRight.stopMotor();
         SmartDashboard.putBoolean("Shooter/Feeder", false);
     }
 
     // PID-based, better consistency
     public void setUpperPower(double rps) {
-        upperMotor.setControl(m_velocity.withVelocity(rps));
+        // ShooterLeft.setControl(m_velocity.withVelocity(rps));
+        // ShooterRight.setControl(m_velocity.withVelocity(rps));
+        ShooterLeft.set(rps/100);
+        ShooterRight.set(rps/100);
         SmartDashboard.putBoolean("Shooter/Flywheel", true);
     }
 
     public void stopUpper() {   
-        upperMotor.stopMotor();
+        ShooterLeft.stopMotor();
+        ShooterRight.stopMotor();
         SmartDashboard.putBoolean("Shooter/Flywheel", false);
     }
 
@@ -93,17 +103,17 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getUpperVelocity(){
-        return upperMotor.getVelocity().getValueAsDouble();
+        return ShooterLeft.getVelocity().getValueAsDouble();
     }
 
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Shooter/Flywheel Velocity (rps)", upperMotor.getVelocity().getValueAsDouble());
-        SmartDashboard.putNumber("Shooter/Feeder Velocity (rps)", lowerMotor.getVelocity().getValueAsDouble());
-        SmartDashboard.putNumber("Shooter/Flywheel Power", upperMotor.get());
-        SmartDashboard.putNumber("Shooter/Feeder Power", lowerMotor.get());
-        SmartDashboard.putNumber("Shooter/Flywheel Supply Current (A)", upperMotor.getSupplyCurrent().getValueAsDouble());
-        SmartDashboard.putNumber("Shooter/Feeder Supply Current (A)", lowerMotor.getSupplyCurrent().getValueAsDouble());
-        SignalLogger.writeDouble("Shooter/UpperVelocityRPS", upperMotor.getVelocity().getValueAsDouble(), "rps");
+        SmartDashboard.putNumber("Shooter/Flywheel Velocity (rps)", ShooterLeft.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Shooter/Feeder Velocity (rps)", IndexerLeft.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Shooter/Flywheel Power", ShooterLeft.get());
+        SmartDashboard.putNumber("Shooter/Feeder Power", IndexerLeft.get());
+        SmartDashboard.putNumber("Shooter/Flywheel Supply Current (A)", ShooterLeft.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putNumber("Shooter/Feeder Supply Current (A)", IndexerLeft.getSupplyCurrent().getValueAsDouble());
+        SignalLogger.writeDouble("Shooter/UpperVelocityRPS", ShooterLeft.getVelocity().getValueAsDouble(), "rps");
     }
 }

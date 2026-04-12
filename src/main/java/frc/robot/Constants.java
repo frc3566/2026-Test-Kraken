@@ -29,13 +29,14 @@ public final class Constants {
     public static final double MaxSpeed = 3.79;
   }
   public static class Motors{
-    public static final int ShooterHigh = 32;
-    public static final int ShooterLow = 22;
+    public static final int ShooterLeft = 50;
+    public static final int ShooterRight = 51;
+    public static final int IndexerLeft = 52;
+    public static final int IndexerRight = 53;
+
     public static final int IntakeRoller = 40;
     public static final int IntakeArmLeader = 42;
-      // public static final int IntakeArmFollower = 42;
-    public static final int Agitator = 23;
-    public static final int Climber = 50;
+
   }
 
   public static class Arm{

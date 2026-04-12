@@ -30,9 +30,20 @@ public class Shooter extends SubsystemBase {
         //TODO: Tune these values
         // upperConfig.kP = 0.55;
         // upperConfig.kV = 0.12;
+         
+        // Stator Current: 160
+        // Supply Current: 80
+        // Supply Current Low 40
+        // kp = 0.55
+        // kv = 0.12
+        // 0.9s ramp to 60
 
         // lowerConfig.kP = 0.35;
         // lowerConfig.kV = 0.12;
+
+        // Same (0.55, 0.12)
+        // 0.25s ramp to 50
+        // Set all to break mode, don't touch inversion, set strict follower for left
 
         ShooterLeft.getConfigurator().apply(upperConfig, 0.05);
         ShooterRight.getConfigurator().apply(upperConfig, 0.05);

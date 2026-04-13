@@ -7,13 +7,7 @@ package frc.robot;
 import org.photonvision.simulation.SimCameraProperties;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform2d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import static edu.wpi.first.math.util.Units.inchesToMeters;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean constants. This
@@ -41,6 +35,25 @@ public final class Constants {
 
   public static class Arm{
     public static final double GearRatio = 45.0;
+    public static final double UpSetpointRotations = 0.0;
+    public static final double DownSetpointRotations = 0.40;
+    public static final double PovDownSetpointRotations = 0.41;
+
+    public static final double DefaultToleranceRotations = 0.01;
+    public static final double PovUpToleranceRotations = 0.05;
+    public static final double PovDownToleranceRotations = 0.015;
+
+    public static final double ManualPower = 0.15;
+
+    public static final double UpAndDownIntervalSeconds = 0.75;
+    public static final double UpAndDownHighRotations = DownSetpointRotations;
+    public static final double UpAndDownLowRotations = 0.15;
+
+    public static final double ArmToSetpointTimeoutSeconds = 1.0;
+    public static final double ArmSwitchTimeoutSeconds = 1.5;
+
+    public static final double ForwardSoftLimitRotations = 0.45;
+    public static final double ReverseSoftLimitRotations = -0.05;
   }
 
   public static class Climber{

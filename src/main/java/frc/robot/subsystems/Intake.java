@@ -8,7 +8,6 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -57,9 +56,9 @@ public class Intake extends SubsystemBase {
         // or the arm encoders will not work as intended.
         // armConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = false;
-        armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.45;  // Straight up
+        armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.Arm.ForwardSoftLimitRotations;  // Straight up
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
-        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.05; // All the way down
+        armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.Arm.ReverseSoftLimitRotations; // All the way down
         // armConfig.Slot0.kP = 0.1;
         armConfig.Slot0.kI = 0.0;
         armConfig.Slot0.kD = 0.0;

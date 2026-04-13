@@ -19,13 +19,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.commands.Shuffle;
-import frc.robot.commands.intake.ArmSwitch;
 import frc.robot.commands.intake.ArmToSetpoint;
 import frc.robot.commands.intake.ArmUpAndDown;
 import frc.robot.commands.shooter.AutoPrime;
@@ -211,7 +210,7 @@ public class RobotContainer {
     secondDriver.leftBumper().whileTrue(new ArmUpAndDown(intake));
     
     // Arm encoder resets on RB when arm is up
-    secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.setArmEncoderPosition(0.0)));
+    secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.setArmEncoderPosition(Constants.Arm.UpSetpointRotations)));
 
         // secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.armUp(0.2)));
         // secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.stopArm()));
@@ -231,15 +230,15 @@ public class RobotContainer {
         secondDriver.a().onTrue(shooter.runOnce(() -> shooter.stopUpper()));
 
         
-        secondDriver.povUp().whileTrue(new ArmToSetpoint(intake, 0.0, 0.05));
-        secondDriver.povDown().whileTrue(new ArmToSetpoint(intake, 0.41, 0.015));
+        secondDriver.povUp().whileTrue(new ArmToSetpoint(intake, Constants.Arm.UpSetpointRotations, Constants.Arm.PovUpToleranceRotations));
+        secondDriver.povDown().whileTrue(new ArmToSetpoint(intake, Constants.Arm.PovDownSetpointRotations, Constants.Arm.PovDownToleranceRotations));
 
         // secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.resetArmPosition(true)));
         // secondDriver.povRight().onTrue(new InstantCommand(() -> intake.resetArmPosition(false)));
 
-        secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.setArmPower(0.15)));
+        secondDriver.povLeft().onTrue(new InstantCommand(() -> intake.setArmPower(Constants.Arm.ManualPower)));
         secondDriver.povLeft().onFalse(new InstantCommand(() -> intake.stopArm()));
-        secondDriver.povRight().onTrue(new InstantCommand(() -> intake.setArmPower(-0.15)));
+        secondDriver.povRight().onTrue(new InstantCommand(() -> intake.setArmPower(-Constants.Arm.ManualPower)));
         secondDriver.povRight().onFalse(new InstantCommand(() -> intake.stopArm()));
 
         // Quick back/forth jostle to shift balls forward in the hopper
@@ -313,7 +312,7 @@ public class RobotContainer {
 
         NamedCommands.registerCommand(
             "ArmDown",
-            new ArmToSetpoint(intake, 0.4, 0.01)
+            new ArmToSetpoint(intake, Constants.Arm.DownSetpointRotations, Constants.Arm.DefaultToleranceRotations)
         );
 
         NamedCommands.registerCommand(

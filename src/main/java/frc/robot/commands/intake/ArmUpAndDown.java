@@ -2,11 +2,12 @@ package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
 
 /**
  * Jiggles the intake arm back and forth between two setpoints.
- * Default setpoints: 0.40 (down-ish) and 0.20 (up-ish), switching every 0.2s.
+ * Default setpoints come from Constants.Arm.
  */
 public class ArmUpAndDown extends Command {
     private final Intake intake;
@@ -31,11 +32,16 @@ public class ArmUpAndDown extends Command {
     }
 
     /**
-     * Uses default values: interval 0.5s, high 0.40, low 0.15 rotations.
+     * Uses default values from Constants.Arm.
      * This is counter intuitive. High = down, Low = up
      */
     public ArmUpAndDown(Intake intake) {
-        this(intake, 0.75, 0.4, 0.15);
+        this(
+            intake,
+            Constants.Arm.UpAndDownIntervalSeconds,
+            Constants.Arm.UpAndDownHighRotations,
+            Constants.Arm.UpAndDownLowRotations
+        );
     }
 
 
@@ -63,6 +69,6 @@ public class ArmUpAndDown extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        intake.setArmPosition(0.4);
+        intake.setArmPosition(Constants.Arm.DownSetpointRotations);
     }
 }

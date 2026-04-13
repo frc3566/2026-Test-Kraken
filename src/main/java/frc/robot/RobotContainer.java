@@ -279,15 +279,28 @@ public class RobotContainer {
 
         // PathPlanner trigger zone binding (name must match the trigger in PathPlanner)
         new EventTrigger("TrigPrimeAndShoot").onTrue(
-            new PrimeAndShoot(
+            Commands.race(
+                new PrimeAndShoot(
                 shooter,
                 intake,
                 () -> drivetrain.getState().Pose,
                 TagUtil::getHubFrontCenterTagTranslation,
                 1,
                 4
+            ),
+            Commands.waitSeconds(2.5).andThen(new ArmUpAndDown(intake))
             )
         );
+
+        // new EventTrigger("TrigArmDown").onTrue(
+        //     new ArmToSetpoint(intake, Constants.Arm.DownSetpointRotations, Constants.Arm.DefaultToleranceRotations)
+        // );
+
+        // new EventTrigger("TrigRollerIn").onTrue(
+        //     new ArmToSetpoint(intake, Constants.Arm.DownSetpointRotations, Constants.Arm.DefaultToleranceRotations)
+        // );
+
+
 
         // Prime the shooter while driving
         NamedCommands.registerCommand(

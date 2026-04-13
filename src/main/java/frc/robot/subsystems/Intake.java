@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,10 +25,10 @@ public class Intake extends SubsystemBase {
         .withSlot(0);
 
     // Separate Motion Magic limits for up vs down
-    private static final double MM_UP_CRUISE_VEL = 0.5; // rotations/sec
-    private static final double MM_UP_ACCEL = 4.0;       // rotations/sec^2
-    private static final double MM_DOWN_CRUISE_VEL = 0.5;
-    private static final double MM_DOWN_ACCEL = 4.0;
+    private static final double MM_UP_CRUISE_VEL = 16; // rotations/sec
+    private static final double MM_UP_ACCEL = 32;       // rotations/sec^2
+    private static final double MM_DOWN_CRUISE_VEL = 16;
+    private static final double MM_DOWN_ACCEL = 32;
 
     private final MotionMagicConfigs mmUp = new MotionMagicConfigs();
     private final MotionMagicConfigs mmDown = new MotionMagicConfigs();
@@ -49,7 +50,7 @@ public class Intake extends SubsystemBase {
         var armConfig = new TalonFXConfiguration();
 
         // Sensor-to-mechanism ratio so getArmPosition() reports mechanism rotations
-        // armConfig.Feedback.SensorToMechanismRatio = ARM_GEAR_RATIO;
+        armConfig.Feedback.SensorToMechanismRatio = ARM_GEAR_RATIO;
 
         // Software limits — prevent over-extension / over-retraction.
         // Remember to power the robot on while the arm is up,
@@ -59,14 +60,14 @@ public class Intake extends SubsystemBase {
         armConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.Arm.ForwardSoftLimitRotations;  // Straight up
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = false;
         armConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.Arm.ReverseSoftLimitRotations; // All the way down
-        // armConfig.Slot0.kP = 0.1;
+        armConfig.Slot0.kP = 0.5;
         armConfig.Slot0.kI = 0.0;
         armConfig.Slot0.kD = 0.0;
         armConfig.Slot0.kV = 0.12;
 
         // Slot 1 — slower PID for raising the arm to the top (0.0 rotations)
         var armSlot1 = new Slot1Configs();
-        armSlot1.kP = armConfig.Slot0.kP+0.1;
+        armSlot1.kP = armConfig.Slot0.kP;
         armSlot1.kI = armConfig.Slot0.kI;
         armSlot1.kD = armConfig.Slot0.kD;
         armSlot1.kV = armConfig.Slot0.kV; // keep feedforward the same
@@ -76,6 +77,7 @@ public class Intake extends SubsystemBase {
         // Units are mechanism rotations per second (because of SensorToMechanismRatio above)
         armConfig.MotionMagic.MotionMagicCruiseVelocity = MM_DOWN_CRUISE_VEL;
         armConfig.MotionMagic.MotionMagicAcceleration = MM_DOWN_ACCEL;
+        armConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
 
         // Pre-build directional Motion Magic configs so we can swap quickly without touching other settings
         mmUp.MotionMagicCruiseVelocity = MM_UP_CRUISE_VEL;
@@ -239,7 +241,9 @@ public class Intake extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Intake/Arm Position (rot)", armLeaderMotor.getPosition().getValueAsDouble());
         SmartDashboard.putNumber("Intake/Arm Leader Velocity (rps)", armLeaderMotor.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Intake/Roller Power", rollerMotor.get());
         SmartDashboard.putNumber("Intake/Roller Velocity (rps)", rollerMotor.getVelocity().getValueAsDouble());
+        SmartDashboard.putNumber("Intake/Arm Power", armLeaderMotor.get());
         SmartDashboard.putNumber("Intake/Arm Leader Supply Current (A)", armLeaderMotor.getSupplyCurrent().getValueAsDouble());
         // SmartDashboard.putNumber("Intake/Arm Follower Supply Current (A)", armFollowerMotor.getSupplyCurrent().getValueAsDouble());
         // SmartDashboard.putNumber("Intake/Arm Follower Velocity (rps)", armFollowerMotor.getVelocity().getValueAsDouble());

@@ -80,12 +80,12 @@
     },
     {
       "anchor": {
-        "x": 2.0,
-        "y": 7.375
+        "x": 1.5,
+        "y": 6.0
       },
       "prevControl": {
-        "x": 1.6999516152033902,
-        "y": 7.373741428051045
+        "x": 1.9226182617406995,
+        "y": 6.90630778703665
       },
       "nextControl": null,
       "isLocked": false,
@@ -107,16 +107,40 @@
     },
     {
       "waypointRelativePos": 5.0,
-      "rotationDegrees": -52.0
+      "rotationDegrees": -29.999999999999996
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "ShooterPrime",
-      "waypointRelativePos": 4.0,
+      "name": "TrigArmDown",
+      "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ArmDown"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "AutoPrime"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "TrigPrimeAndShoot",
+      "waypointRelativePos": 4.5,
+      "endWaypointRelativePos": 5.0,
       "command": null
     }
   ],
@@ -130,7 +154,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -52.0
+    "rotation": -29.999999999999996
   },
   "reversed": false,
   "folder": null,

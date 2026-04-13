@@ -3,7 +3,7 @@ flip_paths.py
 Flips all PathPlanner .path files over the horizontal line y = AXIS_Y,
 writing output files named FLIPPED_<OriginalName> in the same folder.
 
-Flip rule:
+Flip rule:s
   new_y      = 2 * AXIS_Y - old_y   (reflect y over the axis)
   new_angle  = -old_angle            (mirror heading/rotation over a horizontal axis)
 """

@@ -25,7 +25,6 @@ public class PrimeAndShoot extends Command {
         this.targetTranslation = targetTranslation;
         this.primeTime = primeTime;
         this.shootTime = shootTime;
-        addRequirements(shooter, intake);
     }
 
     public PrimeAndShoot(Shooter shooter, Intake intake, Supplier<Pose2d> robotPose, Supplier<Translation2d> targetTranslation, double primeTime) {

@@ -5,67 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "race",
+          "type": "path",
           "data": {
-            "commands": [
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "ArmDown"
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "AutoPrime"
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "LeftNeutralFirst"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "SwipePrimeAndShoot"
-                }
-              },
-              {
-                "type": "sequential",
-                "data": {
-                  "commands": [
-                    {
-                      "type": "wait",
-                      "data": {
-                        "waitTime": 2.5
-                      }
-                    },
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "ArmUpAndDown"
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
+            "pathName": "LeftNeutralFirst"
           }
         }
       ]

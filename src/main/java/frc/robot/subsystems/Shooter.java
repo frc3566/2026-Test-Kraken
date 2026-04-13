@@ -3,8 +3,8 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.StrictFollower;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
@@ -16,7 +16,7 @@ import frc.robot.Constants;
 public class Shooter extends SubsystemBase {
     public TalonFX ShooterLeft, ShooterRight, IndexerLeft, IndexerRight;
     public double testSpeed = 0;
-    private VelocityVoltage m_velocity = new VelocityVoltage(0);
+    private MotionMagicVelocityVoltage m_velocity = new MotionMagicVelocityVoltage(0);
     
 
 
@@ -85,9 +85,8 @@ public class Shooter extends SubsystemBase {
 
     // PID-based, better consistency
     public void setUpperPower(double rps) {
-        // ShooterLeft.setControl(m_velocity.withVelocity(rps));
-        // ShooterRight.setControl(m_velocity.withVelocity(rps));
-        ShooterRight.set(rps/100);
+        ShooterRight.setControl(m_velocity.withVelocity(rps).withAcceleration(200));
+        // ShooterRight.set(rps/100);
         SmartDashboard.putBoolean("Shooter/Flywheel", true);
     }
 

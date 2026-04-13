@@ -8,6 +8,7 @@ public class AutoPrime extends Command {
     private final Shooter shooter;
     private final Intake intake;
     private final Timer timer = new Timer();
+    private int timeOut = -1;
 
     /**
      * Sets the upper shooter and intake roller for auto. 
@@ -23,8 +24,15 @@ public class AutoPrime extends Command {
         this.intake = intake;
     }
 
+    public AutoPrime(Shooter shooter, Intake intake, int timeOut) {
+        this(shooter, intake);
+        this.timeOut = timeOut;
+    }
+
     @Override
     public void initialize() {
+        timer.reset();
+        timer.start();
         System.out.println("Prime Command Initialized");
         // shooter.setAgitatorPower(speed);
         // shooter.setUpperPower(speed);
@@ -42,6 +50,10 @@ public class AutoPrime extends Command {
 
     @Override
     public boolean isFinished() {
+        if(timeOut != -1 && timer.hasElapsed(timeOut)) {
+            return true;
+        }   
+
         return false;
     }
 }

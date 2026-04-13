@@ -8,56 +8,56 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.803867887335263,
-        "y": 0.8825388297680679
+        "x": 6.131703598467107,
+        "y": 0.9548119835431743
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.25,
+        "x": 7.75,
         "y": 1.2245528759057969
       },
       "prevControl": {
-        "x": 7.693999600646237,
-        "y": 0.19856328491940634
+        "x": 7.664964604651849,
+        "y": 0.34153884753220964
       },
       "nextControl": {
-        "x": 8.545085924938027,
-        "y": 1.7690760233439988
+        "x": 7.798460371359332,
+        "y": 1.7277690667083236
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.25,
+        "x": 7.75,
         "y": 3.607219328698787
       },
       "prevControl": {
-        "x": 8.200070467647803,
-        "y": 3.9482792665430644
+        "x": 7.745703082064664,
+        "y": 3.8571823989636904
       },
       "nextControl": {
-        "x": 8.312084860296608,
-        "y": 3.1831284631070815
+        "x": 7.760385001304778,
+        "y": 3.00309636197876
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 8.0,
-        "y": 1.2250000000000005
+        "x": 7.75,
+        "y": 1.1950000000000003
       },
       "prevControl": {
-        "x": 8.685950764600237,
-        "y": 1.8950640980043616
+        "x": 8.044745492267143,
+        "y": 1.6255781935643663
       },
       "nextControl": {
-        "x": 7.211257944650971,
-        "y": 0.45452526456682385
+        "x": 7.2467436183421645,
+        "y": 0.4598192104747403
       },
       "isLocked": false,
       "linkedName": null
@@ -68,8 +68,24 @@
         "y": 0.6950000000000003
       },
       "prevControl": {
-        "x": 4.971008966150725,
-        "y": 0.6570530612771845
+        "x": 5.093746534098112,
+        "y": 0.6950000000000003
+      },
+      "nextControl": {
+        "x": 3.62864030351167,
+        "y": 0.6950000000000003
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 1.5,
+        "y": 2.0700000000000003
+      },
+      "prevControl": {
+        "x": 1.9226182617406995,
+        "y": 1.1636922129633502
       },
       "nextControl": null,
       "isLocked": false,
@@ -84,11 +100,50 @@
     {
       "waypointRelativePos": 2.0,
       "rotationDegrees": -90.0
+    },
+    {
+      "waypointRelativePos": 4.0,
+      "rotationDegrees": -0.0
+    },
+    {
+      "waypointRelativePos": 5.0,
+      "rotationDegrees": 29.999999999999996
     }
   ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "TrigArmDown",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ArmDown"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "AutoPrime"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "TrigPrimeAndShoot",
+      "waypointRelativePos": 4.5,
+      "endWaypointRelativePos": 5.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.4,
     "maxAcceleration": 3.0,
@@ -99,7 +154,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 85.0
+    "rotation": 29.999999999999996
   },
   "reversed": false,
   "folder": null,

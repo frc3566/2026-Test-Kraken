@@ -34,20 +34,20 @@ public final class Constants {
   }
 
   public static class Arm{
-    public static final double GearRatio = 45.0;
+    public static final double GearRatio = 1.0;
     public static final double UpSetpointRotations = 0.0;
-    public static final double DownSetpointRotations = 0.40;
-    public static final double PovDownSetpointRotations = 0.41;
+    public static final double DownSetpointRotations = -17;
+    public static final double PovDownSetpointRotations = -17;
 
-    public static final double DefaultToleranceRotations = 0.01;
-    public static final double PovUpToleranceRotations = 0.05;
-    public static final double PovDownToleranceRotations = 0.015;
+    public static final double DefaultToleranceRotations = 0.25;
+    public static final double PovUpToleranceRotations = 0.25;
+    public static final double PovDownToleranceRotations = 0.25;
 
     public static final double ManualPower = 0.15;
 
     public static final double UpAndDownIntervalSeconds = 0.75;
     public static final double UpAndDownHighRotations = DownSetpointRotations;
-    public static final double UpAndDownLowRotations = 0.15;
+    public static final double UpAndDownLowRotations = -4;
 
     public static final double ArmToSetpointTimeoutSeconds = 1.0;
     public static final double ArmSwitchTimeoutSeconds = 1.5;

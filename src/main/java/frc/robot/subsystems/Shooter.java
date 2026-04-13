@@ -2,10 +2,11 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.StrictFollower;
 import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.controls.StrictFollower;
-import com.ctre.phoenix6.signals.MotorAlignmentValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,6 +17,7 @@ public class Shooter extends SubsystemBase {
     public TalonFX ShooterLeft, ShooterRight, IndexerLeft, IndexerRight;
     public double testSpeed = 0;
     private VelocityVoltage m_velocity = new VelocityVoltage(0);
+    
 
 
     public Shooter() {
@@ -27,28 +29,31 @@ public class Shooter extends SubsystemBase {
         var upperConfig = new Slot0Configs();
         var lowerConfig = new Slot0Configs();
 
-        //TODO: Tune these values
-        // upperConfig.kP = 0.55;
-        // upperConfig.kV = 0.12;
-         
-        // Stator Current: 160
-        // Supply Current: 80
-        // Supply Current Low 40
-        // kp = 0.55
-        // kv = 0.12
-        // 0.9s ramp to 60
+        upperConfig.kP = 0.55;
+        upperConfig.kV = 0.12;
 
-        // lowerConfig.kP = 0.35;
-        // lowerConfig.kV = 0.12;
+        lowerConfig.kP = 0.55;
+        lowerConfig.kV = 0.12;
 
-        // Same (0.55, 0.12)
-        // 0.25s ramp to 50
-        // Set all to break mode, don't touch inversion, set strict follower for left
+        var upperMotorConfig = new TalonFXConfiguration();
+        upperMotorConfig.Slot0 = upperConfig;
+        upperMotorConfig.CurrentLimits.StatorCurrentLimit = 160;
+        upperMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        upperMotorConfig.CurrentLimits.SupplyCurrentLimit = 80;
+        upperMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+        upperMotorConfig.CurrentLimits.SupplyCurrentLowerLimit = 40;
+        upperMotorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.9;
+        upperMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        ShooterLeft.getConfigurator().apply(upperConfig, 0.05);
-        ShooterRight.getConfigurator().apply(upperConfig, 0.05);
-        IndexerLeft.getConfigurator().apply(lowerConfig, 0.05);
-        IndexerRight.getConfigurator().apply(lowerConfig, 0.05);
+        var lowerMotorConfig = new TalonFXConfiguration();
+        lowerMotorConfig.Slot0 = lowerConfig;
+        lowerMotorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
+        lowerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+        ShooterLeft.getConfigurator().apply(upperMotorConfig, 0.05);
+        ShooterRight.getConfigurator().apply(upperMotorConfig, 0.05);
+        IndexerLeft.getConfigurator().apply(lowerMotorConfig, 0.05);
+        IndexerRight.getConfigurator().apply(lowerMotorConfig, 0.05);
         // agitatorMotor = new TalonFX(Constants.Motors.Agitator);
 
         ShooterLeft.setControl(new StrictFollower(ShooterRight.getDeviceID()));

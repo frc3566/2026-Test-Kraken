@@ -9,6 +9,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.events.EventTrigger;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.cscore.UsbCamera;
@@ -45,6 +46,8 @@ import frc.robot.subsystems.Vision;
 public class RobotContainer {
     private boolean enableDrive = true;
     private double autonomousPower = 55;
+    private double trenchPower = 60;
+    private double swipePower = 65;
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
 
@@ -274,6 +277,18 @@ public class RobotContainer {
 
     private void configureAutoCommand() {
 
+        // PathPlanner trigger zone binding (name must match the trigger in PathPlanner)
+        new EventTrigger("TrigPrimeAndShoot").onTrue(
+            new PrimeAndShoot(
+                shooter,
+                intake,
+                () -> drivetrain.getState().Pose,
+                TagUtil::getHubFrontCenterTagTranslation,
+                1,
+                4
+            )
+        );
+
         // Prime the shooter while driving
         NamedCommands.registerCommand(
             "AutoPrime",
@@ -284,7 +299,15 @@ public class RobotContainer {
         // We want to wait until the robot is stead, so 0.5 second for another priming
         NamedCommands.registerCommand(
             "PrimeAndShoot",
-            new PrimeAndShoot(shooter, intake, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation, 0.5, 10)
+            new PrimeAndShoot(shooter, intake, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation, 1, 4)
+        );
+
+        NamedCommands.registerCommand(
+            "PrimeAndShootAndArm", 
+            Commands.race(
+                new PrimeAndShoot(shooter, intake, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation, 1, 4),
+                Commands.waitSeconds(3.0).andThen(new ArmUpAndDown(intake))
+            )
         );
 
 
@@ -309,6 +332,22 @@ public class RobotContainer {
             "CenterPrimeAndShoot",
             new PrimeAndShootFixed(shooter, intake, 54, 1, 10)
         );
+
+        NamedCommands.registerCommand(
+            "TrenchPrimeAndShoot",
+            new PrimeAndShootFixed(shooter, intake, trenchPower, 1, 3)
+        );
+
+        NamedCommands.registerCommand(
+            "SwipePrimeAndShoot",
+            new PrimeAndShootFixed(shooter, intake, swipePower, 1, 3)
+        );
+
+        NamedCommands.registerCommand(
+            "SwipePrimeAndShoot",
+            new PrimeAndShootFixed(shooter, intake, swipePower, 1, 3)
+        );
+
 
         NamedCommands.registerCommand(
             "ArmDown",

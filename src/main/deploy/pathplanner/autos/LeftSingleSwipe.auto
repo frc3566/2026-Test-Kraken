@@ -5,82 +5,32 @@
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "ArmDown"
-          }
-        },
-        {
           "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "LeftNeutralFirst"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutoPrime"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "TrenchPrimeAndShoot"
-                }
-              },
               {
                 "type": "sequential",
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
+                      "type": "named",
                       "data": {
-                        "waitTime": 2.5
+                        "name": "ArmDown"
                       }
                     },
                     {
                       "type": "named",
                       "data": {
-                        "name": "ArmUpAndDown"
+                        "name": "AutoPrime"
                       }
                     }
                   ]
                 }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "PrimeAndShoot"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
+              },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "LeftNeutralSecond"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "AutoPrime"
+                  "pathName": "LeftNeutralFirst"
                 }
               }
             ]
@@ -93,7 +43,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "TrenchPrimeAndShoot"
+                  "name": "SwipePrimeAndShoot"
                 }
               },
               {

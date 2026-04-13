@@ -4,59 +4,57 @@
     {
       "anchor": {
         "x": 3.5,
-        "y": 4.0
+        "y": 6.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.9241242606541693,
-        "y": 4.0
+        "x": 3.75,
+        "y": 6.0
       },
-      "isLocked": true,
+      "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 1.65,
-        "y": 4.0
+        "x": 1.5,
+        "y": 6.0
       },
       "prevControl": {
-        "x": 1.3988227998846403,
-        "y": 4.0
+        "x": 1.25,
+        "y": 6.0
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": null
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [
+  "rotationTargets": [
     {
-      "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.8,
-      "maxWaypointRelativePos": 1.0,
-      "constraints": {
-        "maxVelocity": 1.2,
-        "maxAcceleration": 3.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
-        "nominalVoltage": 12.0,
-        "unlimited": false
-      }
+      "waypointRelativePos": 1.0,
+      "rotationDegrees": -29.999999999999996
     }
   ],
+  "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "TrigPrimeAndShoot",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.4,
     "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
-    "unlimited": false
+    "unlimited": true
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -29.999999999999996
   },
   "reversed": false,
   "folder": null,

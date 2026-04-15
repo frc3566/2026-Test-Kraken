@@ -29,6 +29,8 @@ public class Shooter extends SubsystemBase {
         var upperConfig = new Slot0Configs();
         var lowerConfig = new Slot0Configs();
 
+        //TODO: DO NOT USE VALUES, USE FILE CONFIG INSTEAD
+
         upperConfig.kP = 0.55;
         upperConfig.kV = 0.12;
 
@@ -42,7 +44,6 @@ public class Shooter extends SubsystemBase {
         upperMotorConfig.CurrentLimits.SupplyCurrentLimit = 80;
         upperMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
         upperMotorConfig.CurrentLimits.SupplyCurrentLowerLimit = 40;
-        upperMotorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.9;
         upperMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         var lowerMotorConfig = new TalonFXConfiguration();
@@ -50,10 +51,10 @@ public class Shooter extends SubsystemBase {
         lowerMotorConfig.OpenLoopRamps.DutyCycleOpenLoopRampPeriod = 0.25;
         lowerMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-        ShooterLeft.getConfigurator().apply(upperMotorConfig, 0.05);
-        ShooterRight.getConfigurator().apply(upperMotorConfig, 0.05);
-        IndexerLeft.getConfigurator().apply(lowerMotorConfig, 0.05);
-        IndexerRight.getConfigurator().apply(lowerMotorConfig, 0.05);
+        // ShooterLeft.getConfigurator().apply(upperMotorConfig, 0.05);
+        // ShooterRight.getConfigurator().apply(upperMotorConfig, 0.05);
+        // IndexerLeft.getConfigurator().apply(lowerMotorConfig, 0.05);
+        // IndexerRight.getConfigurator().apply(lowerMotorConfig, 0.05);
         // agitatorMotor = new TalonFX(Constants.Motors.Agitator);
 
         ShooterLeft.setControl(new StrictFollower(ShooterRight.getDeviceID()));
@@ -85,7 +86,7 @@ public class Shooter extends SubsystemBase {
 
     // PID-based, better consistency
     public void setUpperPower(double rps) {
-        ShooterRight.setControl(m_velocity.withVelocity(rps).withAcceleration(200));
+        ShooterRight.setControl(m_velocity.withVelocity(rps).withAcceleration(100));
         // ShooterRight.set(rps/100);
         SmartDashboard.putBoolean("Shooter/Flywheel", true);
     }

@@ -47,7 +47,7 @@ public class ArmUpAndDown extends Command {
 
     @Override
     public void initialize() {
-        currentTarget = lowRotations;
+        currentTarget = highRotations;
         intake.setArmPosition(currentTarget);
         timer.restart();
     }

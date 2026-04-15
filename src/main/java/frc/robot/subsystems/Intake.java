@@ -5,9 +5,11 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
-import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.InvertedValue;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -17,22 +19,24 @@ import frc.robot.Constants;
 public class Intake extends SubsystemBase {
 
     public TalonFX rollerMotor, armLeaderMotor;
+    public CANcoder ArmCanCoder;
 
-    private final VelocityVoltage m_velocity = new VelocityVoltage(0);
+    private final MotionMagicVelocityVoltage m_velocity = new MotionMagicVelocityVoltage(0)
+        .withAcceleration(100);
 
     // Reuse a single request object — just update the position each call
-    private final MotionMagicDutyCycle motionMagicRequest = new MotionMagicDutyCycle(0)
+    private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0)
         .withSlot(0);
 
     // Separate Motion Magic limits for up vs down
-    private static final double MM_UP_CRUISE_VEL = 16; // rotations/sec
-    private static final double MM_UP_ACCEL = 32;       // rotations/sec^2
-    private static final double MM_DOWN_CRUISE_VEL = 16;
-    private static final double MM_DOWN_ACCEL = 32;
+    private static final double MM_UP_CRUISE_VEL = 1.5; // rotations/sec
+    private static final double MM_UP_ACCEL = 1.5;       // rotations/sec^2
+    private static final double MM_DOWN_CRUISE_VEL = 1.5;
+    private static final double MM_DOWN_ACCEL = 1.5;
 
     private final MotionMagicConfigs mmUp = new MotionMagicConfigs();
     private final MotionMagicConfigs mmDown = new MotionMagicConfigs();
-    private Boolean lastAppliedMovingDown = null;
+    private Boolean lastAppliedMovingUp = null;
 
     /**
      * Gear ratio: rotor rotations per one full rotation of the arm mechanism.
@@ -41,6 +45,7 @@ public class Intake extends SubsystemBase {
 
     public Intake() {
         rollerMotor = new TalonFX(Constants.Motors.IntakeRoller);
+        ArmCanCoder = new CANcoder(Constants.Motors.IntakeArmCanCoder);
         armLeaderMotor = new TalonFX(Constants.Motors.IntakeArmLeader);
         // armFollowerMotor = new TalonFX(Constants.Motors.IntakeArmFollower);
 
@@ -49,8 +54,13 @@ public class Intake extends SubsystemBase {
         // ------------------------------------------------------------------
         var armConfig = new TalonFXConfiguration();
 
-        // Sensor-to-mechanism ratio so getArmPosition() reports mechanism rotations
-        armConfig.Feedback.SensorToMechanismRatio = ARM_GEAR_RATIO;
+    // Use remote CANcoder as feedback source for arm position control.
+    armConfig.Feedback.FeedbackRemoteSensorID = Constants.Motors.IntakeArmCanCoder;
+    armConfig.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    // CANcoder is mounted on mechanism, so sensor->mechanism is 1:1.
+    armConfig.Feedback.SensorToMechanismRatio = 1.0;
+    // Rotor turns ARM_GEAR_RATIO times for one sensor turn.
+    armConfig.Feedback.RotorToSensorRatio = ARM_GEAR_RATIO;
 
         // Software limits — prevent over-extension / over-retraction.
         // Remember to power the robot on while the arm is up,
@@ -86,8 +96,7 @@ public class Intake extends SubsystemBase {
         mmDown.MotionMagicCruiseVelocity = MM_DOWN_CRUISE_VEL;
         mmDown.MotionMagicAcceleration = MM_DOWN_ACCEL;
 
-            armConfig.Feedback.RotorToSensorRatio = 1;
-        armLeaderMotor.getConfigurator().apply(armConfig);
+        // armLeaderMotor.getConfigurator().apply(armConfig);
         // armFollowerMotor.getConfigurator().apply(armConfig);
 
         // armFollowerMotor.setControl(new Follower(armLeaderMotor.getDeviceID(), MotorAlignmentValue.Opposed));
@@ -99,7 +108,7 @@ public class Intake extends SubsystemBase {
         var rollerConfig = new Slot0Configs();
         rollerConfig.kP = 0.1;
         rollerConfig.kV = 0.1;
-        rollerMotor.getConfigurator().apply(rollerConfig);
+        // rollerMotor.getConfigurator().apply(rollerConfig);
 
         SmartDashboard.putBoolean("Intake/Roller In", false);
         SmartDashboard.putBoolean("Intake/Roller Out", false);
@@ -118,23 +127,20 @@ public class Intake extends SubsystemBase {
      * @param rotations Target position in mechanism rotations.
      */
     public void setArmPosition(double rotations) {
-        boolean movingDown = rotations > getArmPosition();
-
-        // // Use the slower Slot 1 gains when raising the arm to the top (0.0)
-        // boolean useSlowUpSlot = !movingDown && rotations >= 0.0;
-        // int slotToUse = useSlowUpSlot ? 1 : 0;
+        boolean movingUp = rotations > getArmPosition();
+        int slotToUse = movingUp ? 0 : 1;
+        SmartDashboard.putString("Intake/Arm MM Slot", movingUp ? "Up (Slot 0)" : "Down (Slot 1)");
    
 
         // Pick Motion Magic constraints based on direction
         // Only reapply configs when direction changes to avoid CAN spam
-        // if (lastAppliedMovingDown == null || lastAppliedMovingDown.booleanValue() != movingDown) {
-        //     armLeaderMotor.getConfigurator().apply(movingDown ? mmDown : mmUp);
-        //     lastAppliedMovingDown = movingDown;
+        // if (lastAppliedMovingUp == null || lastAppliedMovingUp.booleanValue() != movingUp) {
+        //     armLeaderMotor.getConfigurator().apply(movingUp ? mmUp : mmDown);
+        //     lastAppliedMovingUp = movingUp;
         // }
 
-        int slotToUse = 0;
-        // Use Motion Magic for built-in velocity/accel limiting
-        // Only use slot 0 since motion magic takes care of max velocity?
+        // Use Motion Magic for built-in velocity/accel limiting,
+        // and choose slot based on movement direction.
         armLeaderMotor.setControl(
             motionMagicRequest
                 .withSlot(slotToUse)
@@ -142,9 +148,8 @@ public class Intake extends SubsystemBase {
         );
         // armFollowerMotor.setControl(new Follower(armLeaderMotor.getDeviceID(), MotorAlignmentValue.Opposed));
 
-
-        SmartDashboard.putBoolean("Intake/Arm Moving Down", movingDown);
-        SmartDashboard.putBoolean("Intake/Arm Moving Up", !movingDown);
+        SmartDashboard.putBoolean("Intake/Arm Moving Down", !movingUp);
+        SmartDashboard.putBoolean("Intake/Arm Moving Up", movingUp);
     }
 
     /**
@@ -216,13 +221,13 @@ public class Intake extends SubsystemBase {
     // ------------------------------------------------------------------
 
     public void rollerIn(double rps) {
-        rollerMotor.setControl(m_velocity.withVelocity(rps));
+        rollerMotor.setControl(m_velocity.withVelocity(rps).withAcceleration(100));
         SmartDashboard.putBoolean("Intake/Roller In", true);
         SmartDashboard.putBoolean("Intake/Roller Out", false);
     }
 
     public void rollerOut(double rps) {
-        rollerMotor.setControl(m_velocity.withVelocity(-rps));
+        rollerMotor.setControl(m_velocity.withVelocity(-rps).withAcceleration(100));
         SmartDashboard.putBoolean("Intake/Roller In", false);
         SmartDashboard.putBoolean("Intake/Roller Out", true);
     }
@@ -240,6 +245,9 @@ public class Intake extends SubsystemBase {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("Intake/Arm Position (rot)", armLeaderMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Intake/Arm CANcoder Position (rot)", ArmCanCoder.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Intake/Arm CANcoder Absolute Position (rot)", ArmCanCoder.getAbsolutePosition().getValueAsDouble());
+        SmartDashboard.putNumber("Intake/Arm CANcoder Velocity (rps)", ArmCanCoder.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Intake/Arm Leader Velocity (rps)", armLeaderMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Intake/Roller Power", rollerMotor.get());
         SmartDashboard.putNumber("Intake/Roller Velocity (rps)", rollerMotor.getVelocity().getValueAsDouble());

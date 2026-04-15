@@ -42,7 +42,7 @@ public class PrimeAndShoot extends Command {
         timer.start();
         double distance = robotPose.get().getTranslation().getDistance(targetTranslation.get());
         shooter.autoPower(distance); // Initial spin-up
-        intake.rollerIn(30);
+        // intake.rollerIn(30);
     }
 
     @Override

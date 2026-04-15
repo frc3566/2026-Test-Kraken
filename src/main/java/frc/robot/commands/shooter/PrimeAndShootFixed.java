@@ -40,7 +40,7 @@ public class PrimeAndShootFixed extends Command {
         timer.reset();
         timer.start();
         shooter.setUpperPower(speed);
-        intake.rollerIn(30);
+        // intake.rollerIn(30);
     }
 
     @Override

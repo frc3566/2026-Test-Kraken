@@ -221,13 +221,15 @@ public class Intake extends SubsystemBase {
     // ------------------------------------------------------------------
 
     public void rollerIn(double rps) {
-        rollerMotor.setControl(m_velocity.withVelocity(rps).withAcceleration(100));
+        // rollerMotor.setControl(new DutyCycleOut(rps/100));
+        rollerMotor.setControl(m_velocity.withVelocity(rps).withAcceleration(150));
         SmartDashboard.putBoolean("Intake/Roller In", true);
         SmartDashboard.putBoolean("Intake/Roller Out", false);
     }
 
     public void rollerOut(double rps) {
-        rollerMotor.setControl(m_velocity.withVelocity(-rps).withAcceleration(100));
+        // rollerMotor.setControl(new DutyCycleOut(-rps/100));
+        rollerMotor.setControl(m_velocity.withVelocity(-rps).withAcceleration(150));
         SmartDashboard.putBoolean("Intake/Roller In", false);
         SmartDashboard.putBoolean("Intake/Roller Out", true);
     }

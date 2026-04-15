@@ -203,9 +203,9 @@ public class RobotContainer {
         );
 
         /* For Second Driver */
-    secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(80)));
+    secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(50)));
     secondDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
-    secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.rollerOut(80)));
+    secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.rollerOut(50)));
     secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
 
 

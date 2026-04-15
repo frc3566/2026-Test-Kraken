@@ -1,0 +1,653 @@
+{
+  "version": 1.0,
+  "grid_size": 128,
+  "tabs": [
+    {
+      "name": "Teleoperated",
+      "grid_layout": {
+        "layouts": [
+          {
+            "title": "Supply Current",
+            "x": 896.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 384.0,
+            "type": "List Layout",
+            "properties": {
+              "label_position": "TOP"
+            },
+            "children": [
+              {
+                "title": "Flywheel",
+                "x": 1152.0,
+                "y": 384.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Shooter/Flywheel Supply Current (A)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Feeder",
+                "x": 1024.0,
+                "y": 640.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Shooter/Feeder Supply Current (A)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Arm",
+                "x": 1024.0,
+                "y": 640.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Intake/Arm Leader Supply Current (A)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              },
+              {
+                "title": "Roller",
+                "x": 1024.0,
+                "y": 384.0,
+                "width": 128.0,
+                "height": 128.0,
+                "type": "Text Display",
+                "properties": {
+                  "topic": "/SmartDashboard/Intake/Roller Supply Current (A)",
+                  "period": 0.06,
+                  "data_type": "double",
+                  "show_submit_button": false
+                }
+              }
+            ]
+          }
+        ],
+        "containers": [
+          {
+            "title": "DRIVETRAIN FIELD",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 768.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/DRIVETRAIN FIELD",
+              "period": 0.06,
+              "field_game": "Rebuilt (No Fuel)",
+              "robot_width": 0.82,
+              "robot_length": 0.92,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": -90.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295,
+              "show_robot_outside_widget": true
+            }
+          },
+          {
+            "title": "Teleop Shift",
+            "x": 256.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Teleop Shift",
+              "period": 0.06,
+              "data_type": "string",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Teleop Shift Time",
+            "x": 256.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Number Bar",
+            "properties": {
+              "topic": "/SmartDashboard/Teleop Shift Time",
+              "period": 0.06,
+              "data_type": "double",
+              "min_value": 0.0,
+              "max_value": 30.0,
+              "divisions": 6,
+              "inverted": false,
+              "orientation": "horizontal"
+            }
+          },
+          {
+            "title": "Match Time",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Match Time",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "AutoPower",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/AutoPower/Enabled",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "TurnToHub",
+            "x": 512.0,
+            "y": 128.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/TurnToHub/Enabled",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "DriveToTrench",
+            "x": 512.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/DriveToTrench/Running",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Roller In",
+            "x": 896.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Intake/Roller In",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Feeder",
+            "x": 896.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter/Feeder",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Flywheel",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter/Flywheel",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Vision OK",
+            "x": 768.0,
+            "y": 512.0,
+            "width": 128.0,
+            "height": 256.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Vision/Pose Estimation Available",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Auto",
+            "x": 1152.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/Shuffleboard/Autonomous/First Auto",
+              "period": 0.06,
+              "sort_options": true
+            }
+          },
+          {
+            "title": "Vx",
+            "x": 256.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Radial Gauge",
+            "properties": {
+              "topic": "/SmartDashboard/Robot Velocity X (m/s)",
+              "period": 0.06,
+              "data_type": "double",
+              "start_angle": -140.0,
+              "end_angle": 140.0,
+              "min_value": -4.0,
+              "max_value": 4.0,
+              "number_of_labels": 8,
+              "wrap_value": false,
+              "show_pointer": true,
+              "show_ticks": true
+            }
+          },
+          {
+            "title": "Vy",
+            "x": 512.0,
+            "y": 512.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Radial Gauge",
+            "properties": {
+              "topic": "/SmartDashboard/Robot Velocity Y (m/s)",
+              "period": 0.06,
+              "data_type": "double",
+              "start_angle": -140.0,
+              "end_angle": 140.0,
+              "min_value": -4.0,
+              "max_value": 4.0,
+              "number_of_labels": 8,
+              "wrap_value": false,
+              "show_pointer": true,
+              "show_ticks": true
+            }
+          },
+          {
+            "title": "Roller Out",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Intake/Roller Out",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Shift Warning",
+            "x": 256.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Teleop/Shift Warning",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Drivetrain Pose X (m)",
+            "x": 512.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Drivetrain Pose X (m)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Drivetrain Pose Y (m)",
+            "x": 640.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Drivetrain Pose Y (m)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Drivetrain Pose Rotation (deg)",
+            "x": 768.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Drivetrain Pose Rotation (deg)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Feeder Power",
+            "x": 1152.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter/Feeder Power",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Flywheel Power",
+            "x": 1152.0,
+            "y": 256.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter/Flywheel Power",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Arm Up",
+            "x": 896.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Intake/Arm Moving Up",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Arm Down",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Intake/Arm Moving Down",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Arm Position (rot)",
+            "x": 1152.0,
+            "y": 384.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Intake/Arm Position (rot)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Roller Power",
+            "x": 1152.0,
+            "y": 0.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Intake/Roller Power",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Arm Moving Up",
+            "x": 1408.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/Intake/Arm Moving Up",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tab 2",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "DRIVETRAIN FIELD",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 768.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/DRIVETRAIN FIELD",
+              "period": 0.06,
+              "field_game": "Rebuilt",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": -90.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295,
+              "show_robot_outside_widget": true
+            }
+          },
+          {
+            "title": "Distance to Target (m)",
+            "x": 896.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/AutoPower/Distance to Target (m)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Enabled",
+            "x": 896.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/SmartDashboard/AutoPower/Enabled",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "Target Flywheel Speed (RPS)",
+            "x": 896.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/AutoPower/Target Flywheel Speed (RPS)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Flywheel Power",
+            "x": 1152.0,
+            "y": 256.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter/Flywheel Power",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "Flywheel Velocity (rps)",
+            "x": 1152.0,
+            "y": 384.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Shooter/Flywheel Velocity (rps)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tab 3",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Distance to Target (m)",
+            "x": 640.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 256.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/AutoPower/Distance to Target (m)",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          },
+          {
+            "title": "fps",
+            "x": 896.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Text Display",
+            "properties": {
+              "topic": "/photonvision/DINGYI/fps",
+              "period": 0.06,
+              "data_type": "double",
+              "show_submit_button": false
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Tab 4",
+      "grid_layout": {
+        "layouts": [],
+        "containers": []
+      }
+    }
+  ]
+}

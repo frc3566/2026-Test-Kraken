@@ -58,9 +58,9 @@ public class TagUtil {
     // }
     public static Translation2d getHubCenterTranslation(){
         if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
-            return new Translation2d(4.625, 4.03);
+            return new Translation2d(4.611, 4.02);
         } else {
-            return new Translation2d(11.915, 4.03);
+            return new Translation2d(11.901, 4.02);
 
         }
     }
@@ -69,17 +69,17 @@ public class TagUtil {
     // Red front = 180 degrees
     public static Pose2d getLeftTrenchPose(){
         if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
-            return new Pose2d(new Translation2d(3.0, 7.425), Rotation2d.kPi);
+            return new Pose2d(new Translation2d(3.0, 7.411), Rotation2d.kPi);
         } else {
-            return new Pose2d(new Translation2d(13.5, 0.644), new Rotation2d(0));
+            return new Pose2d(new Translation2d(13.5, 0.631), new Rotation2d(0));
         }
     }
 
     public static Pose2d getRightTrenchPose(){
         if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
-            return new Pose2d(new Translation2d(3.0, 0.644), Rotation2d.kPi);
+            return new Pose2d(new Translation2d(3.0, 0.631), Rotation2d.kPi);
         } else {
-            return new Pose2d(new Translation2d(13.5, 7.425), new Rotation2d(0));
+            return new Pose2d(new Translation2d(13.5, 7.411), new Rotation2d(0));
         }
     }
 

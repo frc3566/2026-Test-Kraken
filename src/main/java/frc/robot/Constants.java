@@ -41,8 +41,8 @@ public final class Constants {
     public static final double PovDownSetpointRotations = 0;
 
     public static final double DefaultToleranceRotations = 0.02;
-    public static final double PovUpToleranceRotations = 0.05;
-    public static final double PovDownToleranceRotations = 0.05;
+    public static final double PovUpToleranceRotations = 0.02;
+    public static final double PovDownToleranceRotations = 0.02;
 
     public static final double ManualPower = 0.15;
 

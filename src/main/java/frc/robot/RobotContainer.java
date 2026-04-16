@@ -286,19 +286,19 @@ public class RobotContainer {
                 () -> drivetrain.getState().Pose,
                 TagUtil::getHubFrontCenterTagTranslation,
                 1,
-                4
+                3
             ),
             Commands.waitSeconds(2.5).andThen(new ArmUpAndDown(intake))
             )
         );
 
-        // new EventTrigger("TrigArmDown").onTrue(
-        //     new ArmToSetpoint(intake, Constants.Arm.DownSetpointRotations, Constants.Arm.DefaultToleranceRotations)
-        // );
+        new EventTrigger("TrigArmDown").onTrue(
+            new ArmToSetpoint(intake, Constants.Arm.DownSetpointRotations, Constants.Arm.DefaultToleranceRotations)
+        );
 
-        // new EventTrigger("TrigRollerIn").onTrue(
-        //     new ArmToSetpoint(intake, Constants.Arm.DownSetpointRotations, Constants.Arm.DefaultToleranceRotations)
-        // );
+        new EventTrigger("TrigRollerIn").onTrue(
+            Commands.runOnce(() -> intake.rollerIn(50))
+        );
 
 
 
@@ -309,7 +309,6 @@ public class RobotContainer {
         );
 
         // Generic Prime and Shoot.
-        // We want to wait until the robot is stead, so 0.5 second for another priming
         NamedCommands.registerCommand(
             "PrimeAndShoot",
             new PrimeAndShoot(shooter, intake, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation, 1, 4)

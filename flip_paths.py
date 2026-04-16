@@ -11,7 +11,7 @@ Flip rule:s
 import json
 import os
 
-AXIS_Y = 4.035
+AXIS_Y = 4.021
 PATHS_DIR = os.path.join(
     os.path.dirname(__file__),
     "src", "main", "deploy", "pathplanner", "paths"

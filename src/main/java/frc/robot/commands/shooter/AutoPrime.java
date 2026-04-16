@@ -36,7 +36,7 @@ public class AutoPrime extends Command {
         System.out.println("Prime Command Initialized");
         // shooter.setAgitatorPower(speed);
         // shooter.setUpperPower(speed);
-        // intake.rollerIn(30);
+        intake.rollerIn(50);
     }
 
     @Override
@@ -50,10 +50,6 @@ public class AutoPrime extends Command {
 
     @Override
     public boolean isFinished() {
-        if(timeOut != -1 && timer.hasElapsed(timeOut)) {
-            return true;
-        }   
-
         return false;
     }
 }

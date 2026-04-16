@@ -49,7 +49,7 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {
 
-        m_robotContainer.vision.updatePoseEstimation(m_robotContainer.drivetrain);
+        // m_robotContainer.vision.updatePoseEstimation(m_robotContainer.drivetrain);
 
     }
 

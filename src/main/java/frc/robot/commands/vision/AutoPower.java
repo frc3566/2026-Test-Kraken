@@ -27,7 +27,7 @@ public class AutoPower extends Command {
         this.shooter = shooter;
         this.robotPose = robotPose;
         this.targetTranslation = targetTranslation;
-        // this.addRequirements(shooter);
+        addRequirements(shooter);
     }
 
     @Override
@@ -52,6 +52,7 @@ public class AutoPower extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        shooter.stopUpper();
         SmartDashboard.putBoolean("AutoPower/Enabled", false);
         SmartDashboard.putNumber("AutoPower/Distance to Target (m)", 0);
         SmartDashboard.putNumber("AutoPower/Target Flywheel Speed (RPS)", 0);

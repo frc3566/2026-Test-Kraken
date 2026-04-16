@@ -181,12 +181,12 @@ public class Vision extends SubsystemBase {
       Optional<EstimatedRobotPose> poseEst = getEstimatedGlobalPose(camera);
 
       SmartDashboard.putBoolean(cameraKey + "/Pose Estimation Available", poseEst.isPresent());
-      anyPoseAvailable |= poseEst.isPresent();
+  anyPoseAvailable |= poseEst.isPresent();
 
       poseEst = filterPose(poseEst, camera.name());
 
       SmartDashboard.putBoolean(cameraKey + "/Filtered Pose Available", poseEst.isPresent());
-      anyFilteredAvailable |= poseEst.isPresent();
+  anyFilteredAvailable |= poseEst.isPresent();
 
       if(poseEst.isPresent()){
         var pose = poseEst.get().estimatedPose.toPose2d();
@@ -233,7 +233,12 @@ public class Vision extends SubsystemBase {
    
 
   private Optional<EstimatedRobotPose> filterPose(Optional<EstimatedRobotPose> pose, String cameraName) {
-    if (pose.isEmpty()) { return pose; }
+    if (pose.isEmpty()) {
+      String cameraKey = "Vision/" + cameraName;
+      SmartDashboard.putString(cameraKey + "/Filter Reject Reason", "No pose estimate");
+      SmartDashboard.putBoolean(cameraKey + "/Pose Too Far", false);
+      return pose;
+    }
 
   String cameraKey = "Vision/" + cameraName;
 

@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.firecontrol.FuelPhysicsSim;
 import frc.robot.commands.Shuffle;
 import frc.robot.commands.intake.ArmToSetpoint;
 import frc.robot.commands.intake.ArmUpAndDown;
@@ -67,15 +68,19 @@ public class RobotContainer {
     public final Shooter shooter = new Shooter();
     public final Intake intake = new Intake();
     public final Vision vision = new Vision(drivetrain::getPose);
+    
+
 
     public  SendableChooser<Command> firstChooser;
     // public  SendableChooser<Command> secondChooser;
     // public  SendableChooser<Command> thirdChooser;
 
     public RobotContainer() {
-        if(!Utils.isSimulation()){
-            // configureCamera();
-        }
+        if(Utils.isSimulation()){
+            // FuelPhysicsSim ballSim = new FuelPhysicsSim("Sim/Fuel");
+            // ballSim.enable();
+            // ballSim.placeFieldBalls();   // spawns all the game pieces
+    }
 
         
         configureAutoCommand();
@@ -201,9 +206,9 @@ public class RobotContainer {
         );
 
         /* For Second Driver */
-    secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(50)));
+    secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(80)));
     secondDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
-    secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.rollerOut(50)));
+    secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.rollerOut(80)));
     secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
 
 

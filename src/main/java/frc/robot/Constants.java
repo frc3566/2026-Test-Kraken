@@ -50,7 +50,7 @@ public final class Constants {
     public static final double UpAndDownHighRotations = 0.28;
     public static final double UpAndDownLowRotations = 0.00;
 
-    public static final double ArmToSetpointTimeoutSeconds = 10.0;
+    public static final double ArmToSetpointTimeoutSeconds = 5.0;
     public static final double ArmSwitchTimeoutSeconds = 1.5;
 
     public static final double ForwardSoftLimitRotations = 0.45;

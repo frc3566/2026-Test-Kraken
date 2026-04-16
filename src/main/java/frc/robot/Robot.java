@@ -6,16 +6,19 @@ package frc.robot;
 
 import com.ctre.phoenix6.HootAutoReplay;
 
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.firecontrol.FuelPhysicsSim;
 import frc.robot.subsystems.Vision;
 
 public class Robot extends TimedRobot {
     private Command m_autonomousCommand;
+    private  FuelPhysicsSim ballSim;
 
 
     private final RobotContainer m_robotContainer;
@@ -109,8 +112,25 @@ public class Robot extends TimedRobot {
     public void testExit() {}
 
     @Override
+    public void simulationInit() {
+        // ballSim = new FuelPhysicsSim("Sim/Fuel");
+        // ballSim.enable();
+        // ballSim.placeFieldBalls();  // spawns all the game pieces
+
+        // // tell it about your robot
+        // ballSim.configureRobot(0.82, 0.92, 0.1143,
+        //     () -> m_robotContainer.drivetrain.getState().Pose, () -> m_robotContainer.drivetrain.getState().Speeds);
+    }
+
+    @Override
     public void simulationPeriodic() {
         Vision.visionSim.update(m_robotContainer.drivetrain.getState().Pose);
+        // ballSim.tick();  // runs physics, publishes ball positions to NT
+
+        // when you shoot
+        // ballSim.launchBall(new Translation3d(m_robotContainer.drivetrain.getState().Pose.getTranslation()), new Translation3d(10, 10, 10), 20);
+
+
     }
 
     // public void setFieldRobotPose(){

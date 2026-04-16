@@ -122,7 +122,7 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getUpperVelocity(){
-        return ShooterLeft.getVelocity().getValueAsDouble();
+        return ShooterLeft.get() * 100;
     }
 
     @Override

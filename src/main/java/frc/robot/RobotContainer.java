@@ -32,7 +32,6 @@ import frc.robot.commands.shooter.AutoPrime;
 import frc.robot.commands.shooter.PrimeAndShoot;
 import frc.robot.commands.shooter.PrimeAndShootFixed;
 import frc.robot.commands.vision.AutoPower;
-import frc.robot.commands.vision.DriveToPose;
 import frc.robot.commands.vision.DriveToPoseNew;
 import frc.robot.commands.vision.HeadToAngle;
 import frc.robot.commands.vision.TagUtil;
@@ -181,10 +180,10 @@ public class RobotContainer {
             MaxAngularRate)
         );
 
-        firstDriver.leftBumper().whileTrue(new DriveToPose(drivetrain, vision, () -> TagUtil.getLeftTrenchPose()));
-        firstDriver.rightBumper().whileTrue(new DriveToPose(drivetrain, vision, () -> TagUtil.getRightTrenchPose()));
-        firstDriver.povLeft().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getLeftTrenchPose()));
-        firstDriver.povRight().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getRightTrenchPose()));
+        firstDriver.leftBumper().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getLeftTrenchPose()));
+        firstDriver.rightBumper().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getRightTrenchPose()));
+        firstDriver.povLeft().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getLeftTrenchNeutralPose()));
+        firstDriver.povRight().whileTrue(new DriveToPoseNew(vision, () -> TagUtil.getRightTrenchNeutralPose()));
         firstDriver.povUp().onTrue(new Shuffle(drivetrain));
         
        
@@ -198,8 +197,7 @@ public class RobotContainer {
                             shooter.stopLower();
                         }
                     },
-                    () -> shooter.stopLower(),
-                    shooter)
+                    () -> shooter.stopLower())
         );
 
         /* For Second Driver */
@@ -220,17 +218,27 @@ public class RobotContainer {
         // secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.armDown(0.2)));
         // secondDriver.rightBumper().onFalse(new InstantCommand(() -> intake.stopArm()));
 
-        // Scoring 
-        secondDriver.x().onTrue(new InstantCommand(() -> shooter.setUpperPower(50)));
-        
-        // Neutral Passing 
-        secondDriver.b().onTrue(new InstantCommand(() -> shooter.setUpperPower(75)));
+        // Shooter modes (X/B/Y) and universal shooter cancel (A)
+        final Command autoPowerCommand = new AutoPower(
+            shooter,
+            () -> drivetrain.getState().Pose,
+            TagUtil::getHubFrontCenterTagTranslation
+        );
 
-        // Auto Power
-        secondDriver.y().onTrue(new AutoPower(shooter, () -> drivetrain.getState().Pose, TagUtil::getHubFrontCenterTagTranslation));
+        // Scoring power
+        secondDriver.x().onTrue(Commands.runOnce(() -> shooter.setUpperPower(50), shooter));
 
-        // Stop shooter and interrupt auto power
-        secondDriver.a().onTrue(shooter.runOnce(() -> shooter.stopUpper()));
+        // Neutral passing power
+        secondDriver.b().onTrue(Commands.runOnce(() -> shooter.setUpperPower(75), shooter));
+
+        // Auto Power mode
+        secondDriver.y().onTrue(autoPowerCommand);
+
+        // Universal shooter cancel: interrupts any shooter-owned command (including AutoPower)
+        secondDriver.a().onTrue(Commands.runOnce(() -> {
+            shooter.stopUpper();
+            shooter.stopLower();
+        }, shooter));
 
         
         secondDriver.povUp().whileTrue(new ArmToSetpoint(intake, Constants.Arm.UpSetpointRotations, Constants.Arm.PovUpToleranceRotations));

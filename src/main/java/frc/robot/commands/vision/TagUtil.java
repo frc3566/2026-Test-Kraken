@@ -84,6 +84,22 @@ public class TagUtil {
         }
     }
 
+        public static Pose2d getLeftTrenchNeutralPose(){
+        if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
+            return new Pose2d(new Translation2d(6.0, 7.411), Rotation2d.kPi);
+        } else {
+            return new Pose2d(new Translation2d(10.5, 0.631), new Rotation2d(0));
+        }
+    }
+
+    public static Pose2d getRightTrenchNeutralPose(){
+        if (DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue) {
+            return new Pose2d(new Translation2d(6.0, 0.631), Rotation2d.kPi);
+        } else {
+            return new Pose2d(new Translation2d(10.5, 7.411), new Rotation2d(0));
+        }
+    }
+
 
 
     public static Translation2d getHubFrontCenterTagTranslation(){

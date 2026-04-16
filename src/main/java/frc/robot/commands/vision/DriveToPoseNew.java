@@ -26,7 +26,7 @@ import frc.robot.subsystems.Vision;
 public class DriveToPoseNew extends Command {
 
     // TODO: Tune these constraints on the real robot.
-    private static final double MAX_VELOCITY_MPS        = 3.2;
+    private static final double MAX_VELOCITY_MPS        = 3.4;
     private static final double MAX_ACCEL_MPS2          = 3.0;
     private static final double MAX_ANGULAR_VEL_DEG_S   = 540.0;
     private static final double MAX_ANGULAR_ACCEL_DEG_S = 720.0;

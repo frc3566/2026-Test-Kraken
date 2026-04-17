@@ -206,15 +206,14 @@ public class RobotContainer {
         );
 
         /* For Second Driver */
-    secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(70)));
+    secondDriver.leftTrigger().onTrue(new InstantCommand(() -> intake.rollerIn(40)));
     secondDriver.leftTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
-    secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.rollerOut(70)));
+    secondDriver.rightTrigger().onTrue(new InstantCommand(() -> intake.rollerOut(40)));
     secondDriver.rightTrigger().onFalse(new InstantCommand(() -> intake.stopRoller()));
 
 
     // Hold left bumper to move arm up and down repeatedly for intaking multiple balls.
     secondDriver.leftBumper().whileTrue(new ArmUpAndDown(intake));
-    
     // Arm encoder resets on RB when arm is up
     secondDriver.rightBumper().onTrue(new InstantCommand(() -> intake.setArmEncoderPosition(Constants.Arm.UpSetpointRotations)));
 

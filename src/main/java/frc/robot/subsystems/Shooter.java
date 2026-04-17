@@ -117,7 +117,7 @@ public class Shooter extends SubsystemBase {
         // double rps = 39.7+ 0.0417 * distFeet + 0.137 * Math.pow(distFeet,2)-4;
         // TODO: Redo the equation
         // double rps = -1.3664 * Math.pow(distance,2) + 10.591*distance + 28.047;
-        double rps = 10.818*Math.log(distance) + 35.835;
+        double rps = 10.818*Math.log(distance) + 38.335;
         return Math.min(100,rps);
     }
 

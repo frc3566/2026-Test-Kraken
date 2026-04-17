@@ -5,8 +5,8 @@ import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.Slot1Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -21,18 +21,17 @@ public class Intake extends SubsystemBase {
     public TalonFX rollerMotor, armLeaderMotor;
     public CANcoder ArmCanCoder;
 
-    private final MotionMagicVelocityVoltage m_velocity = new MotionMagicVelocityVoltage(0)
-        .withAcceleration(100);
+    private final VelocityVoltage m_velocity = new VelocityVoltage(0);
 
     // Reuse a single request object — just update the position each call
     private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0)
         .withSlot(0);
 
     // Separate Motion Magic limits for up vs down
-    private static final double MM_UP_CRUISE_VEL = 1.5; // rotations/sec
-    private static final double MM_UP_ACCEL = 1.5;       // rotations/sec^2
-    private static final double MM_DOWN_CRUISE_VEL = 1.5;
-    private static final double MM_DOWN_ACCEL = 1.5;
+    private static final double MM_UP_CRUISE_VEL = 1; // rotations/sec
+    private static final double MM_UP_ACCEL = 1;       // rotations/sec^2
+    private static final double MM_DOWN_CRUISE_VEL = 1;
+    private static final double MM_DOWN_ACCEL = 1;
 
     private final MotionMagicConfigs mmUp = new MotionMagicConfigs();
     private final MotionMagicConfigs mmDown = new MotionMagicConfigs();
@@ -221,15 +220,16 @@ public class Intake extends SubsystemBase {
     // ------------------------------------------------------------------
 
     public void rollerIn(double rps) {
-        // rollerMotor.setControl(new DutyCycleOut(rps/100));
-        rollerMotor.setControl(m_velocity.withVelocity(rps).withAcceleration(150));
+        rollerMotor.setControl(new DutyCycleOut(rps/100));
+        // rollerMotor.set(rps/100);
+        // rollerMotor.setControl(m_velocity.withVelocity(rps));
         SmartDashboard.putBoolean("Intake/Roller In", true);
         SmartDashboard.putBoolean("Intake/Roller Out", false);
     }
 
     public void rollerOut(double rps) {
-        // rollerMotor.setControl(new DutyCycleOut(-rps/100));
-        rollerMotor.setControl(m_velocity.withVelocity(-rps).withAcceleration(150));
+        rollerMotor.setControl(new DutyCycleOut(-rps/100));
+        // rollerMotor.setControl(m_velocity.withVelocity(-rps));
         SmartDashboard.putBoolean("Intake/Roller In", false);
         SmartDashboard.putBoolean("Intake/Roller Out", true);
     }
@@ -255,6 +255,7 @@ public class Intake extends SubsystemBase {
         SmartDashboard.putNumber("Intake/Roller Velocity (rps)", rollerMotor.getVelocity().getValueAsDouble());
         SmartDashboard.putNumber("Intake/Arm Power", armLeaderMotor.get());
         SmartDashboard.putNumber("Intake/Arm Leader Supply Current (A)", armLeaderMotor.getSupplyCurrent().getValueAsDouble());
+        SmartDashboard.putBoolean("Intake/Roller Overheating", rollerMotor.getFault_DeviceTemp().getValue());
         // SmartDashboard.putNumber("Intake/Arm Follower Supply Current (A)", armFollowerMotor.getSupplyCurrent().getValueAsDouble());
         // SmartDashboard.putNumber("Intake/Arm Follower Velocity (rps)", armFollowerMotor.getVelocity().getValueAsDouble());
         // SmartDashboard.putNumber("Intake/Arm Follower Position (rot)", armFollowerMotor.getPosition().getValueAsDouble());

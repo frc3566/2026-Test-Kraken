@@ -267,18 +267,18 @@ public class Vision extends SubsystemBase {
     // Log target counts and per-target ambiguity to the SignalLogger
     SignalLogger.writeDouble("Vision/" + cameraName + "/Targets/Total", pose.get().targetsUsed.size(), "count");
     SignalLogger.writeDouble("Vision/" + cameraName + "/Targets/Passed", goodTargets.size(), "count");
-    int targetIndex = 0;
-    for (var target : pose.get().targetsUsed) {
-      SignalLogger.writeDouble(
-        "Vision/" + cameraName + "/Targets/Ambiguity/Fid" + target.getFiducialId(),
-        target.getPoseAmbiguity(),
-        "unitless");
-      SignalLogger.writeDouble(
-        "Vision/" + cameraName + "/Targets/Ambiguity/Index" + targetIndex,
-        target.getPoseAmbiguity(),
-        "unitless");
-      targetIndex++;
-    }
+    // int targetIndex = 0;
+    // for (var target : pose.get().targetsUsed) {
+    //   SignalLogger.writeDouble(
+    //     "Vision/" + cameraName + "/Targets/Ambiguity/Fid" + target.getFiducialId(),
+    //     target.getPoseAmbiguity(),
+    //     "unitless");
+    //   SignalLogger.writeDouble(
+    //     "Vision/" + cameraName + "/Targets/Ambiguity/Index" + targetIndex,
+    //     target.getPoseAmbiguity(),
+    //     "unitless");
+    //   targetIndex++;
+    // }
 
     if (goodTargets.isEmpty()) {
     SmartDashboard.putString(cameraKey + "/Filter Reject Reason",
@@ -454,7 +454,7 @@ public class Vision extends SubsystemBase {
           Units.inchesToMeters(0), //  Left from center
           Units.inchesToMeters(7.282) // Height from center
         ),
-        VecBuilder.fill(0.75, 0.75, Units.degreesToRadians(180)), VecBuilder.fill(0.4, 0.4, Units.degreesToRadians(360))),
+        VecBuilder.fill(0.75, 0.75, Units.degreesToRadians(360)), VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(360))),
     
     /**
      * Dingyi (LL3), Right
@@ -467,7 +467,7 @@ public class Vision extends SubsystemBase {
           Units.inchesToMeters(-12.289),
           Units.inchesToMeters(8.586)
         ),
-        VecBuilder.fill(1, 1, Units.degreesToRadians(180)), VecBuilder.fill(0.6, 0.6, Units.degreesToRadians(360))),
+        VecBuilder.fill(1, 1, Units.degreesToRadians(360)), VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(360))),
 
     /**
      * LEO (LL4), Left
@@ -479,7 +479,7 @@ public class Vision extends SubsystemBase {
           Units.inchesToMeters(12.289),
           Units.inchesToMeters(8.586)
         ),
-        VecBuilder.fill(0.75, 0.75, Units.degreesToRadians(180)), VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(360)));
+        VecBuilder.fill(0.75, 0.75, Units.degreesToRadians(360)), VecBuilder.fill(0.5, 0.5, Units.degreesToRadians(360)));
 
     
     /**

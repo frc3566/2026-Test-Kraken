@@ -80,6 +80,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousExit() {
         m_robotContainer.intake.setArmPosition(Constants.Arm.DownSetpointRotations);
+        m_robotContainer.vision.updatePoseEstimation(m_robotContainer.drivetrain);
     }
 
     @Override

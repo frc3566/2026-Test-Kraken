@@ -265,7 +265,7 @@ public class Vision extends SubsystemBase {
         .toString());
 
     // Log target counts and per-target ambiguity to the SignalLogger
-    SignalLogger.writeDouble("Vision/" + cameraName + "/Targets/Total", pose.get().targetsUsed.size(), "count");
+    SignalLogger.writeDouble("Vision/" + cameraName + "/Targets/Total", pose.get().targetsUsed.size()-1, "count");
     SignalLogger.writeDouble("Vision/" + cameraName + "/Targets/Passed", goodTargets.size(), "count");
     // int targetIndex = 0;
     // for (var target : pose.get().targetsUsed) {

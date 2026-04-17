@@ -36,7 +36,7 @@ public class AutoPrime extends Command {
         System.out.println("Prime Command Initialized");
         // shooter.setAgitatorPower(speed);
         // shooter.setUpperPower(speed);
-        intake.rollerIn(80);
+        intake.rollerIn(70);
     }
 
     @Override
